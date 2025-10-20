@@ -1,55 +1,98 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./PublicationsOffers.css"
 
-import data from "./PublicationOffers.json"
+import data from "./PublicationOffers.json" //Importamos los datos de los productos desde un archivo JSON de ejemplo.
 
-import PublicationOffersDialog from "../PublicationOffersDialog/PublicationOffersDialog";
+import PublicationOffersDialog from "../PublicationOffersDialog/PublicationOffersDialog"; //Importamos el diálogo para mostrar la información del producto seleccionado.
 
-const PublicationsOffers = () => {
+import iconEmpty from "../../../resources/images/productos.svg" //Importamos la imágen para cuando no haya productos disponibles.
 
-    const[dataUser, setDataUser] = useState();
-    const[open, setOpen] = useState(false);
+import { MenuItem, Select, FormControl, InputLabel } from '@mui/material'; //Importamos componentes de materialUI a utilizar.
 
-    const handleOpen = (userData) => {
+
+//Recibimos la prop textSearch desde la página Offers para filtrar los productos según el texto ingresado en la barra de búsqueda.
+const PublicationsOffers = ({textSearch}) => {
+
+    const [dataUser, setDataUser] = useState(); //Estado que almacena la información del producto seleccionado para mostrar en el diálogo.
+    const [open, setOpen] = useState(false); //Estado que maneja la visibilidad del diálogo.
+    const [category, setCategory] = useState(""); //Estado que almacena la categoría seleccionada en el filtro.
+
+    const handleOpen = (userData) => { //Función que abre el diálogo y establece la información del producto seleccionado.
         setDataUser(userData);
         setOpen(true);
     }
 
-    const handleClose = () => { //Cierra el Popup
-        setOpen(false); // Cierra el popup
-        setDataUser(null); // Limpia el producto seleccionado
+    const handleClose = () => { //Función que cierra el diálogo y limpia la información del producto seleccionado.
+        setOpen(false);
+        setDataUser(null);
     };
 
-    return(
+    const handleChangeCategoria = (event) => { //Función que actualiza el estado de la categoría seleccionada en el filtro.
+        setCategory(event.target.value);
+    }
+
+    const typeCategories = [ //Arreglo que contiene las categorías disponibles para el filtro.
+        { id: "", name: "Todas las categorias" },
+        { id: "Hogar", name: "Hogar" },
+        { id: "Juguetes", name: "Juguetes" },
+        { id: "Libros", name: "Libros" },
+        { id: "Ropa", name: "Ropa" },
+        { id: "Tecnología", name: "Tecnología" },
+        { id: "Deportes", name: "Deportes" },
+        { id: "Entretenimiento", name: "Entretenimiento" }
+    ];
+
+    const dataFilter = data.filter((value) => {  //Filtramos los productos según la categoría seleccionada y el texto de búsqueda ingresado.
+        const filterCategory = category ? value.category.toUpperCase() === category.toUpperCase() : true; //Si hay una categoría seleccionada, filtramos por ella; si no, mostramos todas.
+        const filterSearch = textSearch && textSearch.length > 0? value.title.toUpperCase().includes(textSearch.toUpperCase()) : true; //Si hay texto de búsqueda, filtramos por él; si no, mostramos todas.
+
+        return filterCategory && filterSearch; 
+    });
+
+    return (
         <div className="container_general_publications_offers">
             <section className="title_filter_info_offers">
-                <h1>{data.length} ofertas disponibles</h1>
-                <select name="" id=""></select>
+                <h1>{dataFilter.length} ofertas disponibles</h1>
+                <FormControl variant="outlined" fullWidth sx={{width:"200px", "& .MuiInputLabel-root": { fontFamily: "Outfit" }, 
+                    "& .MuiSelect-select": { fontFamily: "Manrope", padding: "15px 10px" } }} className="filter_category_products">
+                            <InputLabel id="category-label" style={{zIndex:"0"}}>Categoría</InputLabel>
+                            <Select labelId="category-label" label="Categoría" onChange={handleChangeCategoria} value={category} >
+                                {typeCategories.map((values, index) => ( 
+                                    <MenuItem key={index} value={values.id} >
+                                        {values.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                </FormControl>
             </section>
-            <section className="section_grid_offers">
-                {data.map((value, index) => (
-                    <div key={index} className="container_product_offers">
-                        <div className="tag_offer limited">{value.category}</div>
-                        <img src={value.img} alt="imagenProducto" />
-                        
-                        <h5 className="product_name">{value.title}</h5>
-                        
-                        <div className="container_price_offers">
-                            <span className="price_offers">${value.priceDiscount}</span>
-                            <span className="price_original">${value.priceOriginal}</span>
+            {dataFilter.length === 0 ? ( //Si no hay productos que coincidan con los filtros, mostramos un mensaje y una imágen indicándolo.
+                <div className="info_empty_products">
+                    <img src={iconEmpty}  alt="Imágen de categoría sin productos."style={{ height: "100px" }}/>
+                    <h2>No hay ofertas disponibles.</h2>
+                </div>
+            ) : (
+                <section className="section_grid_offers">
+                    {dataFilter.map((value, index) => (
+                        <div key={index} className="container_product_offers">
+                            <div className="tag_offer limited">{value.category}</div>
+                            <img src={value.img1} alt="imagenProducto" />
+                            <h5 className="product_name">{value.title}</h5>
+                            <div className="container_price_offers">
+                                <span className="price_offers">${value.priceDiscount}</span>
+                                <span className="price_original">${value.priceOriginal}</span>
+                            </div>
+                            <span className="price_swapcoins">
+                                + {value.priceSwapcoins} SwapCoins
+                            </span>
+                            <a className="button_more_info"onClick={() => handleOpen(value)}>Ver más información</a>
+                            <button className="button_redeem">Canjear ahora</button>
                         </div>
-                        
-                        <span className="price_swapcoins">+ {value.priceSwapcoins} SwapCoins</span>
+                    ))}
+                </section>
+            )}
 
-                        <a className="button_more_info" onClick={() => handleOpen(value)}>Ver más información</a>
-                        <button className="button_redeem">Canjear ahora</button>
-                    </div>
-                ))}
-            </section>
-
-            {/* Popup con más detalles */}
-            {open && (
-                <PublicationOffersDialog userData={dataUser} open={open} handleClose={handleClose}/>
+            {open && ( //Si el estado open es true, mostramos el diálogo con la información del producto seleccionado.
+                <PublicationOffersDialog userData={dataUser} open={open} handleClose={handleClose} /> //Pasamos las props necesarias al diálogo.
             )}
         </div>
     )

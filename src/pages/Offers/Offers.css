@@ -1,9 +1,8 @@
 .container_general_offers{
     min-height: calc(100vh - 80px);
-    background-color: #F9F6EE;
     display: flex;
     flex-direction: column;
-    gap: 50px;
+    gap: 70px;
 }
 
 .container_info_offers{

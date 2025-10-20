@@ -1,30 +1,29 @@
 .container_general_publications_offers{
-    height: 100%;
-    width: 65%;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+  height: 100%;
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 .title_filter_info_offers{
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .title_filter_info_offers h1{
-    font-size: 30px;
-    font-family: "Outfit";
+  font-size: 30px;
+  font-family: "Outfit";
 }
 
 .section_grid_offers{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 2fr));
-    gap: 20px;
-    margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .container_product_offers {
   position: relative;
-  width: 280px;
   background: #fff;
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.15);
@@ -38,7 +37,7 @@
 .container_product_offers img {
   width: 100%;
   height: 200px;
-  object-fit: cover;
+  object-fit: cover; /*Validar esto para la imagen*/
 }
 
 .tag_offer {
@@ -123,4 +122,40 @@
 
 .button_redeem:hover {
   background-color: #003db8;
+}
+
+.info_empty_products{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.info_empty_products h2{
+  font-family: "Outfit";
+  font-size: 23px;
+}
+
+@media (max-width: 500px) {
+  .section_grid_offers{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .container_general_publications_offers{
+    width: 82%;
+  }
+
+  .title_filter_info_offers{
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 20px;
+  }
+
+  .filter_category_products{
+    width: 100% !important;
+  }
 }

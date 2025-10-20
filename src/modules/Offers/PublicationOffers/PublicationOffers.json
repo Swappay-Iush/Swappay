@@ -1,18 +1,23 @@
 [
   {
-    "img": "https://picsum.photos/seed/bmx/800/600",
+    "img1": "https://picsum.photos/seed/bmx/800/600",
+    "img2": "https://picsum.photos/seed/bmx2/800/600",
+    "img3": null,
     "title": "Bicicleta - BMX - Todo Terreno",
     "description": "Diseñada para ofrecer resistencia, estabilidad y control en cualquier superficie. Ideal para aventuras urbanas, rampas y terrenos accidentados. Incluye asiento reforzado y manubrio ergonómico.",
     "specs": "Marco de acero reforzado | Frenos V-brake | Llantas de 20” antideslizantes | Transmisión de una velocidad | Peso: 11 kg | Altura recomendada: 120–180 cm",
     "category": "Deportes",
-    "amount": 5,
+    "amount": 0,
     "priceOriginal": 199,
     "discount": 20,
     "priceDiscount": 149,
-    "priceSwapcoins": 70
+    "priceSwapcoins": 70,
+    "availability": "Agotado"
   },
   {
-    "img": "https://picsum.photos/seed/headphones/800/600",
+    "img1": "https://picsum.photos/seed/headphones/800/600",
+    "img2": null,
+    "img3": "https://picsum.photos/seed/headphones2/800/600",
     "title": "Audífonos Inalámbricos Pro",
     "description": "Sonido envolvente con cancelación activa de ruido, óptimos para trabajo, estudio o deporte. Diseño cómodo para uso prolongado y controles táctiles integrados.",
     "specs": "Batería 24 h | Cancelación de ruido activa | Bluetooth 5.3 | Micrófono integrado | Carga rápida USB-C | Alcance 10 m",
@@ -21,10 +26,13 @@
     "priceOriginal": 149.99,
     "discount": 30,
     "priceDiscount": 104.99,
-    "priceSwapcoins": 50
+    "priceSwapcoins": 50,
+    "availability": "Stock"
   },
   {
-    "img": "https://picsum.photos/seed/kitchen/800/600",
+    "img1": "https://picsum.photos/seed/kitchen/800/600",
+    "img2": "https://picsum.photos/seed/kitchen2/800/600",
+    "img3": "https://picsum.photos/seed/kitchen3/800/600",
     "title": "Kit de Cocina Esencial",
     "description": "Set completo para equipar tu cocina con utensilios de alta calidad y diseño minimalista. Incluye todo lo necesario para cocinar y preparar alimentos con facilidad.",
     "specs": "6 utensilios de acero inoxidable | Mango ergonómico | Resistente al calor | Apto lavavajillas | Estuche organizador incluido",
@@ -33,22 +41,28 @@
     "priceOriginal": 129.99,
     "discount": 23,
     "priceDiscount": 99.99,
-    "priceSwapcoins": 30
+    "priceSwapcoins": 30,
+    "availability": "Stock"
   },
   {
-    "img": "https://picsum.photos/seed/jacket/800/600",
+    "img1": "https://picsum.photos/seed/jacket/800/600",
+    "img2": null,
+    "img3": null,
     "title": "Chaqueta Urbana Impermeable",
     "description": "Chaqueta ligera e impermeable diseñada para el día a día urbano. Protección contra lluvia y viento manteniendo la transpirabilidad.",
     "specs": "Tela impermeable | Cierre YKK | Bolsillos con cremallera | Forro térmico ligero | Colores: negro, beige, azul",
     "category": "Moda",
-    "amount": 15,
+    "amount": 0,
     "priceOriginal": 79.99,
     "discount": 25,
     "priceDiscount": 59.99,
-    "priceSwapcoins": 20
+    "priceSwapcoins": 20,
+    "availability": "Agotado"
   },
   {
-    "img": "https://picsum.photos/seed/smartwatch/800/600",
+    "img1": "https://picsum.photos/seed/smartwatch/800/600",
+    "img2": "https://picsum.photos/seed/smartwatch2/800/600",
+    "img3": null,
     "title": "Reloj Inteligente FitTime X",
     "description": "Reloj pensado para monitorear tu salud y actividad diaria con un diseño elegante y pantalla nítida. Notificaciones, seguimiento deportivo y larga batería.",
     "specs": "Pantalla AMOLED 1.6” | Monitor de ritmo cardíaco | GPS integrado | Resistencia al agua IP68 | Batería 10 días",
@@ -57,6 +71,7 @@
     "priceOriginal": 179.99,
     "discount": 28,
     "priceDiscount": 129.99,
-    "priceSwapcoins": 40
+    "priceSwapcoins": 40,
+    "availability": "Stock"
   }
 ]
