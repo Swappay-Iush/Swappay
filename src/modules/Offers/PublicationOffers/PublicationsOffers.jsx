@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import "./PublicationsOffers.css"
 
-import data from "./PublicationOffers.json"
-
 import PublicationOffersDialog from "../PublicationOffersDialog/PublicationOffersDialog"; //Importamos el diálogo para mostrar la información del producto seleccionado.
 
 import iconEmpty from "../../../resources/images/productos.svg" //Importamos la imágen para cuando no haya productos disponibles.
