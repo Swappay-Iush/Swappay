@@ -19,12 +19,12 @@ const Publications = () => {
 
     useEffect(() => { //Hook que contiene una función para comunicarnos con el backend y traer los productos del usuario.
         const dataProductsUser = async () => {
-        try {
-            const { data } = await api.get(`/products/${id}`); //Llamamos el endpoint para traer los productos del usuario.
-            setDataUser(data); //Actualizamos el estado con los productos del usuario.
-        } catch (error) {
-            console.error(error); //Manejamos el error en caso de que no se pueda traer los productos.
-        }
+          try {
+              const { data } = await api.get(`/products/${id}`); //Llamamos el endpoint para traer los productos del usuario.
+              setDataUser(data); //Actualizamos el estado con los productos del usuario.
+          } catch (error) {
+              console.error(error); //Manejamos el error en caso de que no se pueda traer los productos.
+          }
         };
 
         dataProductsUser(); //Llamamos la función para que se ejecute.

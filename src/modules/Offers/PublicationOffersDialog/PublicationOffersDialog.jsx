@@ -13,24 +13,21 @@ import { IoMdClose } from "react-icons/io"; //Icono de la X
 */
 const PublicationOffersDialog = ({userData, open, handleClose}) => {
 
-    const [newImage, setNewImage] = useState(userData.img1); //Estado para menejar la imágen principal del producto.
+    const [newImage, setNewImage] = useState(`http://localhost:3000${userData.img1}`); //Estado para menejar la imágen principal del producto.
 
     //Iconos 
     const shoppingCart = () => <MdAddShoppingCart className="shoppingCart"/>; //Icono del carrito de compras
     const closeDialog = () => <IoMdClose className="iconClose" onClick={handleClose}/>; //Icono para cerrar la ventana.
 
     //Arreglo que contiene las imagenes del objeto que llega del back y las filtra para no mostrar las nulas.
-    const imagesproducts = [
-        {img: userData.img1, des: userData.title},
-        {img: userData.img2, des: userData.title},
-        {img: userData.img3, des: userData.title}
-    ].filter(value => value.img);
+    const imagesproducts = [userData.img1, userData.img2, userData.img3].filter(img => img).map(img => ({ img: `http://localhost:3000${img}`, des: userData.title }));
+
 
     const changeImage = (image) =>{ //Función que permite el cambio de imágen. 
         setNewImage(image)
     }
 
-    const buttonsDisabled = userData.availability === "Agotado"; //Variable booleanada que actualiza su valor según la disponibilidad de los productos.
+    const buttonsDisabled = !userData.availability; //Variable booleanada que actualiza su valor según la disponibilidad de los productos.
 
     return(
         <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth PaperProps={{ style: {borderRadius: '12px', height:"600px",overflow: 'hidden'}}}
@@ -54,7 +51,7 @@ const PublicationOffersDialog = ({userData, open, handleClose}) => {
                         <h1 className="info_products_title">{userData.title}</h1>
                         <p className="info_products_description">{userData.description}</p>
                         <div className="info_pruducts_amount" style={{display:"flex", alignItems:"center", gap:"20px"}}>
-                            <h5 className={`info_products_stock ${buttonsDisabled ? "products_stock_soldOut" : ""}`}>{userData.availability}</h5>
+                            <h5 className={`info_products_stock ${buttonsDisabled ? "products_stock_soldOut" : ""}`}>{userData.availability ? "Stock" : "Agotado"}</h5>
                             <h5 style={{color:"grey"}}>{userData.amount} unidades disponibles</h5>
                         </div>
                         

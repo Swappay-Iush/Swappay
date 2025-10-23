@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./PublicationsOffers.css"
 
-import data from "./PublicationOffers.json" //Importamos los datos de los productos desde un archivo JSON de ejemplo.
+import data from "./PublicationOffers.json"
 
 import PublicationOffersDialog from "../PublicationOffersDialog/PublicationOffersDialog"; //Importamos el diálogo para mostrar la información del producto seleccionado.
 
@@ -9,6 +9,7 @@ import iconEmpty from "../../../resources/images/productos.svg" //Importamos la 
 
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material'; //Importamos componentes de materialUI a utilizar.
 
+import api from "../../../service/axiosConfig"
 
 //Recibimos la prop textSearch desde la página Offers para filtrar los productos según el texto ingresado en la barra de búsqueda.
 const PublicationsOffers = ({textSearch}) => {
@@ -16,6 +17,22 @@ const PublicationsOffers = ({textSearch}) => {
     const [dataUser, setDataUser] = useState(); //Estado que almacena la información del producto seleccionado para mostrar en el diálogo.
     const [open, setOpen] = useState(false); //Estado que maneja la visibilidad del diálogo.
     const [category, setCategory] = useState(""); //Estado que almacena la categoría seleccionada en el filtro.
+    const [dataOffer, setDataOffer] = useState([]);
+
+    useEffect(() => { //Hook que contiene una función para comunicarnos con el backend y traer los productos con ofertas.
+        const getData = async () => { 
+            try {
+                const {data} = await api.get("/product-offer")  //Llamamos el endpoint para traer las ofertas
+
+                setDataOffer(data); //Actualizamos el estado con el objeto que trae el backend.
+
+            } catch (error) {
+                console.log(error) //Manejamos el error en caso de que no se pueda traer las ofertas.
+            }
+        }
+
+        getData(); //Llamamos la función
+    }, [])
 
     const handleOpen = (userData) => { //Función que abre el diálogo y establece la información del producto seleccionado.
         setDataUser(userData);
@@ -42,12 +59,14 @@ const PublicationsOffers = ({textSearch}) => {
         { id: "Entretenimiento", name: "Entretenimiento" }
     ];
 
-    const dataFilter = data.filter((value) => {  //Filtramos los productos según la categoría seleccionada y el texto de búsqueda ingresado.
+    const dataFilter = dataOffer.filter((value) => {  //Filtramos los productos según la categoría seleccionada y el texto de búsqueda ingresado.
         const filterCategory = category ? value.category.toUpperCase() === category.toUpperCase() : true; //Si hay una categoría seleccionada, filtramos por ella; si no, mostramos todas.
         const filterSearch = textSearch && textSearch.length > 0? value.title.toUpperCase().includes(textSearch.toUpperCase()) : true; //Si hay texto de búsqueda, filtramos por él; si no, mostramos todas.
 
         return filterCategory && filterSearch; 
     });
+
+ 
 
     return (
         <div className="container_general_publications_offers">
@@ -75,7 +94,7 @@ const PublicationsOffers = ({textSearch}) => {
                     {dataFilter.map((value, index) => (
                         <div key={index} className="container_product_offers">
                             <div className="tag_offer limited">{value.category}</div>
-                            <img src={value.img1} alt="imagenProducto" />
+                            <img src={`http://localhost:3000${value.img1}`} alt="imagenProducto" />
                             <h5 className="product_name">{value.title}</h5>
                             <div className="container_price_offers">
                                 <span className="price_offers">${value.priceDiscount}</span>

@@ -16,10 +16,12 @@
     left: 20px;
 }
 
+
 .img_product_major{
-    max-height: 330px;
-    max-width: 100%;
+    height: 285px;
+    width: 100%;
     border-radius: 10px;
+    object-fit:cover;
 }
 
 .container_img_category{position: relative;}
@@ -34,6 +36,7 @@
 .unit_img_products{
     height: 100px;
     cursor: pointer;
+    width: 100%;
     border-radius: 10px;
 }
 
@@ -42,7 +45,7 @@
     max-width: 98%;
     flex-direction: column;
     gap: 14px;
-    margin-top: 20px;
+    margin-top: 15px;
     overflow-y: auto;
     max-height: 64vh;
 }
@@ -190,6 +193,13 @@
         flex-direction: column;
         overflow-y: auto;
         max-height: 90vh; 
+    }
+
+    .img_product_major{
+        max-height: 200px;
+        width: 100%;
+        border-radius: 10px;
+        object-fit:fill;
     }
 
     .container_img_products{
