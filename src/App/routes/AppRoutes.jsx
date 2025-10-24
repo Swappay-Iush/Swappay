@@ -8,6 +8,7 @@ import MainPanel from "../../modules/layouts/main/MainPanel/MainPanel.jsx";
 import ProtectedRouters from "./ProtectedRoutes"; //Importamos el componente para la validación de las rutas protegidas.
 import Profile from "../../pages/Profile/Profile.jsx";
 import MainHeader from "../../modules/layouts/main/MainPanel/components/MainHeader/MainHeader.jsx";
+import Messages from "../../pages/Messages/Messages.jsx";
 
 const AppRoutes = () => {
     return (
@@ -50,6 +51,20 @@ const AppRoutes = () => {
                         <ProtectedRouters> {/*Se manejan rutas protegidas para validaciones con token de usuario.*/}
                             <MainHeader />
                             <Profile />
+                        </ProtectedRouters>
+                    }
+                />
+            ))}
+
+
+            {["/mensajes"].map((path) => (
+                <Route
+                    key={path}
+                    path={path}
+                    element={
+                        <ProtectedRouters> {/*Se manejan rutas protegidas para validaciones con token de usuario.*/}
+                            <MainHeader />
+                            <Messages />
                         </ProtectedRouters>
                     }
                 />
