@@ -16,16 +16,49 @@ const categories = [ "Hogar", "Juguetes", "Libros", "Ropa", "Tecnología", "Depo
 const conditions = [ "Nuevo", "Reacondicionado", "Usado"];
 const delivery = [ "Envío", "Digital"];
 
-const ProductForm = ({ open = false, onClose }) => {
-    const { register, handleSubmit, formState: { errors }, reset, control } = useForm();
-    const [preview1, setPreview1] = useState(null);     
-    const [preview2, setPreview2] = useState(null);
-    const [preview3, setPreview3] = useState(null); // Estado para la tercera imagen
-    const [buttonDisabled, setButtonDisabled] = useState(false);
-    const {id} = useUserStore();
-    const location = useLocation()
+const ProductForm = ({ open = false, onClose, editProductData }) => {
 
-    const onSubmit = async (data) => {
+    const { register, handleSubmit, formState: { errors }, reset, control } = useForm(); //Hook para manejar el formulario.
+    const [preview1, setPreview1] = useState(null); // Estado para la primera imagen      
+    const [preview2, setPreview2] = useState(null); // Estado para la segunda imagen
+    const [preview3, setPreview3] = useState(null); // Estado para la tercera imagen
+    const [buttonDisabled, setButtonDisabled] = useState(false); // Estado para deshabilitar el botón de envío
+    const {id} = useUserStore(); // Obtener el ID del usuario desde el store global
+    const location = useLocation() // Hook para obtener la ubicación actual
+
+    // Efecto para resetear el formulario cuando se abre el modal o cambia el producto a editar
+    useEffect(() => {
+        if (open) { 
+            if (editProductData) { // Si hay datos de producto para editar, rellenar el formulario con esos datos
+                reset({
+                    title: editProductData.title || "",
+                    description: editProductData.description || "",
+                    category: editProductData.category || "",
+                    condition: editProductData.condition || "",
+                    amount: editProductData.amount || "",
+                    interests: editProductData.interests || "",
+                    additionalNotes: editProductData.additionalNotes || "",
+                    ubication: editProductData.ubication || "",
+                    deliveryMethod: editProductData.deliveryMethod === "Envio" ? "Envío" : editProductData.deliveryMethod,
+                    priceSwapcoins: editProductData.priceSwapcoins || "",
+                    imagen1: undefined,
+                    imagen2: undefined,
+                    imagen3: undefined,
+            });
+            setPreview1(editProductData.image1 ? `http://localhost:3000${editProductData.image1}` : null);
+            setPreview2(editProductData.image2 ? `http://localhost:3000${editProductData.image2}` : null);
+            setPreview3(editProductData.image3 ? `http://localhost:3000${editProductData.image3}` : null);
+            } else {
+                reset();
+                setPreview1(null);
+                setPreview2(null);
+                setPreview3(null);
+            }
+            setButtonDisabled(false);
+        }
+    }, [open, reset, editProductData]);
+
+    const onSubmit = async (data) => { // Función que se ejecuta al enviar el formulario
         const formData = new FormData();
         formData.append('idUser', id);
         formData.append('title', data.title);
@@ -45,44 +78,57 @@ const ProductForm = ({ open = false, onClose }) => {
         if (data.imagen2 && data.imagen2[0]) formData.append('image2', data.imagen2[0]);
         if (data.imagen3 && data.imagen3[0]) formData.append('image3', data.imagen3[0]);
 
-        try {
-            await api.post('/products', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+        if(!editProductData){ // Si no hay datos de producto para editar, crear un nuevo producto
+            try {
+                await api.post('/products', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
 
-            toast.success("Publicación creada exitosamente.", {position: "top-center"}); //Mensaje informativo.
-            setButtonDisabled(true);
-            setTimeout(() => {
-                if (onClose) onClose();
-                if(location.pathname == "/perfil/publicaciones"){
-                    setTimeout(() => {
-                        window.location.reload();
-                    },); 
-                }
+                toast.success("Publicación creada exitosamente.", {position: "top-center"}); //Mensaje informativo.
+                setButtonDisabled(true);
+                setTimeout(() => {
+                    if (onClose) onClose();
+                    if(location.pathname == "/perfil/publicaciones"){
+                        setTimeout(() => {
+                            window.location.reload();
+                        },); 
+                    }
 
-            }, 2000);
-        } catch (error) {
-            toast.error(error.response.data.error, {position: "top-center"}); //Mensaje informativo.
+                }, 2000);
+            } catch (error) {
+                toast.error(error.response.data.error, {position: "top-center"}); //Mensaje informativo.
+            }
+        }else { // Si hay datos de producto para editar, actualizar el producto existente
+            try {
+                await api.put(`/products/${editProductData.id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                toast.success("Producto actualizado exitosamente.", {position: "top-center"});
+                setButtonDisabled(true);
+                setTimeout(() => {
+                    if (onClose) onClose();
+                    if(location.pathname === "/perfil/publicaciones"){
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500); 
+                    }
+                }, 2000);
+            } catch (error) {
+                toast.error(error.response?.data?.error || "Error al actualizar el producto", {position: "top-center"});
+            }
         }
     };
-
-    useEffect(() => {
-        if (open) {
-            reset();       
-            setPreview1(null);
-            setPreview2(null);
-            setPreview3(null);
-            setButtonDisabled(false);
-        }
-    }, [open, reset]);
 
     if (!open) return null;
 
 
     //Funciones para previsualizar imágenes
-    const handleImageChange1 = (e) => {
+    const handleImageChange1 = (e) => { // Maneja el cambio de la primera imagen
         const file = e.target.files && e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -93,7 +139,7 @@ const ProductForm = ({ open = false, onClose }) => {
         }
     };
 
-    const handleImageChange2 = (e) => {
+    const handleImageChange2 = (e) => { //Función para la segunda imagen
         const file = e.target.files && e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -104,7 +150,7 @@ const ProductForm = ({ open = false, onClose }) => {
         }
     };
 
-    const handleImageChange3 = (e) => {
+    const handleImageChange3 = (e) => { //Función para la tercera imagen
         const file = e.target.files && e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -318,16 +364,16 @@ const ProductForm = ({ open = false, onClose }) => {
                                 color={errors.imagen1 ? "error" : "primary"}
                             >
                                 Subir imagen 1
-                                <input
-                                    type="file"
-                                    hidden
-                                    accept="image/*"
-                                    {...register("imagen1", { required: true })}
-                                    onChange={e => {
-                                        handleImageChange1(e);
-                                        register("imagen1").onChange(e);
-                                    }}
-                                />
+                            <input
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                {...register("imagen1", { required: !editProductData })}
+                                onChange={e => {
+                                    handleImageChange1(e);
+                                    register("imagen1").onChange(e);
+                                }}
+                            />
                             </Button>
                             {errors.imagen1 && <Typography variant="caption" color="error">Este campo es obligatorio</Typography>}
                         </div>
@@ -381,10 +427,9 @@ const ProductForm = ({ open = false, onClose }) => {
                             </Button>
                                 {/* No mostrar error ya que es opcional */}
                         </div>
-
                         <Button type="submit" disabled={buttonDisabled} variant="contained" fullWidth sx={{ mt: 2, fontWeight: 'bold', backgroundColor:"#285194", fontFamily: "Outfit   " }}>
-                            Publicar Producto
-                        </Button> 
+                            {!editProductData ? 'Crear Publicación' : 'Actualizar Publicación'}
+                        </Button>
                     </form>
                </div>
         </div>
