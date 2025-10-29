@@ -1,0 +1,34 @@
+.container_main_exchanges{
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+}
+
+.container_exchange{
+    background: linear-gradient(180deg, #244a88 0%, #1c3b6a 100%);
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: "Outfit";
+    gap: 20px;
+    position: relative;
+}
+
+.exchange_title{
+    font-size: 700;
+    color: #fff;
+    max-width: 800px;
+    text-align: center;
+    font-size: 45px;
+}
+
+.exchange_info{
+    font-size: 17px;
+    color: #fff;
+    max-width: 700px;
+    text-align: center;
+    font-family: "Manrope";    
+}
