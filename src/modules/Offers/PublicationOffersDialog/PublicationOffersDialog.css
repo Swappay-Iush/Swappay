@@ -18,13 +18,16 @@
 
 
 .img_product_major{
-    height: 285px;
+    max-height: 285px;
     width: 100%;
     border-radius: 10px;
-    object-fit:cover;
+    object-fit:contain;
 }
 
-.container_img_category{position: relative;}
+.container_img_category{
+    position: relative;
+background-color: #f4f4f4;    border-radius: 10px;
+}
 
 .container_img_products{
     display: grid;
@@ -34,10 +37,12 @@
 }
 
 .unit_img_products{
-    height: 100px;
+    max-height: 100px;
     cursor: pointer;
     width: 100%;
     border-radius: 10px;
+    object-fit:inherit;
+
 }
 
 .section_info_products{
