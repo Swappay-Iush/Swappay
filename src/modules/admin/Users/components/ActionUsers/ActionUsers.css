@@ -1,0 +1,55 @@
+.dialog_action_users{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.title_dialog_action{
+    font-family: "Outfit";
+}
+
+.form_action_users{
+    width: 100%;
+    margin-top: 10px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.restore_password_user{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 85%;
+    font-family: "Outfit";
+    font-size: 20px;
+}
+
+.restore_password_user input{
+    width: 15px;
+    height: 15px;
+}
+
+.container_passwords_action{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.buttons_interactive_actions{
+    display: flex;
+    gap: 20px;
+    width: 85%;
+    margin-bottom: 20px;
+}
+
+.buttons_interactive_actions button{
+    padding: 5px;
+    width: 100%;
+    border: none;
+    font-family: "Outfit";
+}

@@ -22,7 +22,7 @@ const InfoPersonal = () => {
     const[visButtonConfig, setVisButtonConfig] = useState(true);
     const[avatarSrc, setAvatarSrc] = useState(null); // Estado para la imagen del avatar
     const[loading, setLoading] = useState(true);
-    const {username, country, isVerified, id, profileImageUser, setUser} = useUserStore();
+    const {username, country, isVerified, id, profileImageUser, setUser, rol} = useUserStore();
 
     useEffect(() => { //UseEffect que permite cargar todos los datos que vienen del back, para poderlos mostrar.
         if(!isVerified) setLoading(true)  //Si el usuario no esta verificado, muestra el componente de carga, si no, lo oculta
@@ -35,10 +35,19 @@ const InfoPersonal = () => {
         return {children: initials,};
     };
 
-    const valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
-        {name: "Sobre mi", href: "/perfil"},
-        {name: "Mis publicaciones", href: "/perfil/publicaciones"}
-    ]
+
+    let valueSections = []
+
+    if(rol === "admin"){
+        valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
+            {name: "Sobre mi", href: "/perfil"},
+        ]
+    }else{
+        valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
+            {name: "Sobre mi", href: "/perfil"},
+            {name: "Mis publicaciones", href: "/perfil/publicaciones"}
+        ]
+    }
 
     const changeSection = (name, href) => { //Función que permite el cambio de las rutas.
         setSectionSelected(name)
