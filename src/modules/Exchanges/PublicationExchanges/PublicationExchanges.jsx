@@ -1,100 +1,186 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import "./PublicationExchanges.css";
-import PublicationDialog from "../../publications/PublicationDialog/PublicationDialog";
+import { MenuItem, Select, FormControl, InputLabel } from "@mui/material"; //MUI
+import PublicationExchangesDialog from "../PublicatinExchangesDialog/PublicationExchangesDialog";
+import api from "../../../service/axiosConfig"; //Se llama el back
+import iconEmpty from "../../../resources/images/logo.jpg"; //Imagen para cuando no halla nada disponible
 
+import InfoPopup from "../../../components/InfoPopup/InfoPopup"; //Importamos popup
+import { useNavigate } from "react-router-dom"; 
 
-const PublicationExchanges = () => {
+const PublicationExchanges = ({ textSearch }) => {
+  const [dataUser, setDataUser] = useState(null);   //Estado para guardar los productos de intercambio
+  const [open, setOpen] = useState(false);          //Estado para almacenar la información del elemento seleccionado para mostrar en el modal
+  const [category, setCategory] = useState("");     //Estado para controlar si el modal está abierto o cerrado
+  const [exchanges, setExchanges] = useState([]);   //Estado para almacenar la categoría seleccionada del filtro
 
-    const [dataUser, setDataUser] = useState(null);
-    const [open, setOpen] = useState(false);
+  //Estado nuevo para Popup de perfil incompleto
+  const [openPopup, setOpenPopup] = useState(false);
+  const navigate = useNavigate();
 
-    //Simulamos con dos productos
-    const Products = [
-    {
-      id: 1,
-      title: "Cámara fotográfica Canon",
-      description: "Perfecto estado, incluye estuche y batería extra.",
-      category: "Tecnología",
-      priceSwapcoins: 250,
-      image1: "/img/camara.jpg",
-      image2: "/img/camara2.jpg",
-      image3: "/img/camara3.jpg",
-      condition: "Usado",
-      userName: "Laura Martínez",
-      deliveryMethod: "Físico",
-      ubication: "Medellín, Colombia",
-      additionalNotes: "Entrega presencial o envío a acordar.",
-    },
-    {
-      id: 2,
-      title: "Libro: El Principito",
-      description: "Edición ilustrada en tapa dura.",
-      category: "Libros",
-      priceSwapcoins: null,
-      image1: "/img/libro.jpg",
-      condition: "Nuevo",
-      userName: "Juan Pérez",
-      deliveryMethod: "Digital",
-      ubication: "Bogotá, Colombia",
-      additionalNotes: "Versión PDF y ePub disponible.",
-    }, ];
-
-    //Abre el dialogo con el producto seleccionado
-    const handleOpen = (product) => {
-        setDataUser(product);
-        setOpen(true);
+  //Se traen los productos de intercambio al cargar
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const { data } = await api.get("/products"); //Se llama el endpoint para traer los datos
+        setExchanges(data); //Se guarda
+      } catch (error) {
+        console.log("Error cargando intercambios:", error);
+      }
     };
+    getData();
+  }, []);
 
-    //Cierra el dialogo
-    const handleClose = () => {
-        setDataUser(null);
-        setOpen(false);
-    };
+  //Función para abrir el dialog con la información del producto
+  const handleOpen = async (item) => {
+    try {
+      const { data: user } = await api.get("/auth/verify"); //Validamos antes de abrir
 
-    return (
-        <div className="container_general_publications_exchanges">
-            <h1 className="title_publications">Intercambios disponibles</h1>
+      //Verificamos si faltan datos de perfil
+      const incompleteProfile =
+        !user.phone || !user.city || !user.country;
 
+      if (incompleteProfile) {
+        setOpenPopup(true); //Mostrar popup
+        return; //No abrir dialog
+      }
 
-            <section className="section_grid_exchanges">
-                {Products.map((item) => (
-                     //Se recorre el arreglo de productos con .map() y se genera una card por cada elemento
-                    <div key={item.id} className="container_product_exchange"> 
-                        <div className="tag_exchange">{item.category}</div> 
+      //Si tiene toda la información se abre el dialog
+      setDataUser(item);
+      setOpen(true);
 
-                        <img
-                            src={`http://localhost:3000${item.image1}`}
-                            alt={item.title}
-                            className="img_product_exchange"
-                        />
+    } catch (error) {
+      console.log("Error validando usuario:", error);
+    }
+  };
 
-                        <h5 className="product_name">{item.title}</h5>
-                        <p className="product_description">{item.description}</p>
+  //Función para cerrar el dialog
+  const handleClose = () => {
+    setDataUser(null);
+    setOpen(false);
+  };
 
-                        {item.priceSwapcoins && (
-                            <span className="price_swapcoins">
-                                + {item.priceSwapcoins} SwapCoins
-                            </span>
-                        )}
+  const handleChangeCategory = (e) => setCategory(e.target.value);   //Función que guarda la categoría seleccionada en el estado
 
-                        <button className="button_more_info" onClick={() => handleOpen(item)}> Ver más detalles</button>
+  const typeCategories = [ //Arreglo categorías
+    { id: "", name: "Todas las categorías" },
+    { id: "Tecnología", name: "Tecnología" },
+    { id: "Deportes", name: "Deportes" },
+    { id: "Hogar", name: "Hogar" },
+    { id: "Juguetes", name: "Juguetes" },
+    { id: "Moda", name: "Moda" },
+    { id: "Otros", name: "Otros" }
+  ];
 
-                        <button className="button_exchange">Solicitar intercambio</button>
-                    </div>
-                ))}
-            </section>
+  //Filtro de categoría y búsqueda
+  const dataFilter = exchanges.filter((item) => {
+    const filterCategory = category
+      ? item.category?.toUpperCase() === category.toUpperCase()
+      : true;
 
-            {/* Componente modal reutilizado que muestra los detalles del producto seleccionado */}
-            {open && (
-                <PublicationDialog
-                dataUser={dataUser}
-                open={open}
-                handleClose={handleClose}
-                />
-            )}
+    const filterSearch =
+      textSearch && textSearch.length > 0
+        ? item.title?.toUpperCase().includes(textSearch.toUpperCase())
+        : true;
+
+    return filterCategory && filterSearch;
+  });
+
+  return (
+    <div className="container_general_publications_exchanges">
+
+      <div className="title_filter_info_offers">
+        <h1>Intercambios disponibles</h1>
+
+        <FormControl
+          variant="outlined"
+          fullWidth
+          sx={{
+            width: "200px",
+            "& .MuiInputLabel-root": { fontFamily: "Outfit" },
+            "& .MuiSelect-select": { fontFamily: "Manrope", padding: "15px 10px" }
+          }}
+        >
+          <InputLabel id="category-label" style={{ zIndex: "0" }}>
+            Categoría
+          </InputLabel>
+
+          <Select
+            labelId="category-label"
+            label="Categoría"
+            onChange={handleChangeCategory}
+            value={category}
+          >
+            {typeCategories.map((option, index) => (
+              <MenuItem key={index} value={option.id}>
+                {option.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+
+      {dataFilter.length === 0 ? (
+        <div className="info_empty_products">
+          <img src={iconEmpty} alt="Sin intercambios" style={{ height: "100px" }} />
+          <h2>No hay intercambios disponibles.</h2>
         </div>
-    );
- 
-}
+      ) : (
+        <section className="section_grid_exchanges">
+          {dataFilter.map((item) => (
+            <div key={item.id} className="container_product_exchange">
+
+              <div className="tag_exchange">{item.category}</div>
+              <img src={item.image1} alt={item.title} className="img_product_exchange" />
+
+              <h5 className="product_name">{item.title}</h5>
+              <p className="product_description">{item.description}</p>
+              <p className="product_exchanges_interest">
+                <strong>Intercambio por:</strong> {item.interests}
+              </p>
+
+              {item.priceSwapcoins && (
+                <span className="price_swapcoins">+ {item.priceSwapcoins} SwapCoins</span>
+              )}
+
+              <div className="users_exchanges">
+                <img
+                  src={item.userImage || `http://localhost:3000${item.userName}`}
+                  alt={item.userName}
+                  className="avatar_exchange"
+                />
+                <span className="user_name_exchange">{item.userName}</span>
+              </div>
+
+              <button className="button_more_info" onClick={() => handleOpen(item)}> Ver más detalles</button>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {open && ( //Se abre el dialog con la información
+        <PublicationExchangesDialog
+          dataUser={dataUser}
+          open={open}
+          handleClose={handleClose}
+        />
+      )}
+
+      <InfoPopup //Popup para completar perfil
+        open={openPopup}
+        onClose={() => setOpenPopup(false)}
+        title="Completa tu perfil"
+        message="Para ver los detalles del intercambio debes completar tu información personal."
+        confirmText="Ir a configuración"
+        cancelText="Cancelar"
+        colorConfirm="primary"
+        onConfirm={() => {
+          setOpenPopup(false);
+          navigate("/perfil/configuracion");
+        }}
+      />
+    </div>
+  );
+};
 
 export default PublicationExchanges;

@@ -32,3 +32,13 @@
     text-align: center;
     font-family: "Manrope";    
 }
+
+@media (max-width: 768px) {
+  .exchange_title { font-size: 32px; }
+  .exchange_info  { font-size: 15px; }
+}
+
+@media (max-width: 480px) {
+  .exchange_title { font-size: 26px; }
+  .exchange_info  { font-size: 14px; }
+}
