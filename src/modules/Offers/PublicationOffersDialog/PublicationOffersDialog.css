@@ -1,6 +1,8 @@
-.container_general_dialog_products{
+.container_general_dialog_products {
     display: grid;
     grid-template-columns: 450px 1fr;
+    position: relative;
+    height: 100%;
 }
 
 .section_img_products{
@@ -52,7 +54,7 @@ background-color: #f4f4f4;    border-radius: 10px;
     gap: 14px;
     margin-top: 15px;
     overflow-y: auto;
-    max-height: 64vh;
+    max-height: 100vh;
 }
 
 .section_info_products::-webkit-scrollbar {
