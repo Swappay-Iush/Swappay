@@ -23,7 +23,6 @@ const Publications = () => {
   const [productToDelete, setProductToDelete] = useState(null); // Estado para almacenar el ID del producto a eliminar
   const [editProductData, setEditProductData] = useState(null); // Estado para almacenar la información del producto a editar
 
-
   useEffect(() => { //Hook que contiene una función para comunicarnos con el backend y traer los productos del usuario.
       const dataProductsUser = async () => {
       try {

@@ -1,0 +1,71 @@
+.container_general_offers{
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+}
+
+.container_info_offers{
+    background: linear-gradient(180deg, #244a88 0%, #1c3b6a 100%);
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    font-family: "Outfit";
+    position: relative;
+}
+
+.offers_exclusive{
+    background-color: #4061bb;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px;
+    border-radius: 100px;
+    color: #fff;
+}
+
+.offers_title{
+    font-weight: 700;
+    color: #fff;
+    max-width: 800px;
+    text-align: center;
+    font-size: 45px;
+    text-wrap: wrap;
+    word-break: break-word; 
+    white-space: normal; 
+}
+
+.offers_description{
+    font-size: 20px;
+    color: #fff;
+    max-width: 700px;
+    text-align: center;
+    font-family: "Manrope";
+}
+
+.container_filter{
+    position: absolute;
+    bottom: -25px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.container_info_publications{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+
+@media (max-width: 480px) {
+    .offers_title{
+        font-size: 35px;
+    }
+
+    .offers_description{
+        font-size: 20px;
+    }
+}
