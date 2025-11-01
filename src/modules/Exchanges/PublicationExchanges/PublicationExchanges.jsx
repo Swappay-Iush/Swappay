@@ -4,7 +4,7 @@ import { MenuItem, Select, FormControl, InputLabel } from "@mui/material"; //MUI
 import PublicationExchangesDialog from "../PublicatinExchangesDialog/PublicationExchangesDialog.jsx";
 import api from "../../../service/axiosConfig"; //Llamamos el back
 import iconEmpty from "../../../resources/images/productos.svg";
-import InfoPopup from "../../../components/infoPopup/infoPopup";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup";
 import { useNavigate } from "react-router-dom";
 
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
