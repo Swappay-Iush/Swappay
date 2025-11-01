@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import api from "../../service/axiosConfig";
 import { useUserStore } from "../../App/stores/Store";
 
+import logoSwappay from "../../resources/images/Designer.png";
+
 const Login = () => {
 
     const navigate= useNavigate();
@@ -62,7 +64,7 @@ const Login = () => {
         <div className="overlayGeneral">
             <div className="containerGeneralOverlay" id="Logo_Body_Login">
                 <div className="containerLogo">
-                    <img src="src\resources\images\Designer.png" alt="Logo" className="imgLogo"/> {/*Logo de la aplicación*/}
+                    <img src={logoSwappay} alt="Logo" className="imgLogo"/> {/*Logo de la aplicación*/}
                     <h1 className="textWelcome">Bienvenid@</h1> 
                     <p className="textDescriptionLogin">Accede a ofertas, intercambia productos y gana monedas en una  plataforma que conecta personas con oportunidades.</p>
                 </div>
