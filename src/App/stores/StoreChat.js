@@ -29,12 +29,10 @@ export const useChatUser = create(
                     // Petición al backend para obtener salas por usuario
                     const { data } = await api.get(`/chat/user/${userId}`);
                     // Diagnósticos para verificar datos recibidos y el id actual
-                    console.log("📥 Respuesta completa del backend:", data);
-                    console.log("👤 Usuario actual (userId):", userId);
+
                     
                     // Si no hay datos, salimos sin modificar estado
                     if (!data || data.length === 0) {
-                        console.log("⚠️ No hay salas de chat guardadas en el backend");
                         return;
                     }
                     
@@ -49,7 +47,6 @@ export const useChatUser = create(
                         
                         // Si faltan las asociaciones de usuario, no podemos identificar al otro participante
                         if (!room.User1 || !room.User2) {
-                            console.warn("⚠️ Backend no devolvió User1/User2, saltando sala:", room.id);
                             return null;
                         }
                         
@@ -89,12 +86,10 @@ export const useChatUser = create(
                     }
                     // Persistimos el resultado en el store (y localStorage por persist)
                     set({ conversations_users: uniqueChats });
-                    console.log("✅ Chats únicos del backend:", uniqueChats); // Verificación final
                     
                 } catch (error) {
                     // Manejo de errores de red/servidor
-                    console.error("❌ Error cargando salas de chat:", error);
-                    console.error("Detalles:", error.response?.data);
+                    console.error("Error:", error.response?.data);
                 }
             },
 
