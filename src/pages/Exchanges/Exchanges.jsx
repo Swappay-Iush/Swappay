@@ -17,6 +17,7 @@ const Exchanges = () => {
             <section className="container_products_exchanges">
                 <PublicationExchanges />
             </section>
+
         </div>
     )
 }
