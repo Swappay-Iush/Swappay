@@ -15,10 +15,6 @@
   transition: .2s ease;
 }
 
-.modalCloseIcon .iconClose:hover {
-  color: #a52a2a;
-}
-
 .section_img_products {
   padding: 10px;
   position: relative;
@@ -118,6 +114,11 @@
   margin-top: 10px;
 }
 
+.info_user_exchange{
+  display: flex;
+  flex-direction: column;
+
+}
 .exchange_userImg {
   width: 45px;
   height: 45px;
@@ -136,9 +137,44 @@
 }
 
 .exchange_buttons_products {
-  margin-top: 20px;
+  margin-top: 25px;
   display: flex;
   gap: 12px;
+  width: 100%;
+}
+
+.button_pricex {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: "Outfit";
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background-color: #0B3C88; 
+  color: white;
+  transition: .2s ease;
+}
+
+.button_pricex:hover {
+  background-color: #072c67;
+}
+
+.button_exchange {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: "Outfit";
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background-color: #FF7043; 
+  color: #fff;
+  transition: .2s ease;
+}
+
+.button_exchange:hover {
+  background-color: #e86736;
 }
 
 .button_exchange {
@@ -164,5 +200,10 @@
   }
   .exchange_buttons_products {
     flex-direction: column;
+  }
+
+  .info_products_description, .info_product_item {
+    max-width: 100%;
+    overflow-x: auto;
   }
 }

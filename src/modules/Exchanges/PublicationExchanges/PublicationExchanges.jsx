@@ -1,19 +1,41 @@
 import { useState, useEffect } from "react";
 import "./PublicationExchanges.css";
 import { MenuItem, Select, FormControl, InputLabel } from "@mui/material"; //MUI
-import PublicationExchangesDialog from "../PublicatinExchangesDialog/PublicationExchangesDialog";
+import PublicationExchangesDialog from "../PublicatinExchangesDialog/PublicationExchangesDialog.jsx";
 import api from "../../../service/axiosConfig"; //Llamamos el back
-import iconEmpty from "../../../resources/images/logo.jpg";
-import InfoPopup from "../../../components/InfoPopup/InfoPopup";
+import iconEmpty from "../../../resources/images/productos.svg";
+import InfoPopup from "../../../components/infoPopup/infoPopup";
 import { useNavigate } from "react-router-dom";
 
+import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
+import { useUserStore } from "../../../App/stores/Store";
+
 const PublicationExchanges = ({ textSearch }) => {
+
+  const {username} = useUserStore();
   const [dataUser, setDataUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState("");
   const [exchanges, setExchanges] = useState([]);
   const [openPopup, setOpenPopup] = useState(false);
+  const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
+
   const navigate = useNavigate();
+
+  const stringAvatar = (name) => { //Función que permite mostrar N cantidad de letras [1 o 2] en la imagen de perfil, según el nombre de usuario.
+      const parts = name.split(" ");
+      const initials = parts.length === 1 ? parts[0][0] : `${parts[0][0]}${parts[1][0]}`; 
+      return {children: initials,};
+  };
+
+  useEffect (() => { //Actualiza loading si el username está disponible en el store.
+      if(username === null){
+          setLoading(true);
+      }else {
+          setLoading(false);
+      }
+  },[username]);
+
 
   //Cargar productos desde backend
   useEffect(() => {
@@ -21,7 +43,6 @@ const PublicationExchanges = ({ textSearch }) => {
       try {
         const { data } = await api.get("/products");
         setExchanges(data);
-        console.log("Productos cargados:", data);
       } catch (error) {
         console.log("Error cargando productos:", error);
       }
@@ -88,7 +109,7 @@ const PublicationExchanges = ({ textSearch }) => {
     <div className="container_general_publications_exchanges">
 
       <div className="title_filter_info_offers">
-        <h1>Intercambios disponibles</h1>
+        <h1 className="title_section_exchange">{dataFilter.length} Intercambios disponibles</h1>
 
         <FormControl fullWidth variant="outlined" sx={{ width: "200px" }}>
           <InputLabel id="category-label">Categoría</InputLabel>
@@ -136,22 +157,19 @@ const PublicationExchanges = ({ textSearch }) => {
               )}
 
               <div className="users_exchanges">
-                <img
-                  src={
-                    item.user?.image
-                      ? `${import.meta.env.VITE_BACKEND_URL}${item.user.image}`
-                      : iconEmpty
-                  }
-                  alt="usuario"
+
+              <Avatar
                   className="avatar_exchange"
-                />
+                  src={loading ? "Cargando imagen" : `http://localhost:3000/uploads/${item.user.profileImage}`}
+                  {...stringAvatar(loading ? "Usuario": item.user.username.toUpperCase())} 
+              />
                 <span className="user_name_exchange">
-                  {item.user?.name || "Usuario"}
+                  {item.user?.username || "Usuario"}
                 </span>
               </div>
 
               <button 
-                className="button_more_info" 
+                className="button_more_info_exchange" 
                 onClick={() => handleOpen(item)}
               >
                 Ver más detalles

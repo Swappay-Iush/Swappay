@@ -1,7 +1,11 @@
-import "./Exchanges.css"
+import { useState } from "react";
+import "./Exchanges.css";
 import PublicationExchanges from "../../modules/Exchanges/PublicationExchanges/PublicationExchanges";
+import InputSearch from "../../components/InputSearch/InputSearch"; // Importa el componente de búsqueda
 
 const Exchanges = () => {
+    const [textSearch, setTextSearch] = useState(""); // Estado para el texto de búsqueda
+
     return( 
         <div className="container_main_exchanges">
             <section className="container_einfo">
@@ -11,13 +15,15 @@ const Exchanges = () => {
                         Explora una variedad de artículos únicos y encuentra el intercambio perfecto para ti, dale una segunda vida a lo que ya no usas. 
                         Podrás utilizar tus <strong>SwapCoins</strong> para realizar intercambios con otros usuarios.
                     </p>
+                    <div className="container_filter">
+                        <InputSearch setTextSearch={setTextSearch} /> {/* Barra de búsqueda */}
+                    </div>
                 </div>
             </section>
 
             <section className="container_products_exchanges">
-                <PublicationExchanges />
+                <PublicationExchanges textSearch={textSearch} /> {/* Pasa el texto de búsqueda */}
             </section>
-
         </div>
     )
 }

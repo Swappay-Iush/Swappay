@@ -41,7 +41,6 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  justify-content: center;
 }
 
 .container_product_exchange {
@@ -103,6 +102,10 @@
   font-size: 14px;
   color: #555;
   padding: 0 10px;
+  max-width: 100%;
+  word-wrap: break-word;       
+  overflow-wrap: break-word;   
+  white-space: normal;        
 }
 
 .product_exchanges_interest {
@@ -140,7 +143,7 @@
   color: #244a88;
 }
 
-.button_more_info {
+.button_more_info_exchange {
   background: #244a88;
   color: #fff;
   border: none;
@@ -155,7 +158,7 @@
   transition: 0.2s;
 }
 
-.button_more_info:hover {
+.button_more_info_exchange:hover {
   background: #163568;
 }
 
@@ -164,6 +167,10 @@
     flex-direction: column;
     gap: 12px;
     text-align: center;
+  }
+
+  .title_section_exchange{
+    font-size: 25px !important;
   }
 
   .section_grid_exchanges {
