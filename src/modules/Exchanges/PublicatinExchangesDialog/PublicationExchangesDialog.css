@@ -12,7 +12,7 @@
   cursor: pointer;
   color: #666;
   z-index: 200;
-  transition: 0.2s ease;
+  transition: .2s ease;
 }
 
 .modalCloseIcon .iconClose:hover {
@@ -29,14 +29,17 @@
 }
 
 .info_products_category {
-  background-color: #0056D2;
-  font-family: "Outfit";
-  font-size: 14px;
-  padding: 8px;
-  border-radius: 16px;
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background-color: #244A88;
+  padding: 5px 12px;
+  border-radius: 14px;
   color: #fff;
-  top: 10px;
-  left: 10px;
+  font-family: "Outfit";
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
 }
 
 .img_product_major {
@@ -60,6 +63,22 @@
   object-fit: contain;
 }
 
+.min_img_products {
+  cursor: pointer;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform .15s ease;
+}
+
+.min_img_products img:hover {
+  transform: scale(1.05);
+}
+
+.min_img_products.active {
+  outline: 3px solid #0056D2;
+  border-radius: 10px;
+}
+
 .section_info_products {
   display: flex;
   flex-direction: column;
@@ -76,11 +95,7 @@
   color: #0056D2;
 }
 
-.info_products_description {
-  font-family: "Manrope";
-  font-size: 15px;
-}
-
+.info_products_description,
 .info_product_item {
   font-family: "Manrope";
   font-size: 15px;
@@ -94,7 +109,6 @@
   color: #0056D2;
   font-weight: 700;
   width: fit-content;
-  
 }
 
 .exchange_user_img {
@@ -127,7 +141,6 @@
   gap: 12px;
 }
 
-.button_cart,
 .button_exchange {
   flex: 1;
   padding: 12px;
@@ -136,32 +149,20 @@
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: .2s ease;
-}
-
-.button_cart {
-  background-color: #0B3C88;
-  color: white;
-}
-
-.button_cart:hover {
-  background-color: #072c67;
-}
-
-.button_exchange {
   background-color: #FF7043;
   color: #fff;
+  transition: .2s ease;
 }
 
 .button_exchange:hover {
   background-color: #e86736;
 }
 
-@media (max-width: 768px){
-  .container_general_dialog_products{ grid-template-columns:1fr; }
-  .exchange_buttons_products{ flex-direction:column; }
-}
-
-@media (max-width:480px){
-  .container_img_products{ overflow-x:auto; }
+@media (max-width: 768px) {
+  .container_general_dialog_products {
+    grid-template-columns: 1fr;
+  }
+  .exchange_buttons_products {
+    flex-direction: column;
+  }
 }

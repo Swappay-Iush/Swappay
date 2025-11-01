@@ -2,77 +2,75 @@ import { useState, useEffect } from "react";
 import "./PublicationExchanges.css";
 import { MenuItem, Select, FormControl, InputLabel } from "@mui/material"; //MUI
 import PublicationExchangesDialog from "../PublicatinExchangesDialog/PublicationExchangesDialog";
-import api from "../../../service/axiosConfig"; //Se llama el back
-import iconEmpty from "../../../resources/images/logo.jpg"; //Imagen para cuando no halla nada disponible
-
-import InfoPopup from "../../../components/InfoPopup/InfoPopup"; //Importamos popup
-import { useNavigate } from "react-router-dom"; 
+import api from "../../../service/axiosConfig"; //Llamamos el back
+import iconEmpty from "../../../resources/images/logo.jpg";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup";
+import { useNavigate } from "react-router-dom";
 
 const PublicationExchanges = ({ textSearch }) => {
-  const [dataUser, setDataUser] = useState(null);   //Estado para guardar los productos de intercambio
-  const [open, setOpen] = useState(false);          //Estado para almacenar la información del elemento seleccionado para mostrar en el modal
-  const [category, setCategory] = useState("");     //Estado para controlar si el modal está abierto o cerrado
-  const [exchanges, setExchanges] = useState([]);   //Estado para almacenar la categoría seleccionada del filtro
-
-  //Estado nuevo para Popup de perfil incompleto
+  const [dataUser, setDataUser] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [category, setCategory] = useState("");
+  const [exchanges, setExchanges] = useState([]);
   const [openPopup, setOpenPopup] = useState(false);
   const navigate = useNavigate();
 
-  //Se traen los productos de intercambio al cargar
+  //Cargar productos desde backend
   useEffect(() => {
     const getData = async () => {
       try {
-        const { data } = await api.get("/products"); //Se llama el endpoint para traer los datos
-        setExchanges(data); //Se guarda
+        const { data } = await api.get("/products");
+        setExchanges(data);
+        console.log("Productos cargados:", data);
       } catch (error) {
-        console.log("Error cargando intercambios:", error);
+        console.log("Error cargando productos:", error);
       }
     };
     getData();
   }, []);
 
-  //Función para abrir el dialog con la información del producto
+  //Permite abrir el dialog
   const handleOpen = async (item) => {
-    try {
-      const { data: user } = await api.get("/auth/verify"); //Validamos antes de abrir
 
-      //Verificamos si faltan datos de perfil
+    try {
+      const { data: user } = await api.post("/verification/verificationToken");
+
       const incompleteProfile =
         !user.phone || !user.city || !user.country;
 
       if (incompleteProfile) {
-        setOpenPopup(true); //Mostrar popup
-        return; //No abrir dialog
+        setOpenPopup(true);
+        return;
       }
 
-      //Si tiene toda la información se abre el dialog
       setDataUser(item);
       setOpen(true);
 
     } catch (error) {
-      console.log("Error validando usuario:", error);
+      console.log("Error cargando productos:", error);
     }
   };
 
-  //Función para cerrar el dialog
+
   const handleClose = () => {
     setDataUser(null);
     setOpen(false);
   };
 
-  const handleChangeCategory = (e) => setCategory(e.target.value);   //Función que guarda la categoría seleccionada en el estado
+  const handleChangeCategory = (e) => setCategory(e.target.value);
 
-  const typeCategories = [ //Arreglo categorías
+  const typeCategories = [
     { id: "", name: "Todas las categorías" },
     { id: "Tecnología", name: "Tecnología" },
     { id: "Deportes", name: "Deportes" },
     { id: "Hogar", name: "Hogar" },
     { id: "Juguetes", name: "Juguetes" },
-    { id: "Moda", name: "Moda" },
-    { id: "Otros", name: "Otros" }
+    { id: "Ropa", name: "Ropa" },
+    { id: "Entretenimiento", name: "Entretenimiento" },
+    { id: "Libros", name: "Libros" }
   ];
 
-  //Filtro de categoría y búsqueda
+  // Filtrar categoría + búsqueda
   const dataFilter = exchanges.filter((item) => {
     const filterCategory = category
       ? item.category?.toUpperCase() === category.toUpperCase()
@@ -92,19 +90,8 @@ const PublicationExchanges = ({ textSearch }) => {
       <div className="title_filter_info_offers">
         <h1>Intercambios disponibles</h1>
 
-        <FormControl
-          variant="outlined"
-          fullWidth
-          sx={{
-            width: "200px",
-            "& .MuiInputLabel-root": { fontFamily: "Outfit" },
-            "& .MuiSelect-select": { fontFamily: "Manrope", padding: "15px 10px" }
-          }}
-        >
-          <InputLabel id="category-label" style={{ zIndex: "0" }}>
-            Categoría
-          </InputLabel>
-
+        <FormControl fullWidth variant="outlined" sx={{ width: "200px" }}>
+          <InputLabel id="category-label">Categoría</InputLabel>
           <Select
             labelId="category-label"
             label="Categoría"
@@ -112,9 +99,7 @@ const PublicationExchanges = ({ textSearch }) => {
             value={category}
           >
             {typeCategories.map((option, index) => (
-              <MenuItem key={index} value={option.id}>
-                {option.name}
-              </MenuItem>
+              <MenuItem key={index} value={option.id}>{option.name}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -122,19 +107,26 @@ const PublicationExchanges = ({ textSearch }) => {
 
       {dataFilter.length === 0 ? (
         <div className="info_empty_products">
-          <img src={iconEmpty} alt="Sin intercambios" style={{ height: "100px" }} />
+          <img src={iconEmpty} alt="Sin productos" style={{ height: "100px" }} />
           <h2>No hay intercambios disponibles.</h2>
         </div>
       ) : (
+
         <section className="section_grid_exchanges">
           {dataFilter.map((item) => (
             <div key={item.id} className="container_product_exchange">
 
               <div className="tag_exchange">{item.category}</div>
-              <img src={item.image1} alt={item.title} className="img_product_exchange" />
+
+              <img 
+                src={`http://localhost:3000${item.image1}`}
+                alt={item.title}
+                className="img_product_exchange"
+              />
 
               <h5 className="product_name">{item.title}</h5>
               <p className="product_description">{item.description}</p>
+
               <p className="product_exchanges_interest">
                 <strong>Intercambio por:</strong> {item.interests}
               </p>
@@ -145,35 +137,41 @@ const PublicationExchanges = ({ textSearch }) => {
 
               <div className="users_exchanges">
                 <img
-                  src={item.userImage || `http://localhost:3000${item.userName}`}
-                  alt={item.userName}
+                  src={
+                    item.user?.image
+                      ? `${import.meta.env.VITE_BACKEND_URL}${item.user.image}`
+                      : iconEmpty
+                  }
+                  alt="usuario"
                   className="avatar_exchange"
                 />
-                <span className="user_name_exchange">{item.userName}</span>
+                <span className="user_name_exchange">
+                  {item.user?.name || "Usuario"}
+                </span>
               </div>
 
-              <button className="button_more_info" onClick={() => handleOpen(item)}> Ver más detalles</button>
+              <button 
+                className="button_more_info" 
+                onClick={() => handleOpen(item)}
+              >
+                Ver más detalles
+              </button>
+
             </div>
           ))}
         </section>
       )}
 
-      {open && ( //Se abre el dialog con la información
-        <PublicationExchangesDialog
-          dataUser={dataUser}
-          open={open}
-          handleClose={handleClose}
-        />
+      {open && (
+        <PublicationExchangesDialog dataUser={dataUser} open={open} handleClose={handleClose} />
       )}
 
-      <InfoPopup //Popup para completar perfil
+      <InfoPopup
         open={openPopup}
         onClose={() => setOpenPopup(false)}
         title="Completa tu perfil"
         message="Para ver los detalles del intercambio debes completar tu información personal."
         confirmText="Ir a configuración"
-        cancelText="Cancelar"
-        colorConfirm="primary"
         onConfirm={() => {
           setOpenPopup(false);
           navigate("/perfil/configuracion");
