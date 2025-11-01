@@ -11,9 +11,7 @@ import { useUserStore } from "../../App/stores/Store";
 
 const MainAdmin = () =>{
     const {rol} = useUserStore();
-
-    console.log(rol)
-
+    
     const location = useLocation(); //Usamos el hook de useLocation para ver la ubicación actual.
     let contentSection; //Variable que almacena el componente a renderizar según la ruta en el pathname.
 

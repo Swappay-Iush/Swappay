@@ -53,3 +53,34 @@
     border: none;
     font-family: "Outfit";
 }
+
+.btn-cancel {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-family: "Outfit";
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background 0.2s;
+}
+.btn-cancel:hover {
+    background-color: #bdbdbd;
+}
+
+.btn-submit {
+    background-color: #0056D2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 20px;
+    font-family: "Outfit";
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-submit:hover {
+    background-color: #106fdb;
+}
