@@ -9,6 +9,8 @@ import { MenuItem, Select, FormControl, InputLabel } from '@mui/material'; //Imp
 
 import api from "../../../service/axiosConfig"
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 //Recibimos la prop textSearch desde la página Offers para filtrar los productos según el texto ingresado en la barra de búsqueda.
 const PublicationsOffers = ({textSearch}) => {
 
@@ -92,7 +94,7 @@ const PublicationsOffers = ({textSearch}) => {
                     {dataFilter.map((value, index) => (
                         <div key={index} className="container_product_offers">
                             <div className="tag_offer limited">{value.category}</div>
-                            <img src={`http://localhost:3000${value.img1}`} alt="imagenProducto" />
+                            <img src={`${API_URL}${value.img1}`} alt="imagenProducto" />
                             <h5 className="product_name">{value.title}</h5>
                             <div className="container_price_offers">
                                 <span className="price_offers">${value.priceDiscount}</span>

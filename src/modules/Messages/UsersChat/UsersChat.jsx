@@ -8,6 +8,8 @@ import { useChatUser } from "../../../App/stores/StoreChat"; // Importamos el st
 // Avatar de MUI para mostrar foto o iniciales del usuario
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 // Listado de conversaciones: al hacer click, avisamos al padre qué chat abrir
 const UsersChat = ({setInfoUser}) => { //Recibimos por props la función para establecer la información del usuario seleccionado.
 
@@ -43,7 +45,7 @@ const UsersChat = ({setInfoUser}) => { //Recibimos por props la función para es
                 <div key={index} className="userChat-item" onClick={() => userSelected(value)}> {/* Item clickeable */}
                 <Avatar
                     className="userChat-avatar"
-                    src={value?.userImage ? `http://localhost:3000/uploads/${value.userImage}` : undefined} // Usamos imagen si existe
+                    src={value?.userImage ? `${API_URL}/uploads/${value.userImage}` : undefined} // Usamos imagen si existe
                     alt={value?.username || "Usuario"} // Texto alternativo para accesibilidad
                     {...stringAvatar(value?.username)} // Fallback: iniciales cuando no hay imagen
                     style={{ cursor: "pointer" }}

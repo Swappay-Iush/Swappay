@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
 import { useUserStore } from "../../../App/stores/Store";
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 const PublicationExchanges = ({ textSearch }) => {
 
   const {username} = useUserStore();
@@ -140,7 +142,7 @@ const PublicationExchanges = ({ textSearch }) => {
               <div className="tag_exchange">{item.category}</div>
 
               <img 
-                src={`http://localhost:3000${item.image1}`}
+                src={`${API_URL}${item.image1}`}
                 alt={item.title}
                 className="img_product_exchange"
               />
@@ -160,7 +162,7 @@ const PublicationExchanges = ({ textSearch }) => {
 
               <Avatar
                   className="avatar_exchange"
-                  src={loading ? "Cargando imagen" : `http://localhost:3000/uploads/${item.user.profileImage}`}
+                  src={loading ? "Cargando imagen" : `${API_URL}/uploads/${item.user.profileImage}`}
                   {...stringAvatar(loading ? "Usuario": item.user.username.toUpperCase())} 
               />
                 <span className="user_name_exchange">

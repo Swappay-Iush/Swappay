@@ -17,6 +17,8 @@ import { useChatUser } from "../../../App/stores/StoreChat.js";
 
 import { useNavigate } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
   if (!dataUser) return null;
 
@@ -39,9 +41,9 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
   };
 
   const images = [
-    dataUser.image1 && `http://localhost:3000${dataUser.image1}`,
-    dataUser.image2 && `http://localhost:3000${dataUser.image2}`,
-    dataUser.image3 && `http://localhost:3000${dataUser.image3}`,
+    dataUser.image1 && `${API_URL}${dataUser.image1}`,
+    dataUser.image2 && `${API_URL}${dataUser.image2}`,
+    dataUser.image3 && `${API_URL}${dataUser.image3}`,
   ].filter(Boolean);
 
   const [newImage, setNewImage] = useState(images[0]);
@@ -151,7 +153,7 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
           <div className="exchange_user_img">            
               <Avatar
                   className="exchange_userImg"
-                  src={loading ? "Cargando imagen" : `http://localhost:3000/uploads/${user.profileImage}`}
+                  src={loading ? "Cargando imagen" : `${API_URL}/uploads/${user.profileImage}`}
                   {...stringAvatar(loading ? "Usuario": user.username.toUpperCase())} 
               />
             <div className="info_user_exchange">

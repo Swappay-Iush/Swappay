@@ -16,6 +16,8 @@ import Avatar from '@mui/material/Avatar';
 // Store de sesión para obtener el id del usuario autenticado
 import { useUserStore } from "../../../App/stores/Store";
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 // Componente principal del chat; recibe infoUser con {salaID, userId, username, userImage}
 const LiveChat = ({ infoUser }) => { 
     // Estado controlado del input de mensaje
@@ -40,7 +42,7 @@ const LiveChat = ({ infoUser }) => {
         // Si aún no existe una conexión, la creamos
         if (!socketRef.current) {
             // Inicializa el cliente Socket.IO apuntando al backend
-            socketRef.current = io("http://localhost:3000", {
+            socketRef.current = io(API_URL, {
                 transports: ['websocket', 'polling'], // Transportes permitidos
                 withCredentials: true // Permitir cookies si aplica
             });
@@ -139,7 +141,7 @@ const LiveChat = ({ infoUser }) => {
     useEffect(() => {
         // Si el usuario tiene imagen, armamos la URL del backend; si no, usamos iniciales
         if (infoUser?.userImage) {
-            setAvatarSrc(`http://localhost:3000/uploads/${infoUser.userImage}`);
+            setAvatarSrc(`${API_URL}/uploads/${infoUser.userImage}`);
         } else {
             setAvatarSrc(null);
         }

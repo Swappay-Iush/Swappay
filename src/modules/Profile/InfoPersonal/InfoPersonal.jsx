@@ -13,6 +13,7 @@ import api from "../../../service/axiosConfig"; //Importamos api para comunicarn
 
 import { toast } from "react-toastify"; //Utilizamos los push informativos.
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
 const InfoPersonal = () => {
 
@@ -74,8 +75,8 @@ const InfoPersonal = () => {
             // Realiza una solicitud PUT al endpoint del backend para actualizar la imagen de perfil del usuario.
             const { data } = await api.put(`/users/${id}/profile-image`, formData,{headers: { "Content-Type": "multipart/form-data" },});
 
-            setAvatarSrc(`http://localhost:3000/uploads/${data.profileImage}`); // Actualiza el estado local 'avatarSrc' con la URL de la nueva imagen para mostrarla inmediatamente en la interfaz.
-            setUser({profileImageUser: `http://localhost:3000/uploads/${data.profileImage}`}); // Actualiza el estado global del usuario para reflejar la nueva imagen de perfil en toda la aplicación.
+            setAvatarSrc(`${API_URL}/uploads/${data.profileImage}`); // Actualiza el estado local 'avatarSrc' con la URL de la nueva imagen para mostrarla inmediatamente en la interfaz.
+            setUser({profileImageUser: `${API_URL}/uploads/${data.profileImage}`}); // Actualiza el estado global del usuario para reflejar la nueva imagen de perfil en toda la aplicación.
 
             toast.success( data.message || "Imagen actualizada.", {position: "top-center"}); //Mensaje informativo de exito.
 

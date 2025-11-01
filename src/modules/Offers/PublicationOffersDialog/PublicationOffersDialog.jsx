@@ -6,6 +6,8 @@ import { Dialog } from "@mui/material"; //Importamos componentes de materialUI a
 import { MdAddShoppingCart } from "react-icons/md"; //Icono del carro de compras
 import { IoMdClose } from "react-icons/io"; //Icono de la X
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 /*
     userData: Objeto que contiene la información del producto seleccionado.
     open: Estado booleano que indica si el diálogo está abierto o cerrado.
@@ -13,14 +15,14 @@ import { IoMdClose } from "react-icons/io"; //Icono de la X
 */
 const PublicationOffersDialog = ({userData, open, handleClose}) => {
 
-    const [newImage, setNewImage] = useState(`http://localhost:3000${userData.img1}`); //Estado para menejar la imágen principal del producto.
+    const [newImage, setNewImage] = useState(`${API_URL}${userData.img1}`); //Estado para menejar la imágen principal del producto.
 
     //Iconos 
     const shoppingCart = () => <MdAddShoppingCart className="shoppingCart"/>; //Icono del carrito de compras
     const closeDialog = () => <IoMdClose className="iconClose" onClick={handleClose}/>; //Icono para cerrar la ventana.
 
     //Arreglo que contiene las imagenes del objeto que llega del back y las filtra para no mostrar las nulas.
-    const imagesproducts = [userData.img1, userData.img2, userData.img3].filter(img => img).map(img => ({ img: `http://localhost:3000${img}`, des: userData.title }));
+    const imagesproducts = [userData.img1, userData.img2, userData.img3].filter(img => img).map(img => ({ img: `${API_URL}${img}`, des: userData.title }));
 
 
     const changeImage = (image) =>{ //Función que permite el cambio de imágen. 

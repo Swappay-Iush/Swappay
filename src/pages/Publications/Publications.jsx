@@ -11,6 +11,8 @@ import PublicationDialog from "../../modules/publications/PublicationDialog/Publ
 
 import InfoPopup from "../../components/infoPopup/infoPopup";
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 const Publications = () => { 
 
   const { id } = useUserStore(); //Traemos el ID del usuario del store.
@@ -88,7 +90,7 @@ const Publications = () => {
               className="containerProductOwner"
             >
               <header className="img_Product">
-                <img src={`http://localhost:3000${value.image1}`} alt={value.title} className="img_productOwner"/> {/* Mostramos la primera imagen del producto */}
+                <img src={`${API_URL}${value.image1}`} alt={value.title} className="img_productOwner"/> {/* Mostramos la primera imagen del producto */}
               </header>
               <section>
                 <div className="container_title_product">

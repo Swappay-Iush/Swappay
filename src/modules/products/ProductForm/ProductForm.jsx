@@ -11,6 +11,8 @@ import { ToastContainer } from 'react-toastify';
 import { useUserStore } from "../../../App/stores/Store";
 import { useLocation } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 //Listas de opciones para el formulario
 const categories = [ "Hogar", "Juguetes", "Libros", "Ropa", "Tecnología", "Deportes", "Entretenimiento"];
 const conditions = [ "Nuevo", "Reacondicionado", "Usado"];
@@ -45,9 +47,9 @@ const ProductForm = ({ open = false, onClose, editProductData }) => {
                     imagen2: undefined,
                     imagen3: undefined,
             });
-            setPreview1(editProductData.image1 ? `http://localhost:3000${editProductData.image1}` : null);
-            setPreview2(editProductData.image2 ? `http://localhost:3000${editProductData.image2}` : null);
-            setPreview3(editProductData.image3 ? `http://localhost:3000${editProductData.image3}` : null);
+            setPreview1(editProductData.image1 ? `${API_URL}${editProductData.image1}` : null);
+            setPreview2(editProductData.image2 ? `${API_URL}${editProductData.image2}` : null);
+            setPreview3(editProductData.image3 ? `${API_URL}${editProductData.image3}` : null);
             } else {
                 reset();
                 setPreview1(null);
