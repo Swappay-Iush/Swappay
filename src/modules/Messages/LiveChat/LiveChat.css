@@ -1,0 +1,142 @@
+.container_chat_private {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+.header_chat_private {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #eee;
+    background: #f5f5f5;
+}
+
+.header_profile_user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header_profile_user img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: fil;
+}
+
+.header_profile_user h1 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin: 0;
+    font-family: "Outfit";
+}
+
+.chat_messages_section {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    background: #fafafa;
+}
+
+.chat_messages_list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat_message {
+    max-width: 60%;
+    padding: 10px 16px;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-family: "Manrope";
+    background: #e0e0e0;
+    align-self: flex-start;
+}
+
+.chat_message.from_me {
+    background: #4f8cff;
+    color: #fff;
+    align-self: flex-end;
+}
+
+.chat_input_section {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #eee;
+    background: #f7f7f7;
+}
+
+.chat_input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    outline: none;
+    font-family: "Manrope";
+}
+
+.chat_send_btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: #4f8cff;
+    color: #fff;
+    font-weight: 500;
+    font-family: "Outfit";
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.chat_send_btn:hover {
+    background: #3466c2;
+}
+
+/* Botón de acciones del intercambio (aceptar / en proceso) */
+.trade_btn {
+    padding: 6px 12px; /* más pequeño */
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "Outfit";
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.trade_btn--primary {
+    background: #2196F3; /* azul */
+    color: #fff;
+}
+
+.trade_btn--primary:hover {
+    background: #1976D2; /* azul más oscuro */
+}
+
+.trade_btn--success {
+    background: #4CAF50; /* verde */
+    color: #fff;
+}
+
+.trade_btn--success:hover {
+    background: #3d8b41;
+}
+
+.trade_btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.trade_status_text {
+    font-size: 12px;
+    color: #4CAF50;
+    font-weight: 500;
+}

@@ -11,7 +11,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Logout from '@mui/icons-material/Logout';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import PersonIcon from '@mui/icons-material/Person';
-
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate, useLocation } from "react-router-dom"; //Usamos router-dom para validación y manejo de rutas.
 import { useUserStore } from "../../../../../../App/stores/Store"; //Importamos el store.
 
@@ -102,6 +102,10 @@ const MainHeader = () => {
                     <MenuItem onClick={() => userAction('/perfil')} style={{fontFamily:"Outfit"}}>
                         <ListItemIcon><PersonIcon/></ListItemIcon>
                         Mi perfil
+                    </MenuItem>
+                    <MenuItem onClick={() => userAction('/mensajes')} style={{fontFamily:"Outfit"}} >
+                        <ListItemIcon><ChatBubbleOutlineIcon/></ListItemIcon>
+                        Mensajes
                     </MenuItem>
                     <MenuItem onClick={() => setAnchorEl(null)} style={{fontFamily:"Outfit"}} >
                         <ListItemIcon><HelpOutlineIcon/></ListItemIcon>

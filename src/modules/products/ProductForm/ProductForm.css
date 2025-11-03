@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1300;
+  z-index: 1500; 
   backdrop-filter: blur(4px);
   font-family: "Outfit";
 }
@@ -28,6 +28,10 @@
   max-height: 90vh;
   overflow: hidden;
   box-sizing: border-box;
+}
+
+.MuiPopover-root {
+  z-index: 1600 !important; 
 }
 
 .product-modal-container{

@@ -1,6 +1,8 @@
 import { create } from "zustand";  
 import api from "../../service/axiosConfig"; //Importamos API para comunicarnos con el backend.
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 //Estado global para manejar la información del usuario en toda la aplicación
 export const useUserStore = create((set) => ({
     id: null,  //ID del usuario
@@ -32,7 +34,7 @@ export const useUserStore = create((set) => ({
 
             //En caso de ser valido, traemos todos los datos del usuario.
             set({id: data.id, username: data.username, rol: data.rol, country: data.country, email: data.email, isVerified: true,
-                userInfo: data, profileImageUser: `http://localhost:3000/uploads/${data.profileImage}`
+                userInfo: data, profileImageUser: `${API_URL}/uploads/${data.profileImage}`
             })
 
         } catch (error) {

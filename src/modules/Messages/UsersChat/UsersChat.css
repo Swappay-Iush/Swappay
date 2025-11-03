@@ -1,0 +1,56 @@
+.usersChat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #e0e0e0;
+  height: 100%;
+  overflow-y: auto;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.userChat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: background 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.userChat-item:hover {
+  background-color: #e9f5ff;
+  transform: scale(1.01);
+}
+
+.userChat-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: fill;
+}
+
+.userChat-info h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #222;
+  font-weight: 500;
+  font-family: "Outfit";
+}
+
+
+@media (max-width: 700px) {
+  .usersChat-container {
+    max-height: 170px;
+  }
+
+  .userChat-item {
+    min-height: 65px;
+  }
+}

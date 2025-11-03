@@ -42,6 +42,9 @@
   margin: 0;
   font-family: "Outfit";
   text-align: center;
+    overflow-x: hidden; /* Evita scroll horizontal */
+  word-break: break-word; /* Corta palabras largas */
+  white-space: normal; /* Permite que el texto salte de línea */
 }
 
 .description_Product_Dialog {
@@ -56,6 +59,9 @@
   color: #070707;
   margin: 0;
   font-family: "Manrope";
+  overflow-x: hidden; 
+  word-break: break-word; /* Corta palabras largas */
+  white-space: normal; /* Permite que el texto salte de línea */
 }
 
 .details_Product_Dialog {
@@ -69,14 +75,15 @@
 
 .detail_item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   padding: 12px;
   background-color: #f8f9fa;
   border-radius: 8px;
   border: 1px solid #285194;
   max-width: 500px;
-  overflow-x: auto;
+  overflow-x: auto; 
+  text-wrap: nowrap;
 }
 
 .detail_label {
@@ -148,9 +155,15 @@
   }
 }
 
+@media (max-height: 915px) {
+  .img_Product_Dialog {
+    min-height: 475px;
+  }
+}
+
 /* Scrollbar personalizado */
 .containerProductOwner_Dialog::-webkit-scrollbar {
-  width: 8px;
+  width: 0;
 }
 
 .containerProductOwner_Dialog::-webkit-scrollbar-track {

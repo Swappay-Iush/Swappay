@@ -5,6 +5,8 @@ import { Dialog, MobileStepper, Button } from "@mui/material"; //Importamos comp
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';  //Importamos los iconos para el carrusel de imágenes.
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'; //Importamos los iconos para el carrusel de imágenes.
 
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
+
 const PublicationDialog = ({dataUser, open, handleClose}) => { //Recibimos como props, la información del producto, si el popup está abierto y la función para cerrarlo.
     const [activeStep, setActiveStep] = useState(0); //Estado para manejar el paso activo del carrusel de imágenes.
     
@@ -39,7 +41,7 @@ const PublicationDialog = ({dataUser, open, handleClose}) => { //Recibimos como 
                 <header className="img_Product_Dialog">
                     {images.length > 0 && (
                         <>
-                            <img src={`http://localhost:3000${images[activeStep]}`} alt={`${dataUser.title} - ${activeStep + 1}`} /> {/* Muestra la imagen actual del carrusel */}
+                            <img src={`${API_URL}${images[activeStep]}`} alt={`${dataUser.title} - ${activeStep + 1}`} /> {/* Muestra la imagen actual del carrusel */}
                             {images.length > 1 && (
                                 <MobileStepper steps={maxSteps} position="static" activeStep={activeStep}
                                     sx={{ position: 'absolute', bottom: 0,width: '100%',
