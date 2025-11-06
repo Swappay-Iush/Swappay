@@ -157,7 +157,9 @@ const { register, handleSubmit, formState: { errors }, reset, control } = useFor
                                         PaperProps: { style: { maxHeight: 400, width: 320 } },
                                         disableScrollLock: true,
                                     }}
-                                    sx={{ '& fieldset': { border: 'none' } }}
+                                    sx={{'& fieldset': { border: 'none' },fontFamily: "Outfit",textAlign: "left",paddingLeft: 0, 
+                                    '.MuiSelect-select': {paddingLeft: "5px !important", fontFamily: "Outfit",textAlign: "left",},
+                                    '.MuiMenuItem-root': {fontFamily: "Outfit",textAlign: "left",},}}
                                 >
                                     <MenuItem value="" disabled>
                                         <em style={{ fontFamily: "Outfit", fontStyle: "normal", color: "grey" }}>Selecciona el país</em>
@@ -190,7 +192,9 @@ const { register, handleSubmit, formState: { errors }, reset, control } = useFor
                                         PaperProps: { style: { maxHeight: 400, width: 320 } },
                                         disableScrollLock: true,
                                     }}
-                                    sx={{ '& fieldset': { border: 'none' } }}
+                                     sx={{'& fieldset': { border: 'none' },fontFamily: "Outfit",textAlign: "left",paddingLeft: 0, 
+                                    '.MuiSelect-select': {paddingLeft: "5px !important", fontFamily: "Outfit",textAlign: "left",},
+                                    '.MuiMenuItem-root': {fontFamily: "Outfit",textAlign: "left",},}}
                                 >
                                     <MenuItem value="" disabled>
                                         <em style={{ fontFamily: "Outfit", fontStyle: "normal", color: "grey" }}>Selecciona el rol</em>

@@ -6,7 +6,9 @@ import { CiSearch } from "react-icons/ci";
 
 import api from "../../../service/axiosConfig";
 
+
 import ActionUsers from "./components/ActionUsers/ActionUsers";
+import TableInfo from "../../../components/tableInfo/TableInfo";
 
 import InfoPopup from "../../../components/infoPopup/infoPopup";
 
@@ -87,7 +89,7 @@ const Users = () => {
 
     return(
         <div className="container_admin_users">
-            <h1 className="title_admin_users" style={{fontFamily:"Outfit"}}>Gestión de Usuarios</h1>
+            <h1 className="title_admin_users" style={{fontFamily:"Outfit"}}>Gestión de usuarios</h1>
             {loading ? (
                 <div>
                     Cargando usuarios...
@@ -102,42 +104,28 @@ const Users = () => {
                         <button onClick={() => actionUser("create")}>Agregar Usuario</button>
                     </div>
                     <div className="container_scroll_table">
-                        <table className="table_admin_users">
-                            <thead>
-                                <tr>
-                                    <th>Nombre Completo</th>
-                                    <th>Correo</th>
-                                    <th>Nacionalidad</th>
-                                    <th>Rol</th>
-                                    <th>Opciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredUsers.length > 0 ? (
-                                    filteredUsers.map((value, index) => (
-                                        <tr key={index}>
-                                            <td>{value.username}</td>
-                                            <td>{value.email}</td>
-                                            <td>{value.country}</td>
-                                            <td>{value.rol === "user" ? "Usuario" : "Administrador"}</td>
-                                            <td>
-                                                {!(rol === "admin" && value.email === useUserStore.getState().email) && (
-                                                    <>
-                                                        <button className="icon-btn edit-btn" title="Editar" onClick={() => actionUser("edit", value)}>{iconEdit()}</button>
-                                                        <button className="icon-btn delete-btn" title="Eliminar" onClick={() => handleDeleteUser(value.id)}>{iconDelete()}</button>
-                                                    </>
-                                                )}
-                                            </td>
-
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" style={{fontFamily:"Manrope"}}>No se encontraron usuarios con esa búsqueda.</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                        <TableInfo
+                            columns={[
+                                { label: "Nombre Completo", key: "username" },
+                                { label: "Correo", key: "email" },
+                                { label: "Nacionalidad", key: "country" },
+                                { label: "Rol", key: "rol", render: (row) => row.rol === "user" ? "Usuario" : "Administrador" },
+                                {
+                                    label: "Opciones",
+                                    key: "actions",
+                                    render: (row) =>
+                                        !(rol === "admin" && row.email === useUserStore.getState().email) && (
+                                            <>
+                                                <button className="icon-btn edit-btn" title="Editar" onClick={() => actionUser("edit", row)}>{iconEdit()}</button>
+                                                <button className="icon-btn delete-btn" title="Eliminar" onClick={() => handleDeleteUser(row.id)}>{iconDelete()}</button>
+                                            </>
+                                        )
+                                }
+                            ]}
+                            data={filteredUsers}
+                            emptyMessage="No se encontraron usuarios con esa búsqueda."
+                            tableClassName="table_admin_users"
+                        />
                     </div>
                 </div>
             )}
@@ -147,7 +135,7 @@ const Users = () => {
             )}
 
 
-             {infoPopupVisible &&  // Mostramos el InfoPopup para confirmar la eliminación del usuario.
+            {infoPopupVisible &&  // Mostramos el InfoPopup para confirmar la eliminación del usuario.
                 <InfoPopup
                     open={infoPopupVisible}
                     onClose={() => setInfoPopupVisible(false)}

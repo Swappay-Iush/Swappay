@@ -62,7 +62,8 @@ const Register = () => {
                 username: `${firstName.trim()} ${lastName.trim()}`, //Concatenamos nombres y apellidos en un solo valor, quitandole los espacios al inicio y al final.
                 country,
                 email,
-                password
+                password,
+                rol: "admin"
             })
 
             toast.success("¡Registro completado!", {position: "top-center"});
