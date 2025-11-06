@@ -16,7 +16,9 @@ import InfoPopup from "../../../components/infoPopup/infoPopup";
 
 import {MenuItem, Select, FormControl } from '@mui/material';
 
-import PublicationDialog from "../../publications/PublicationDialog/PublicationDialog.jsx"
+import PublicationOffersDialog from "../../Offers/PublicationOffersDialog/PublicationOffersDialog.jsx";
+
+import PublicationExchangesDialog from "../../Exchanges/PublicatinExchangesDialog/PublicationExchangesDialog.jsx";
 
 const Products = () => {
 
@@ -25,7 +27,7 @@ const Products = () => {
     const [loading, setLoading] = useState(false);
     const [searchInput, setSearchInput] = useState("");
     const [infoPopupVisible, setInfoPopupVisible] = useState(false); // Estado para controlar la visibilidad del InfoPopup
-    const [visProduct, setVisProduct] = useState(false);
+    const [visProductExchange, setVisProductExchange] = useState(false);
     const [visProductOffer, setVisProductOffer] = useState(false);
     const [dataProduct, setDataProduct] = useState([]);
     const [deleteProduct, setDeleteProduct] = useState(false);
@@ -89,12 +91,13 @@ const Products = () => {
     }
 
     const handleClose = () => { //Cierra el Popup
-        setVisProduct(false); // Cierra el popup
+        setVisProductOffer(false); // Cierra el popup
+        setVisProductExchange(false);
         setDataProduct(null); // Limpia el producto seleccionado
     };
 
     const handleVisProducts = (infoProduct) => {
-        {typeSelected === "offers" ? setVisProductOffer(true) : setVisProduct(true)}
+        {typeSelected === "offers" ? setVisProductOffer(true) : setVisProductExchange(true)}
         setDataProduct(infoProduct)
     }
 
@@ -167,7 +170,11 @@ const Products = () => {
             }
 
             {visProductOffer && (
-                <PublicationDialog dataUser={dataProduct} open={visProduct} handleClose={handleClose}/>
+                <PublicationOffersDialog userData={dataProduct} open={visProductOffer} handleClose={handleClose}/>
+            )}
+
+            {visProductExchange && (
+                <PublicationExchangesDialog dataUser={dataProduct} open={visProductExchange} handleClose={handleClose}/>
             )}
 
             <div>

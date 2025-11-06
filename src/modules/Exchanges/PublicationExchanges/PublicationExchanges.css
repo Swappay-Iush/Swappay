@@ -1,0 +1,184 @@
+.container_general_publications_exchanges {
+  width: 100%;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.title_filter_info_offers {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-family: "Outfit";
+}
+
+.info_empty_products {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  padding: 60px 0;
+}
+
+.info_empty_products h2 {
+  font-family: "Manrope";
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.section_grid_exchanges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container_product_exchange {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+  flex: 1 1 300px;
+  max-width: 340px;
+  min-height: 410px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: 0.2s ease-in-out;
+  gap: 10px;
+  padding-bottom:18px;
+}
+.container_product_exchange {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.container_product_exchange:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.tag_exchange {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #244a88;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.img_product_exchange {
+  width: 100%;
+  height: 240px;
+  object-fit:contain;
+  border-radius: 14px 14px 0 0;
+  display: block;
+  margin: 0;
+}
+
+.product_name {
+  font-family: "Outfit";
+  font-size: 18px;
+  font-weight: 700;
+  color: #244a88;
+  text-align: center;
+}
+
+.product_description {
+  font-family: "Manrope";
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+  padding: 0 10px;
+  max-width: 100%;
+  word-wrap: break-word;       
+  overflow-wrap: break-word;   
+  white-space: normal;        
+}
+
+.product_exchanges_interest {
+  font-size: 13px;
+  color: #333;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.price_swapcoins {
+  display: block;
+  color: #ff7b00;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: center;
+}
+
+.users_exchanges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0 10px;
+}
+
+.avatar_exchange {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user_name_exchange {
+  font-size: 14px;
+  font-weight: 600;
+  color: #244a88;
+}
+
+.button_more_info_exchange {
+  background: #244a88;
+  color: #fff;
+  border: none;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 90%;
+  margin: auto auto 0 auto;
+  display: block;
+  transition: 0.2s;
+}
+
+.button_more_info_exchange:hover {
+  background: #163568;
+}
+
+@media (max-width: 768px) {
+  .title_filter_info_offers {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .title_section_exchange{
+    font-size: 25px !important;
+  }
+
+  .section_grid_exchanges {
+    justify-content: center;
+  }
+
+  .container_product_exchange {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}

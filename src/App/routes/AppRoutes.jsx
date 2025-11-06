@@ -9,6 +9,7 @@ import MainPanel from "../../modules/layouts/main/MainPanel/MainPanel.jsx";
 import ProtectedRouters from "./ProtectedRoutes";
 import Profile from "../../pages/Profile/Profile.jsx";
 import MainHeader from "../../modules/layouts/main/MainPanel/components/MainHeader/MainHeader.jsx";
+import Messages from "../../pages/Messages/Messages.jsx";
 import MainAdmin from "../../modules/admin/MainAdmin.jsx";
 
 import NoPage from "../../components/NoPage/NoPage.jsx";
@@ -86,6 +87,20 @@ const AppRoutes = () => {
                         <ProtectedRouters>
                             <MainHeader />
                             <Profile />
+                        </ProtectedRouters>
+                    }
+                />
+            ))}
+
+
+            {["/mensajes"].map((path) => (
+                <Route
+                    key={path}
+                    path={path}
+                    element={
+                        <ProtectedRouters> {/*Se manejan rutas protegidas para validaciones con token de usuario.*/}
+                            <MainHeader />
+                            <Messages />
                         </ProtectedRouters>
                     }
                 />
