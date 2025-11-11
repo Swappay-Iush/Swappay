@@ -81,7 +81,7 @@ const { register, handleSubmit, formState: { errors }, reset, control } = useFor
                     password: password
                 })
 
-                toast.success("¡Registro completado!", {position: "top-center"});
+                toast.success("¡Usuario creado!", {position: "top-center"});
                 setTrueAction(true);
 
                 setTimeout(() => {

@@ -137,7 +137,7 @@ const InfoPersonal = () => {
                 <h5>{loading ? "Pais" : country}</h5>
                 <h5>
                     <Stack spacing={1} className="rating_users">
-                        <Rating name="half-rating" defaultValue={2.5} precision={0.5} readOnly /> {/*Estrellas de calificación en solo lectura.*/}
+                        <Rating name="half-rating" defaultValue={5} precision={0.5} readOnly /> {/*Estrellas de calificación en solo lectura.*/}
                     </Stack>
                 </h5>
             </section>

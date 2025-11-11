@@ -46,8 +46,6 @@ const LiveChat = ({ infoUser }) => {
                 transports: ['websocket', 'polling'], // Transportes permitidos
                 withCredentials: true // Permitir cookies si aplica
             });
-            // Log para validar la conexión (el id puede tardar en estar disponible)
-            console.log("🔌 Socket conectado:", socketRef.current.id);
         }
 
         // Al desmontar el componente, cerramos la conexión para evitar fugas
@@ -64,9 +62,6 @@ const LiveChat = ({ infoUser }) => {
         // Si no hay sala seleccionada o el socket no está listo, no hacemos nada
         if (!infoUser?.salaID || !socketRef.current) return;
 
-        // Log informativo con el id de la sala a cargar
-        console.log("📥 Cargando chat para sala:", infoUser.salaID);
-
         // Unirse a la sala de Socket.IO para recibir eventos en tiempo real de esa conversación
         socketRef.current.emit("joinRoom", { chatRoomId: infoUser.salaID });
 
@@ -82,17 +77,15 @@ const LiveChat = ({ infoUser }) => {
                 }));
                 // Guardamos el historial en estado local
                 setMessages(formattedMessages);
-                console.log("✅ Historial cargado:", formattedMessages.length, "mensajes");
             })
             .catch(err => {
                 // Si falla la carga, dejamos la conversación vacía y registramos el error
-                console.error("❌ Error cargando historial:", err);
+                console.error("Error cargando historial:", err);
                 setMessages([]);
             });
 
         // Handler: procesa mensajes entrantes por Socket.IO
         const handleNewMessage = (data) => {
-            console.log("📨 Nuevo mensaje recibido:", data);
             // Aseguramos que el mensaje corresponde a la sala visible
             if (data.chatRoomId === infoUser.salaID) {
                 // Agregamos el nuevo mensaje al final del historial
@@ -110,7 +103,6 @@ const LiveChat = ({ infoUser }) => {
 
         // Handler: procesa actualizaciones del estado de intercambio por Socket.IO
         const handleTradeUpdate = (data) => {
-            console.log("Actualización de intercambio recibida:", data);
             // Si viene especificado el chatRoomId y no corresponde, ignoramos
             if (data?.chatRoomId && data.chatRoomId !== infoUser.salaID) return;
             // Aceptamos dos formatos: data directa o anidada en tradeAgreement
@@ -161,9 +153,8 @@ const LiveChat = ({ infoUser }) => {
         try {
             const response = await api.get(`/chat/trade/status/${infoUser.salaID}`);
             setTradeStatus(response.data);
-            console.log("📊 Estado del intercambio:", response.data);
         } catch (error) {
-            console.error("❌ Error al cargar estado del intercambio:", error);
+            console.error("Error al cargar estado del intercambio:", error);
         }
     };
 
@@ -199,15 +190,29 @@ const LiveChat = ({ infoUser }) => {
             content: message.trim() // Contenido del mensaje sin espacios extremos
         };
 
-        console.log("📤 Enviando mensaje:", payload); // Log de salida
         socketRef.current.emit("sendMessage", payload); // Emitimos por Socket.IO
         setMessage(""); // Limpiamos el input
     };
 
+    useEffect(() => {
+        if(tradeStatus && tradeStatus.tradeCompleted === 'en_proceso'){
+            const changeInfoExchange = async () => {
+                try {
+                    await api.post(`/chat/trade/messages/${tradeStatus.chatRoomId}`, {
+                        messagesInfo: ["Solicitud de intercambio enviado"]
+                    })
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            changeInfoExchange();
+        }
+    }, [tradeStatus])
+
     // Handler para aceptar/rechazar el intercambio (toggle)
     const handleAcceptTrade = async () => {
         if (!infoUser?.salaID || !currentUserId) {
-            console.error("❌ Datos insuficientes:", { salaID: infoUser?.salaID, currentUserId });
             toast.error('Error: No se pudo identificar la sala o el usuario', {
                 position: "top-center"
             });
@@ -215,7 +220,6 @@ const LiveChat = ({ infoUser }) => {
         }
         
         setLoadingTrade(true);
-        console.log("📤 Enviando aceptación:", { chatRoomId: infoUser.salaID, userId: currentUserId });
         
         try {
             const response = await api.post('/chat/trade/accept', {
@@ -225,11 +229,10 @@ const LiveChat = ({ infoUser }) => {
             
             // Actualizar estado local con la respuesta
             setTradeStatus(response.data);
-            console.log("✅ Intercambio actualizado:", response.data);
             
             // Mostrar notificación según el resultado
             if (response.data.tradeCompleted === 'en_proceso') {
-                toast.success('🎉 ¡Intercambio en proceso! Ambos usuarios han aceptado.', {
+                toast.success('¡Intercambio en proceso! Ambos usuarios han aceptado.', {
                     position: "top-center",
                     autoClose: 4000
                 });
