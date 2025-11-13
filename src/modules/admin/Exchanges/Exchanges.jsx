@@ -108,11 +108,19 @@ const Exchanges = () => {
                                 {
                                     label: "Opciones",
                                     key: "actions",
-                                    render: (row) =>
-                                        <>
-                                            <button className="icon-btn edit-btn" title="Actualizar información" onClick={() => handleChangeMessage(row.chatRoom.id)}>{iconMessage()}</button>
-                                            <button className="icon-btn delete-btn" title="Eliminar" onClick={() => handleDeleteUser(row.chatRoom.id)}>{iconDelete()}</button>
-                                        </>
+                                    render: (row) => {
+                                        const messages = Array.isArray(row.messagesInfo) ? row.messagesInfo : [];
+                                        const lastMessage = messages.length > 0 ? messages[messages.length - 1] : "";
+                                        const isNegotiation = lastMessage === "En negociación";
+                                        return (
+                                            <>
+                                                {!isNegotiation && (
+                                                    <button className="icon-btn edit-btn" title="Actualizar información" onClick={() => handleChangeMessage(row.chatRoom.id)}>{iconMessage()} </button>
+                                                )}
+                                                <button className="icon-btn delete-btn" title="Eliminar" onClick={() => handleDeleteUser(row.chatRoom.id)}>{iconDelete()}</button>
+                                            </>
+                                        );
+                                    }
                                 }
                             ]}
                             data={filteredExchange}

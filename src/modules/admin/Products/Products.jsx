@@ -113,14 +113,13 @@ const Products = () => {
                     <div className="search_add_user" style={{display: "flex", gap: "1rem", alignItems: "center"}}>
                         <div className="search-input-wrapper" style={{overflow:"hidden", display: "flex", alignItems: "center"}}>
                             {iconSearch()}
-                            <input type="text" placeholder="Buscar por nombre, correo o nacionalidad..." onChange={(e) => setSearchInput(e.target.value)}/>
+                            <input type="text" className="search_input_products" placeholder="Buscar por nombre, correo o nacionalidad..." onChange={(e) => setSearchInput(e.target.value)}/>
                         </div>
                         <FormControl size="small" variant="outlined">
                             <Select
                                 value={typeSelected}
                                 onChange={e => setTypeSelected(e.target.value)}
                                 displayEmpty
-                                style={{ minWidth: 150 }}
                                 className="select_section_products"
                             >
                                 <MenuItem value="offers" style={{fontFamily:"Outfit"}}>Ofertas</MenuItem>

@@ -137,4 +137,7 @@
         text-align: center;
     }
 
+    .search_add_user input{
+        width: 100%;
+    }
 }
