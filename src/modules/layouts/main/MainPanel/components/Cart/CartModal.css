@@ -1,0 +1,210 @@
+.cart_overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.cart_dialog{
+    width: min(860px, 92vw);
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: 100vh;
+}
+
+.cart_header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    background: #fafafa;
+}
+
+.cart_header h3{
+    margin: 0;
+    font-family: "Outfit";
+    font-size: 18px;
+}
+
+.icon_btn{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: #f1f1f1;
+    cursor: pointer;
+}
+
+.icon_btn:hover{
+    background: #e5e5e5;
+}
+
+.cart_body{
+    padding: 14px 20px;
+    max-height: 48vh;
+    overflow: auto;
+    background: #fff;
+}
+
+.cart_section{
+    margin-bottom: 14px;
+}
+
+.cart_section_title{
+    font-family: "Outfit";
+    font-weight: 600;
+    color: #333;
+    margin: 8px 0 10px;
+}
+
+.cart_list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cart_row{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.cart_thumb{
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: #eaeaea;
+}
+
+.cart_info{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cart_title{
+    font-family: "Outfit";
+    font-size: 14px;
+    color: #222;
+}
+
+.cart_meta{
+    font-family: "Manrope";
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    gap: 6px;
+}
+
+.cart_meta.small{
+    font-size: 12px;
+}
+
+.price{
+    color: #111;
+}
+
+.swap{
+    color: #ff6b00;
+}
+
+.seller{
+    font-family: "Manrope";
+    font-size: 12px;
+    color: #888;
+}
+
+.cart_qty{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.qty{
+    min-width: 18px;
+    text-align: center;
+    font-family: "Outfit";
+}
+
+.cart_footer{
+    padding: 14px 20px;
+    border-top: 1px solid #eee;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.summary{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.summary_row{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "Manrope";
+    color: #444;
+}
+
+.summary_row.total{
+    font-weight: 700;
+    color: #111;
+}
+
+.actions{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.btn{
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: "Outfit";
+}
+
+.btn.light{
+    background: #e9eef8;
+    color: #285194;
+}
+
+.btn.primary{
+    background: #285194;
+    color: #fff;
+}
+
+@media (max-width: 560px){
+    .cart_dialog{
+        width: 94vw;
+    }
+
+    .cart_row{
+        align-items: flex-start;
+    }
+
+    .cart_qty{
+        margin-left: auto;
+    }
+}

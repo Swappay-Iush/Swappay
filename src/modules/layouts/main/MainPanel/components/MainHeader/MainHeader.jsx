@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import "./MainHeader.css"
 
 import { BsCoin } from "react-icons/bs"; //Importamos el icono usado para los swapcoins
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 //Importamos componentes a utilizar desde materialUI
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
@@ -14,6 +15,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate, useLocation } from "react-router-dom"; //Usamos router-dom para validación y manejo de rutas.
 import { useUserStore } from "../../../../../../App/stores/Store"; //Importamos el store.
+import CartModal from "../Cart/CartModal";
 
 const MainHeader = () => {
 
@@ -23,6 +25,7 @@ const MainHeader = () => {
 
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
     const [buttonSelected, setButtonSelected] = useState("Panel"); //Estado que almacena el botón seleccionado.
+    const [openCart, setOpenCart] = useState(false); //Estado para abrir/cerrar el carrito
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
 
     const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los swapCoins.
@@ -92,6 +95,10 @@ const MainHeader = () => {
                         <div className="value_swapcoins">{50}</div>
                     </div>
                 </div>
+                {/* Botón de carrito */}
+                <button className="cart_button_header" onClick={() => setOpenCart(true)} aria-label="Abrir carrito">
+                    <ShoppingCartOutlinedIcon style={{ color: '#000' }} />
+                </button>
                 <Avatar
                     className="profile_user_header"
                     src={loading ? "Cargando imagen" : profileImageUser}
@@ -117,6 +124,10 @@ const MainHeader = () => {
                     </MenuItem>
                 </Menu>
             </section>
+            {/* Modal del carrito */}
+            {openCart && (
+                <CartModal open={openCart} onClose={() => setOpenCart(false)} />
+            )}
         </div>
     );
 }

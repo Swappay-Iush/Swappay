@@ -65,6 +65,23 @@
     font-family: "Outfit";
 }
 
+.cart_button_header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    height: 45px;
+    width: 45px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.85;
+}
+
+.cart_button_header:hover{
+    opacity: 1;
+}
+
 #buttonSelected_header{
     opacity: 1 ;
 }
@@ -91,6 +108,11 @@
         height: 35px;
         padding: 6px;
         font-size: 14px;
+    }
+
+    .cart_button_header{
+        height: 35px;
+        width: 35px;
     }
 
     .profile_user_header {
