@@ -109,7 +109,7 @@ const Users = () => {
                                 { label: "Nombre Completo", key: "username" },
                                 { label: "Correo", key: "email" },
                                 { label: "Nacionalidad", key: "country" },
-                                { label: "Rol", key: "rol", render: (row) => row.rol === "user" ? "Usuario" : "Administrador" },
+                                { label: "Rol", key: "rol", render: (row) => row.rol === "user" ? "Usuario" : row.rol == "admin" ? "Administrador" : "Colaborador"},
                                 {
                                     label: "Opciones",
                                     key: "actions",
