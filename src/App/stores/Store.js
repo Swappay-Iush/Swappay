@@ -13,7 +13,7 @@ export const useUserStore = create((set) => ({
     isVerified: false,  //Si el usuario esta verificado con el token.
     profileImageUser: null, //Imagen del usuario
     userInfo: {}, //Objeto que almacena toda la información del usuario y tiene campos como: phone, country, address, etc.
-
+    
     setUserInfo: (infoUser) => set({ userInfo: infoUser }), //Función para actualizar userInfo con todo el objeto del usuario.
     setUser: (user) => set(user), //Función para actualizar datos del usuario  
 

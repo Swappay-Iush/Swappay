@@ -8,18 +8,21 @@ import { IoMdClose } from "react-icons/io"; //Icono de la X
 
 const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
+import { useUserStore } from "../../../App/stores/Store";
 /*
     userData: Objeto que contiene la información del producto seleccionado.
     open: Estado booleano que indica si el diálogo está abierto o cerrado.
     handleClose: Función para cerrar la ventana.
 */
 const PublicationOffersDialog = ({userData, open, handleClose}) => {
+    
+    const {rol} = useUserStore();
 
     const [newImage, setNewImage] = useState(`${API_URL}${userData.img1}`); //Estado para menejar la imágen principal del producto.
 
     //Iconos 
     const shoppingCart = () => <MdAddShoppingCart className="shoppingCart"/>; //Icono del carrito de compras
-    const closeDialog = () => <IoMdClose className="iconClose" onClick={handleClose}/>; //Icono para cerrar la ventana.
+    const closeDialog = () => <IoMdClose className="iconCloseOffers" onClick={handleClose}/>; //Icono para cerrar la ventana.
 
     //Arreglo que contiene las imagenes del objeto que llega del back y las filtra para no mostrar las nulas.
     const imagesproducts = [userData.img1, userData.img2, userData.img3].filter(img => img).map(img => ({ img: `${API_URL}${img}`, des: userData.title }));
@@ -37,7 +40,7 @@ const PublicationOffersDialog = ({userData, open, handleClose}) => {
           <div className="container_general_dialog_products">
                 <section className="section_img_products">
                         <div className="container_img_category">
-                            <h6 className="info_products_category" style={{position:"absolute"}}>{userData.category}</h6>
+                            <h6 className="info_products_category_offers" style={{position:"absolute"}}>{userData.category}</h6>
                             <img src={newImage} alt="Imágen principal" className="img_product_major"/>
                         </div>
                         <div className="container_img_products">
@@ -47,9 +50,9 @@ const PublicationOffersDialog = ({userData, open, handleClose}) => {
                                 </span>
                             ))}
                         </div>
-                        <span>{closeDialog()}</span>
                 </section>
                 <section className="section_info_products">
+                        <span>{closeDialog()}</span>
                         <h1 className="info_products_title">{userData.title}</h1>
                         <p className="info_products_description">{userData.description}</p>
                         <div className="info_pruducts_amount" style={{display:"flex", alignItems:"center", gap:"20px"}}>
@@ -65,10 +68,12 @@ const PublicationOffersDialog = ({userData, open, handleClose}) => {
                             </div>
                         </div>
 
-                        <div className="section--buttons_producs">
-                            <button className={`button-shopping-cart ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>{shoppingCart()}Añadir al carrito</button>
-                            <button className={`button-buy-now ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>Comprar ahora</button>
-                        </div>
+                        {rol !== "admin" && (
+                            <div className="section--buttons_producs">
+                                <button className={`button-shopping-cart ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>{shoppingCart()}Añadir al carrito</button>
+                                <button className={`button-buy-now ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>Comprar ahora</button>
+                            </div>
+                        )}
 
                         <div className="section_specs_products">
                             <h5 style={{fontFamily:"Manrope", marginTop:"15px", fontWeight: "600"}}>Especificaciones:</h5>

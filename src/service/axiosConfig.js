@@ -1,7 +1,8 @@
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
 const api = axios.create({
-    baseURL: "https://swappay-backend-production.up.railway.app", // URL DEL BACKEND
+    baseURL: API_URL, // URL DEL BACKEND
     withCredentials: true
 })
 

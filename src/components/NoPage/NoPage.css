@@ -1,0 +1,40 @@
+.no-page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f7f9fc;
+  font-family: "Manrope";
+}
+
+.no-page-404 {
+  font-size: 8rem;
+  color: #285194;
+  margin: 0;
+  font-weight: bold;
+  letter-spacing: 10px;
+}
+
+.no-page-text {
+  font-size: 1.5rem;
+  margin: 20px 0;
+  color: #333;
+  text-align: center;
+}
+
+.no-page-btn {
+  padding: 12px 32px;
+  font-size: 1rem;
+  font-family: "Outfit";
+  background: #285194;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.no-page-btn:hover {
+  background: #3166b9;
+}

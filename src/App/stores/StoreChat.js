@@ -38,12 +38,6 @@ export const useChatUser = create(
                     
                     // Normalizamos cada registro de sala al formato que consume la UI
                     const formattedChats = data.map(room => {
-                        // Logs de apoyo para validar estructura de cada sala
-                        console.log("🔍 Procesando sala:", room);
-                        console.log("   - room.user1Id:", room.user1Id);
-                        console.log("   - room.user2Id:", room.user2Id);
-                        console.log("   - User1:", room.User1);
-                        console.log("   - User2:", room.User2);
                         
                         // Si faltan las asociaciones de usuario, no podemos identificar al otro participante
                         if (!room.User1 || !room.User2) {
@@ -62,9 +56,6 @@ export const useChatUser = create(
                         if (otherUser && Number(otherUser.id) === idActual) {
                             otherUser = Number(room.user1Id) === idActual ? room.User1 : room.User2; // Intercambio
                         }
-                        // Logs para verificar la selección del otro usuario
-                        console.log("   - Otro usuario seleccionado:", otherUser);
-                        console.log(`   - Usuario actual: ${idActual}, Nombre del otro usuario: ${otherUser.username}`);
                         
                         // Formato final que entiende la UI (lista de chats y LiveChat)
                         return {

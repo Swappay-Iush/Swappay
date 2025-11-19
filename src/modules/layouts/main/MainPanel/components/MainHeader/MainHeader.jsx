@@ -19,10 +19,10 @@ const MainHeader = () => {
 
     const navigate = useNavigate(); //Utilizamos esto para navegar entre rutas.
     const location = useLocation(); //Usamos esto para verificar la ruta actual según la URL.
-    const {username, logout, profileImageUser } = useUserStore(); //Se obtiene el username, cierre de sesión e imagen del usuario.
+    const {username, logout, profileImageUser, rol } = useUserStore(); //Se obtiene el username, cierre de sesión e imagen del usuario.
 
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
-    const [buttonSelected, setButtonSelected] = useState("Panel"); //Estado que almacena el botón seleccionado.
+    const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
 
     const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los swapCoins.
@@ -48,11 +48,21 @@ const MainHeader = () => {
         navigate(sectionRef)
     }
 
-    const allSections = [ //Arreglo de objetos para mapearlos y mostrar las secciones disponibles.
+    const userSections = [ //Arreglo de objetos para mapearlos y mostrar las secciones disponibles.
         {name: "Panel", ref: "/panel"}, 
         {name: "Ofertas", ref: "/ofertas"},
         {name: "Intercambios", ref: "/intercambios"}
     ]
+
+    const adminSections = [
+        { name: "Usuarios", ref: "/admin/usuarios" },
+        { name: "Productos", ref: "/admin/productos" },
+        { name: "Intercambios", ref: "/admin/intercambios" },
+        //{ name: "Intercambio y Ventas", ref: "/admin/intercambios_ventas" },
+    ];
+
+    const visibleSections = rol === "admin" ? adminSections : userSections;
+    const actionRol = rol === "admin";
 
     const sectionSelected = (nameSection, refNavigate) => { //Función que permite actualizar el botón seleccionado y navegar hacia una ruta correspondiente. 
         setButtonSelected(nameSection);
@@ -60,10 +70,19 @@ const MainHeader = () => {
     }
 
     useEffect(() => { //Hook que controla el enfoque de las secciones según la ruta correspondiente.
-        if(location.pathname === "/panel") setButtonSelected("Panel");
-        else if(location.pathname === "/ofertas") setButtonSelected("Ofertas");
-        else if(location.pathname === "/intercambios") setButtonSelected("Intercambios");
-    }, [location.pathname])
+        if (rol === "admin") {
+            // Rutas para administrador
+            if(location.pathname === "/admin/usuarios") setButtonSelected("Usuarios");
+            else if(location.pathname === "/admin/productos") setButtonSelected("Productos");
+            else if(location.pathname === "/admin/intercambios") setButtonSelected("Intercambios");
+            //else if(location.pathname === "/admin/intercambios_ventas") setButtonSelected("Intercambio y Ventas");
+        } else {
+            // Rutas para usuario normal
+            if(location.pathname === "/panel") setButtonSelected("Panel");
+            else if(location.pathname === "/ofertas") setButtonSelected("Ofertas");
+            else if(location.pathname === "/intercambios") setButtonSelected("Intercambios");
+        }
+    }, [location.pathname, rol])
 
     const userLogout = async () => { //Función que permite cerrar la sesión del usuario.
         try {
@@ -77,21 +96,23 @@ const MainHeader = () => {
     return (
         <div className="container_Header_panel">
             <section className="sections_header">
-                <h1 className="title_header">Swappay</h1>
-                {allSections.map((value, index) => ( //Mapeamos el arreglo para mostrar las opciones.
-                    <a key={index} onClick={() => sectionSelected(value.name, value.ref)} id={buttonSelected === value.name && allSections.some(section => section.ref === location.pathname) ? "buttonSelected_header" : ""}>
+                <h1 className="title_header">{rol === "admin" ? "Swappay admin" : "Swappay"}</h1>
+                {visibleSections.map((value, index) => ( //Mapeamos el arreglo para mostrar las opciones.
+                    <a key={index} onClick={() => sectionSelected(value.name, value.ref)} id={buttonSelected === value.name && visibleSections.some(section => section.ref === location.pathname) ? "buttonSelected_header" : ""}>
                         {value.name}
                     </a>
                 ))}
             </section>
             <section className="sections_header">
-                <div className="swapCoin_header">
-                    {bsCoin()} {/*Icono de los swapcoins */}
-                    <div className="info_swapcoin">
-                        <div className="text_swapcoins">Mis Swapcoins:</div>
-                        <div className="value_swapcoins">{50}</div>
+                {!actionRol && (
+                    <div className="swapCoin_header">
+                        {bsCoin()} {/*Icono de los swapcoins */}
+                        <div className="info_swapcoin">
+                            <div className="text_swapcoins">Mis Swapcoins:</div>
+                            <div className="value_swapcoins">{50}</div>
+                        </div>
                     </div>
-                </div>
+                )}
                 <Avatar
                     className="profile_user_header"
                     src={loading ? "Cargando imagen" : profileImageUser}

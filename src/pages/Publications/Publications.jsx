@@ -9,7 +9,7 @@ import ProductForm from "../../modules/products/ProductForm/ProductForm";
 
 import PublicationDialog from "../../modules/publications/PublicationDialog/PublicationDialog"; //Importamos el componente del popup para ver más detalles de la publicación.
 
-import InfoPopup from "../../components/InfoPopup/InfoPopup";
+import InfoPopup from "../../components/infoPopup/infoPopup";
 
 const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
