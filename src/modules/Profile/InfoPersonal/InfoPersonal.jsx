@@ -135,11 +135,6 @@ const InfoPersonal = () => {
             <section className="priority_info_user">
                 <h5>{loading ? "Usuario" : username}</h5>
                 <h5>{loading ? "Pais" : country}</h5>
-                {rol === "user" && (
-                    <h5 style={{background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', border: '1px solid #FFD700', color: '#fff', fontWeight: '600'}}>
-                        💰 {loading ? "0" : swappcoins} SwappCoins
-                    </h5>
-                )}
                 <h5>
                     <Stack spacing={1} className="rating_users">
                         <Rating name="half-rating" defaultValue={5} precision={0.5} readOnly /> {/*Estrellas de calificación en solo lectura.*/}
