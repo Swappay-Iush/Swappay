@@ -7,7 +7,7 @@ import { FaTrash} from 'react-icons/fa'
 import { BiMessageAdd } from "react-icons/bi";
 
 import TableInfo from "../../../components/tableInfo/TableInfo";
-import InfoPopup from "../../../components/infoPopup/infoPopup";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup";
 import UpdateMessage from "./components/UpdateMessage";
 
 import { toast } from 'react-toastify';
