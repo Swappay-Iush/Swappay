@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import "./MainHeader.css"
 
-import { BsCoin } from "react-icons/bs"; //Importamos el icono usado para los swapcoins
+import { BsCoin } from "react-icons/bs"; //Importamos el icono usado para los swappcoins
 
 //Importamos componentes a utilizar desde materialUI
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
@@ -19,13 +19,13 @@ const MainHeader = () => {
 
     const navigate = useNavigate(); //Utilizamos esto para navegar entre rutas.
     const location = useLocation(); //Usamos esto para verificar la ruta actual según la URL.
-    const {username, logout, profileImageUser, rol } = useUserStore(); //Se obtiene el username, cierre de sesión e imagen del usuario.
+    const {username, logout, profileImageUser, rol, swappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
 
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
     const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
 
-    const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los swapCoins.
+    const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los Swappcoins.
     
     useEffect (() => { //Actualiza loading si el username está disponible en el store.
         if(username === null){
@@ -106,10 +106,10 @@ const MainHeader = () => {
             <section className="sections_header">
                 {!actionRol && (
                     <div className="swapCoin_header">
-                        {bsCoin()} {/*Icono de los swapcoins */}
+                        {bsCoin()} {/*Icono de los swappcoins */}
                         <div className="info_swapcoin">
-                            <div className="text_swapcoins">Mis Swapcoins:</div>
-                            <div className="value_swapcoins">{50}</div>
+                            <div className="text_swapcoins">Mis Swappcoins:</div>
+                            <div className="value_swapcoins">{swappcoins || 0}</div>
                         </div>
                     </div>
                 )}
