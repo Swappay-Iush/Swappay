@@ -44,7 +44,16 @@ const Login = () => {
 
             const data = response.data;
 
-            setUser(data)
+            setUser({
+                id: data.id,
+                username: data.username,
+                rol: data.rol,
+                country: data.country,
+                email: data.email,
+                swappcoins: data.swappcoins || 0,
+                completedTrades: data.completedTrades || 0,
+                profileCompletedReward: data.profileCompletedReward || false
+            })
             setChangeLogin(true);
             
             toast.success(`¡Bienvenid@! ${data.username}`, { position: "top-center",autoClose: 1500,hideProgressBar: false,closeOnClick: true,

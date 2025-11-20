@@ -23,7 +23,7 @@ const InfoPersonal = () => {
     const[visButtonConfig, setVisButtonConfig] = useState(true);
     const[avatarSrc, setAvatarSrc] = useState(null); // Estado para la imagen del avatar
     const[loading, setLoading] = useState(true);
-    const {username, country, isVerified, id, profileImageUser, setUser, rol} = useUserStore();
+    const {username, country, isVerified, id, profileImageUser, setUser, rol, swappcoins} = useUserStore();
 
     useEffect(() => { //UseEffect que permite cargar todos los datos que vienen del back, para poderlos mostrar.
         if(!isVerified) setLoading(true)  //Si el usuario no esta verificado, muestra el componente de carga, si no, lo oculta
@@ -135,6 +135,11 @@ const InfoPersonal = () => {
             <section className="priority_info_user">
                 <h5>{loading ? "Usuario" : username}</h5>
                 <h5>{loading ? "Pais" : country}</h5>
+                {rol === "user" && (
+                    <h5 style={{background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', border: '1px solid #FFD700', color: '#fff', fontWeight: '600'}}>
+                        💰 {loading ? "0" : swappcoins} SwappCoins
+                    </h5>
+                )}
                 <h5>
                     <Stack spacing={1} className="rating_users">
                         <Rating name="half-rating" defaultValue={5} precision={0.5} readOnly /> {/*Estrellas de calificación en solo lectura.*/}
