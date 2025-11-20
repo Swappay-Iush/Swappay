@@ -10,7 +10,7 @@ import api from "../../../service/axiosConfig";
 import ActionUsers from "./components/ActionUsers/ActionUsers";
 import TableInfo from "../../../components/tableInfo/TableInfo";
 
-import InfoPopup from "../../../components/infoPopup/infoPopup";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup";
 
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
