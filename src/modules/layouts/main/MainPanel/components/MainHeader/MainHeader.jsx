@@ -19,7 +19,7 @@ const MainHeader = () => {
 
     const navigate = useNavigate(); //Utilizamos esto para navegar entre rutas.
     const location = useLocation(); //Usamos esto para verificar la ruta actual según la URL.
-    const {username, logout, profileImageUser, rol, swappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
+    const {username, logout, profileImageUser, rol, swappcoins, id, updateSwappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
 
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
     const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : "Panel"); //Estado que almacena el botón seleccionado.
@@ -27,6 +27,13 @@ const MainHeader = () => {
 
     const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los Swappcoins.
     
+    // Actualizar swappcoins al cargar el componente
+    useEffect(() => {
+        if (id && rol === "user") {
+            updateSwappcoins(id).catch(err => console.error("Error al cargar swappcoins:", err));
+        }
+    }, [id, rol]);
+
     useEffect (() => { //Actualiza loading si el username está disponible en el store.
         if(username === null){
             setLoading(true);
