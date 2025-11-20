@@ -12,7 +12,7 @@ import TableInfo from "../../../components/tableInfo/TableInfo";
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 
-import InfoPopup from "../../../components/infoPopup/infoPopup";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup";
 
 import {MenuItem, Select, FormControl } from '@mui/material';
 
