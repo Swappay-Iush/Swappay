@@ -10,7 +10,6 @@ import api from "../../../service/axiosConfig";
 import { toast } from "react-toastify";
 
 // Icono de opciones del chat (no funcional aún)
-import MoreVertIcon from "@mui/icons-material/MoreVert";  
 // Componente Avatar de MUI para mostrar foto o iniciales
 import Avatar from '@mui/material/Avatar';
 // Store de sesión para obtener el id del usuario autenticado
@@ -352,8 +351,21 @@ const LiveChat = ({ infoUser }) => {
                             })()
                         }
                     
-                    {/* Icono de opciones del chat (placeholder) */}
-                    <MoreVertIcon className="chat_options_icon" style={{ cursor: "pointer" }}/>
+                    {/* Icono de opciones del chat */}
+                    <IconButton onClick={(e) => setMenuAnchor(e.currentTarget)} size="small">
+                        <MoreVertIcon className="chat_options_icon" />
+                    </IconButton>
+                    <Menu
+                        anchorEl={menuAnchor}
+                        open={Boolean(menuAnchor)}
+                        onClose={() => setMenuAnchor(null)}
+                    >
+                        {tradeStatus?.tradeCompleted === 'completado' ? (
+                            <MenuItem onClick={handleNewExchange}>Nuevo intercambio</MenuItem>
+                        ) : (
+                            <MenuItem onClick={() => { setMenuAnchor(null); }}>Opciones</MenuItem>
+                        )}
+                    </Menu>
                 </div>
             </header>
 
