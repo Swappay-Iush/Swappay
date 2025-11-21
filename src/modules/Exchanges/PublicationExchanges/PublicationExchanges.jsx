@@ -113,7 +113,7 @@ const PublicationExchanges = ({ textSearch }) => {
       <div className="title_filter_info_offers">
         <h1 className="title_section_exchange">{dataFilter.length} Intercambios disponibles</h1>
 
-        <FormControl fullWidth variant="outlined" sx={{ width: "200px" }}>
+        <FormControl fullWidth variant="outlined" sx={{ width: "200px", zIndex: "0" }}>
           <InputLabel id="category-label">Categoría</InputLabel>
           <Select
             labelId="category-label"
