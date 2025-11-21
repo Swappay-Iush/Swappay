@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import "./MainHeader.css"
 
 import { BsCoin } from "react-icons/bs"; //Importamos el icono usado para los swapcoins
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 //Importamos componentes a utilizar desde materialUI
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
@@ -16,6 +15,11 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate, useLocation } from "react-router-dom"; //Usamos router-dom para validación y manejo de rutas.
 import { useUserStore } from "../../../../../../App/stores/Store"; //Importamos el store.
 import CartModal from "../Cart/CartModal";
+
+import { styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import Badge, { badgeClasses } from '@mui/material/Badge';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 const MainHeader = () => {
 
@@ -77,6 +81,13 @@ const MainHeader = () => {
         }
     }
 
+    const CartBadge = styled(Badge)`
+        & .${badgeClasses.badge} {
+            top: -12px;
+            right: -6px;
+        }
+    `;
+
     return (
         <div className="container_Header_panel">
             <section className="sections_header">
@@ -95,10 +106,10 @@ const MainHeader = () => {
                         <div className="value_swapcoins">{50}</div>
                     </div>
                 </div>
-                {/* Botón de carrito */}
-                <button className="cart_button_header" onClick={() => setOpenCart(true)} aria-label="Abrir carrito">
-                    <ShoppingCartOutlinedIcon style={{ color: '#000' }} />
-                </button>
+                <IconButton onClick={() => setOpenCart(true)}>
+                    <ShoppingCartIcon fontSize="medium" style={{color:"#c4c4c4ff"}}/>
+                    <CartBadge badgeContent={3} color="primary" overlap="circular" />
+                </IconButton>
                 <Avatar
                     className="profile_user_header"
                     src={loading ? "Cargando imagen" : profileImageUser}
