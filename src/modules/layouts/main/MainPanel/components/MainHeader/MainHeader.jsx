@@ -125,17 +125,19 @@ const MainHeader = () => {
             </section>
             <section className="sections_header">
                 {!actionRol && (
-                    <div className="swapCoin_header">
-                        {bsCoin()} {/*Icono de los swappcoins */}
-                        <div className="info_swapcoin">
-                            <div className="text_swapcoins">Mis Swappcoins:</div>
-                            <div className="value_swapcoins">{swappcoins || 0}</div>
+                    <>
+                        <div className="swapCoin_header">
+                            {bsCoin()} {/*Icono de los swappcoins */}
+                            <div className="info_swapcoin">
+                                <div className="text_swapcoins">Mis Swappcoins:</div>
+                                <div className="value_swapcoins">{swappcoins || 0}</div>
+                            </div>
                         </div>
-                    </div>
-                    <IconButton onClick={() => setOpenCart(true)}>
-                        <ShoppingCartIcon fontSize="medium" style={{color:"#c4c4c4ff"}}/>
-                        <CartBadge badgeContent={3} color="primary" overlap="circular" />
-                    </IconButton>
+                        <IconButton onClick={() => setOpenCart(true)}>
+                            <ShoppingCartIcon fontSize="medium" style={{color:"#c4c4c4ff"}}/>
+                            <CartBadge badgeContent={3} color="primary" overlap="circular" />
+                        </IconButton>
+                    </>
                 )}
                 
                 <Avatar
