@@ -7,27 +7,23 @@
       "idProductOffer": 101,
       "idProduct": null,
       "quantity": 1,
-      "priceSnapshot": 50.00,
-      "swapcoinsSnapshot": 500,
-      "offeredProductId": null,
       "productOffer": {
         "id": 101,
         "title": "Computador HP Pavilion",
         "description": "Laptop en excelente estado",
         "category": "Tecnología",
-        "priceOriginal": 50.00,
+        "priceOriginal": 50.0,
         "priceDiscount": 0,
         "discount": 0,
         "priceSwapcoins": 500,
         "availability": true,
-        "img1": "../../../../../../resources/images/computer.png",
+        "img1": "computer",
         "user": {
           "id": 5,
           "username": "Usuario1",
           "profileImage": null
         }
-      },
-      "createdAt": "2025-11-20T10:30:00.000Z"
+      }
     },
     {
       "id": 2,
@@ -36,27 +32,23 @@
       "idProductOffer": 102,
       "idProduct": null,
       "quantity": 2,
-      "priceSnapshot": 15.00,
-      "swapcoinsSnapshot": 150,
-      "offeredProductId": null,
       "productOffer": {
         "id": 102,
         "title": "Curso de Diseño Swappay",
         "description": "Curso completo de diseño gráfico",
         "category": "Educación",
-        "priceOriginal": 20.00,
-        "priceDiscount": 15.00,
+        "priceOriginal": 20.0,
+        "priceDiscount": 15.0,
         "discount": 25,
         "priceSwapcoins": 150,
         "availability": true,
-        "img1": "../../../../../../resources/images/Designer.png",
+        "img1": "designer",
         "user": {
           "id": 8,
           "username": "Usuario2",
           "profileImage": null
         }
-      },
-      "createdAt": "2025-11-20T11:15:00.000Z"
+      }
     },
     {
       "id": 3,
@@ -65,9 +57,6 @@
       "idProductOffer": null,
       "idProduct": 201,
       "quantity": 1,
-      "priceSnapshot": null,
-      "swapcoinsSnapshot": 50,
-      "offeredProductId": 301,
       "product": {
         "id": 201,
         "title": "Cámara Canon EOS",
@@ -75,8 +64,8 @@
         "category": "Tecnología",
         "condition": "Usado",
         "interests": "Trueque",
-        "priceSwapcoins": "50",
-        "image1": "../../../../../../resources/images/discount.png",
+        "priceSwapcoins": 50,
+        "image1": "discount",
         "ubication": "Bogotá",
         "deliveryMethod": "Envio",
         "user": {
@@ -86,24 +75,11 @@
         }
       },
       "offeredProduct": {
-        "id": 301,
         "title": "Mi Laptop Lenovo",
         "description": "Laptop que ofrezco en intercambio",
         "category": "Tecnología",
-        "condition": "Usado",
-        "image1": "../../../../../../resources/images/computer.png"
-      },
-      "createdAt": "2025-11-20T12:00:00.000Z"
+        "condition": "Usado"
+      }
     }
-  ],
-  "summary": {
-    "totalItems": 3,
-    "purchaseItems": 2,
-    "exchangeItems": 1,
-    "subtotalDollars": 80.00,
-    "subtotalSwapcoins": 800,
-    "exchangeProcessingFees": 50,
-    "totalDollars": 80.00,
-    "totalSwapcoins": 850
-  }
+  ]
 }
