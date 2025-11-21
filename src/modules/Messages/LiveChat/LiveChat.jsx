@@ -18,7 +18,10 @@ import { useUserStore } from "../../../App/stores/Store";
 
 const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
-// Componente principal del chat; recibe infoUser con {salaID, userId, username, userImage}
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
 const LiveChat = ({ infoUser }) => { 
     // Estado controlado del input de mensaje
     const [message, setMessage] = useState("");
@@ -36,6 +39,26 @@ const LiveChat = ({ infoUser }) => {
     const messagesEndRef = useRef(null);
     // Id del usuario autenticado desde el store
     const { id: currentUserId } = useUserStore();
+    // Estado para el menú de opciones (tres puntitos)
+    const [menuAnchor, setMenuAnchor] = useState(null);
+
+    // Acción: iniciar un nuevo intercambio (resetea el acuerdo y actualiza messagesInfo)
+    const handleNewExchange = async () => {
+        if (!infoUser?.salaID) return;
+        setMenuAnchor(null);
+        try {
+            // Resetear acuerdo en backend
+            await api.post('/chat/trade/reset', { chatRoomId: infoUser.salaID });
+            // Añadir una entrada para que la última posición deje de ser 'Intercambio exitoso'
+            await api.post(`/chat/trade/messages/${infoUser.salaID}`, { messagesInfo: ['Reinicio de intercambio'] });
+            // Refrescar estado local
+            await fetchTradeStatus();
+            toast.success('Nuevo intercambio iniciado. El estado se ha reiniciado.');
+        } catch (err) {
+            console.error('Error al iniciar nuevo intercambio:', err);
+            toast.error('No se pudo iniciar nuevo intercambio.');
+        }
+    };
 
     // Conectar socket una sola vez al montar el componente
     useEffect(() => {
@@ -272,36 +295,62 @@ const LiveChat = ({ infoUser }) => {
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     {/* Sección de estado del intercambio */}
-                    {tradeStatus && tradeStatus.tradeCompleted === 'en_proceso' ? (
-                        // Intercambio completado - mostrar botón verde deshabilitado con mismo diseño
-                        <button
-                            className="trade_btn trade_btn--success"
-                            disabled
-                        >
-                            ✓ Intercambio en proceso
-                        </button>
-                    ) : (
-                        // Intercambio pendiente - mostrar botón y estado
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            {/* Botón para aceptar intercambio */}
-                            <button 
-                                onClick={handleAcceptTrade}
-                                disabled={loadingTrade}
-                                className={`trade_btn ${tradeStatus?.currentUserAccepted ? 'trade_btn--success' : 'trade_btn--primary'}`}
-                            >
-                                {loadingTrade ? '⏳ Procesando...' : (
-                                    tradeStatus?.currentUserAccepted ? '✓ Has Aceptado' : 'Aceptar intercambio'
-                                )}
-                            </button>
-                            
-                            {/* Indicador de estado del otro usuario */}
-                            {tradeStatus?.otherUserAccepted && (
-                                <span className="trade_status_text">
-                                    ✓ {infoUser?.username} aceptó
-                                </span>
-                            )}
-                        </div>
-                    )}
+                        {
+                            (() => {
+                                // Determinar roles y estados locales
+                                const user1Id = tradeStatus?.user1Id;
+                                const user2Id = tradeStatus?.user2Id;
+                                const iAccepted = tradeStatus ? (Number(user1Id) === Number(currentUserId) ? tradeStatus.user1Accepted : tradeStatus.user2Accepted) : false;
+                                const otherAccepted = tradeStatus ? (Number(user1Id) === Number(currentUserId) ? tradeStatus.user2Accepted : tradeStatus.user1Accepted) : false;
+                                const bothAccepted = tradeStatus && (tradeStatus.user1Accepted && tradeStatus.user2Accepted);
+
+                                // Caso: intercambio completado (final)
+                                if (tradeStatus && tradeStatus.tradeCompleted === 'completado') {
+                                    return (
+                                        <button className="trade_btn trade_btn--success" disabled>
+                                            ✓ Intercambio completado
+                                        </button>
+                                    );
+                                }
+
+                                // Caso: ambos aceptaron → mostrar estado en proceso
+                                if (bothAccepted || (tradeStatus && tradeStatus.tradeCompleted === 'en_proceso')) {
+                                    return (
+                                        <button className="trade_btn trade_btn--success" disabled>
+                                            ✓ Intercambio en proceso
+                                        </button>
+                                    );
+                                }
+
+                                // Caso: yo acepté y el otro no → mostrar para mi 'Intercambio en proceso'
+                                if (iAccepted && !otherAccepted) {
+                                    return (
+                                        <button className="trade_btn trade_btn--success" disabled>
+                                            ✓ Intercambio en proceso
+                                        </button>
+                                    );
+                                }
+
+                                // Caso: el otro aceptó y yo no → mostrar botón activo para aceptar y texto explicativo
+                                return (
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <button 
+                                            onClick={handleAcceptTrade}
+                                            disabled={loadingTrade}
+                                            className={`trade_btn ${iAccepted ? 'trade_btn--success' : 'trade_btn--primary'}`}
+                                        >
+                                            {loadingTrade ? '⏳ Procesando...' : (iAccepted ? '✓ Has Aceptado' : 'Aceptar intercambio')}
+                                        </button>
+
+                                        {otherAccepted && !iAccepted && (
+                                            <span className="trade_status_text">
+                                                Intercambio aceptado por el otro, esperando tu confirmación
+                                            </span>
+                                        )}
+                                    </div>
+                                );
+                            })()
+                        }
                     
                     {/* Icono de opciones del chat (placeholder) */}
                     <MoreVertIcon className="chat_options_icon" style={{ cursor: "pointer" }}/>
