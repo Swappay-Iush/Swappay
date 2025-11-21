@@ -13,7 +13,7 @@ const Exchanges = () => {
                     <h1 className="exchange_title">Encuentra tu próximo tesoro</h1>
                     <p className="exchange_info">
                         Explora una variedad de artículos únicos y encuentra el intercambio perfecto para ti, dale una segunda vida a lo que ya no usas. 
-                        Podrás utilizar tus <strong>SwapCoins</strong> para realizar intercambios con otros usuarios.
+                        Podrás utilizar tus <strong>Swappcoins</strong> para realizar intercambios con otros usuarios.
                     </p>
                     <div className="container_filter">
                         <InputSearch setTextSearch={setTextSearch} /> {/* Barra de búsqueda */}

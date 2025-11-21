@@ -22,7 +22,7 @@ const MainData = () => {
             <section className="mainDataHero">
                 <div className="mainDataContainerHero">  {/*Crea mensaje de bienvenida personalizado*/}
                     <h3>Bienvenid@ {username}</h3>
-                    <p>En este espacio podrás intercambiar, descubrir promociones y aprovechar al máximo tus Swapcoins.</p>
+                    <p>En este espacio podrás intercambiar, descubrir promociones y aprovechar al máximo tus Swappcoins.</p>
                 </div>
                 <div className="mainDataImageHero">
                      <img src={Computer} alt="" />

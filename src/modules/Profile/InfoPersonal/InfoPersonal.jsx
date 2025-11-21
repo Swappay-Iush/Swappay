@@ -23,7 +23,7 @@ const InfoPersonal = () => {
     const[visButtonConfig, setVisButtonConfig] = useState(true);
     const[avatarSrc, setAvatarSrc] = useState(null); // Estado para la imagen del avatar
     const[loading, setLoading] = useState(true);
-    const {username, country, isVerified, id, profileImageUser, setUser, rol} = useUserStore();
+    const {username, country, isVerified, id, profileImageUser, setUser, rol, swappcoins} = useUserStore();
 
     useEffect(() => { //UseEffect que permite cargar todos los datos que vienen del back, para poderlos mostrar.
         if(!isVerified) setLoading(true)  //Si el usuario no esta verificado, muestra el componente de carga, si no, lo oculta

@@ -89,7 +89,7 @@ const PublicationDialog = ({dataUser, open, handleClose}) => { //Recibimos como 
                     </div>
                     {dataUser.priceSwapcoins && (
                         <div className="detail_item">
-                            <span className="detail_label">Precio en Swapcoins:</span>
+                            <span className="detail_label">Precio en Swappcoins:</span>
                             <span className="detail_value">{dataUser.priceSwapcoins}</span>
                         </div>
                     )}

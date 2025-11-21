@@ -17,8 +17,8 @@ const Offers = () => {
                     <IoIosTrendingUp style={{fontSize:"18px", color:"#fff"}}/>
                     Ofertas exclusivas actualizadas
                 </div>
-                <h1 className="offers_title">Aprovecha tus SwapCoins y consigue más por menos</h1>
-                <p className="offers_description">Combina dinero real con SwapCoins y accede a descuentos únicos en productos premium</p>
+                <h1 className="offers_title">Aprovecha tus Swappcoins y consigue más por menos</h1>
+                <p className="offers_description">Combina dinero real con Swappcoins y accede a descuentos únicos en productos premium</p>
                 <div className="container_filter">
                     <InputSearch setTextSearch={setTextSearch}/> {/*Componente de la barra de búsqueda, le pasamos la función para actualizar el estado del texto de búsqueda.*/}
                 </div>

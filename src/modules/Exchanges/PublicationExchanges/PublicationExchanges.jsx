@@ -5,7 +5,7 @@ import PublicationExchangesDialog from "../PublicatinExchangesDialog/Publication
 import api from "../../../service/axiosConfig"; //Llamamos el back
 import iconEmpty from "../../../resources/images/productos.svg";
 import { useNavigate } from "react-router-dom";
-import InfoPopup from "../../../components/infoPopup/infoPopup.jsx";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup.jsx";
 
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
 import { useUserStore } from "../../../App/stores/Store";

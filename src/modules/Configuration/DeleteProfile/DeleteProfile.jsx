@@ -7,7 +7,7 @@ import {Typography, TextField, Button} from '@mui/material'; //Importamos compon
 import { useUserStore } from "../../../App/stores/Store"; //Importamos el store para manejar los estados globales.
 import api from "../../../service/axiosConfig"; //Importamos api, para luego tener comunicación con el backend.
 
-import InfoPopup from "../../../components/infoPopup/infoPopup"; //Importamos la ventana emergente de confirmación para eliminar el perfil.
+import InfoPopup from "../../../components/InfoPopup/InfoPopup"; //Importamos la ventana emergente de confirmación para eliminar el perfil.
 
 import { useNavigate } from "react-router-dom"; //Importamos useNavigate para el manejo de rutas.
 import { toast } from "react-toastify"; //Importamos los push para los mensajes informativos.
