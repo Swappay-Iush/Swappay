@@ -14,14 +14,20 @@ import PersonIcon from '@mui/icons-material/Person';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate, useLocation } from "react-router-dom"; //Usamos router-dom para validación y manejo de rutas.
 import { useUserStore } from "../../../../../../App/stores/Store"; //Importamos el store.
+import CartModal from "../Cart/CartModal";
+
+import { styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import Badge, { badgeClasses } from '@mui/material/Badge';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 const MainHeader = () => {
 
     const navigate = useNavigate(); //Utilizamos esto para navegar entre rutas.
     const location = useLocation(); //Usamos esto para verificar la ruta actual según la URL.
     const {username, logout, profileImageUser, rol, swappcoins, id, updateSwappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
-
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
+    const [openCart, setOpenCart] = useState(false); //Estado para abrir/cerrar el carrito
     const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
 
@@ -100,6 +106,13 @@ const MainHeader = () => {
         }
     }
 
+    const CartBadge = styled(Badge)`
+        & .${badgeClasses.badge} {
+            top: -12px;
+            right: -6px;
+        }
+    `;
+
     return (
         <div className="container_Header_panel">
             <section className="sections_header">
@@ -112,14 +125,21 @@ const MainHeader = () => {
             </section>
             <section className="sections_header">
                 {!actionRol && (
-                    <div className="swapCoin_header">
-                        {bsCoin()} {/*Icono de los swappcoins */}
-                        <div className="info_swapcoin">
-                            <div className="text_swapcoins">Mis Swappcoins:</div>
-                            <div className="value_swapcoins">{swappcoins || 0}</div>
+                    <>
+                        <div className="swapCoin_header">
+                            {bsCoin()} {/*Icono de los swappcoins */}
+                            <div className="info_swapcoin">
+                                <div className="text_swapcoins">Mis Swappcoins:</div>
+                                <div className="value_swapcoins">{swappcoins || 0}</div>
+                            </div>
                         </div>
-                    </div>
+                        <IconButton onClick={() => setOpenCart(true)}>
+                            <ShoppingCartIcon fontSize="medium" style={{color:"#c4c4c4ff"}}/>
+                            <CartBadge badgeContent={3} color="primary" overlap="circular" />
+                        </IconButton>
+                    </>
                 )}
+                
                 <Avatar
                     className="profile_user_header"
                     src={loading ? "Cargando imagen" : profileImageUser}
@@ -145,6 +165,10 @@ const MainHeader = () => {
                     </MenuItem>
                 </Menu>
             </section>
+            {/* Modal del carrito */}
+            {openCart && (
+                <CartModal open={openCart} onClose={() => setOpenCart(false)} />
+            )}
         </div>
     );
 }
