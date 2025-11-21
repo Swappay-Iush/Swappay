@@ -1,0 +1,143 @@
+.container_admin_users{
+    height: calc(100vh - 80px);
+    padding: 20px;
+
+}
+
+.container_table_user{
+    padding: 20px;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.search_add_user{
+    display: flex;
+    justify-content: right;
+    gap: 20px;
+}
+
+.search_add_user input{
+    height: 40px;
+    width: 400px;
+    border-radius: 6px;
+    border: 1px solid grey;
+    font-family: "Manrope";
+}
+
+.search_add_user input:focus{
+    outline: none;
+}
+
+.search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 0 12px;
+    border: 1px solid #dbe2ea;
+}
+
+.search-input-wrapper input {
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    background: transparent;
+}
+
+.search_add_user button{
+    border: none;
+    border-radius: 6px;
+    padding: 0 10px;
+    background-color: #285194;
+    color: #FFF;
+    font-family: "Outfit";  
+}
+
+.search_add_user button:hover{
+    background-color: #2f5da8;
+}
+
+.container_scroll_table{
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.table_admin_users{
+    width: 100%;
+    border-collapse: collapse;
+    
+}
+
+.table_admin_users th, .table_admin_users td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.table_admin_users td{
+    font-family: "Manrope";
+    background-color: #ffff;
+}
+
+.table_admin_users th {
+    background-color: #275092;
+    color: white;
+    font-weight: 600;
+    font-family: "Outfit";
+}
+
+.table_admin_users tr:hover {
+    background-color: #f5f8fa;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    margin: 0 4px;
+    border-radius: 6px;
+    transition: background 0.2s;
+    font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.edit-btn {color: #285194}
+
+.edit-btn:hover { background: #e4ecfa;}
+
+.delete-btn { color: #e74c3c;}
+
+.delete-btn:hover {background: #fdecea;}
+
+
+@media (max-width: 900px){
+    .icon-btn{
+        padding: 4px;
+    }
+}
+
+@media (max-width: 500px) {
+    .search_add_user{
+        flex-direction: column-reverse;
+    }
+
+    .search_add_user button{
+        height:35px;
+    }
+
+    .title_admin_users{
+        text-align: center;
+    }
+
+    .search_add_user input{
+        width: 100%;
+    }
+}

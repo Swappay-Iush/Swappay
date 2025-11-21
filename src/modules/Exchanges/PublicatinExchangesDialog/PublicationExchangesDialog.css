@@ -6,11 +6,11 @@
 
 .modalCloseIcon .iconClose {
   position: absolute;
-  top: 18px;
-  right: 22px;
+  top: 12px;
+  right: 10px;
   font-size: 30px;
   cursor: pointer;
-  color: #666;
+  color: #000;
   z-index: 200;
   transition: .2s ease;
 }

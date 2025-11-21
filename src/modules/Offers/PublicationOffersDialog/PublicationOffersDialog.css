@@ -18,6 +18,20 @@
     left: 20px;
 }
 
+.iconCloseOffers {
+  position: absolute;
+  top: 12px;
+  right:13px;
+  font-size: 30px;
+  cursor: pointer;
+  color: #000;
+  z-index: 200;
+  transition: .2s ease;
+}
+
+.iconCloseOffers:hover{
+    transform: scale(1.1);
+}
 
 .img_product_major{
     max-height: 285px;
@@ -83,7 +97,7 @@ background-color: #f4f4f4;    border-radius: 10px;
     max-width: 93%;
 }
 
-.info_products_category{
+.info_products_category_offers{
     background-color: #0056D2;
     font-family: "Outfit";
     font-size: 15px;

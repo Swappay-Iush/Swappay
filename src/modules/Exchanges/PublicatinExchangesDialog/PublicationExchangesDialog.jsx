@@ -22,7 +22,7 @@ const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para
 const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
   if (!dataUser) return null;
 
-  const {id, username} = useUserStore();
+  const {id, username, rol} = useUserStore();
   const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
   const navigate = useNavigate();
 
@@ -164,19 +164,21 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
             </div>
           </div>
 
-          <div className="exchange_buttons_products">
+          {rol !== "admin" && (
+            <div className="exchange_buttons_products">
 
-            {dataUser.priceSwapcoins && (
-              <button className="button_pricex">
-                Comprar por Swapcoins
+              {dataUser.priceSwapcoins && (
+                <button className="button_pricex">
+                  Comprar por Swapcoins
+                </button>
+              )}
+
+              <button className="button_exchange" onClick={() => usersChat(dataUser)}>
+                Solicitar intercambio
               </button>
-            )}
 
-            <button className="button_exchange" onClick={() => usersChat(dataUser)}>
-              Solicitar intercambio
-            </button>
-
-          </div>
+            </div>
+          )}
 
         </section>
 
