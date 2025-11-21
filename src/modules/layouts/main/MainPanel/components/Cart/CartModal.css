@@ -50,6 +50,15 @@
     background: #e5e5e5;
 }
 
+.icon_btn.delete{
+    background: #ffe5e5;
+    color: #d32f2f;
+}
+
+.icon_btn.delete:hover{
+    background: #ffcccc;
+}
+
 .cart_body{
     padding: 14px 20px;
     max-height: 48vh;
