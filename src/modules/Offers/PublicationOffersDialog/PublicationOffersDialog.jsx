@@ -68,7 +68,7 @@ const PublicationOffersDialog = ({userData, open, handleClose}) => {
                             </div>
                         </div>
 
-                        {rol !== "admin" && (
+                        {rol !== "admin" && rol !== "collaborator" && (
                             <div className="section--buttons_producs">
                                 <button className={`button-shopping-cart ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>{shoppingCart()}Añadir al carrito</button>
                                 <button className={`button-buy-now ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>Comprar ahora</button>

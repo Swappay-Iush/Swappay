@@ -39,7 +39,7 @@ const InfoPersonal = () => {
 
     let valueSections = []
 
-    if(rol === "admin"){
+    if(rol === "admin" || rol === "collaborator"){
         valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
             {name: "Sobre mi", href: "/perfil"},
         ]

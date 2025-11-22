@@ -18,18 +18,35 @@ const AboutMe = () => {
     }, [id, rol]);
 
     useEffect(() => {
-        // Actualizamos la información del usuario cuando cambian los datos del store
-        setInfoUser([
+        const info = [
             {nameInfo: "Fecha de nacimiento: ", valueInfo: userInfo.dateBirth || "Sin información"},
             {nameInfo: "Correo: ", valueInfo: email || "Sin información"},
             {nameInfo: "Genero: ", valueInfo: userInfo.gender || "Sin información"},
             {nameInfo: "Dirección: ", valueInfo: userInfo.address || "Sin información"},
             {nameInfo: "Ciudad: ", valueInfo: userInfo.city || "Sin información"},
             {nameInfo: "Teléfono: ", valueInfo: userInfo.phone || "Sin información"},
-            {nameInfo: "Total intercambios: ", valueInfo: completedTrades || "0"},
-            {nameInfo: "Total compras: ", valueInfo: "0"},
-            {nameInfo: "Total Swappcoins: ", valueInfo: swappcoins || "0"}
-        ]);
+        ];
+
+        if (rol === "user") {
+            info.push(
+                {nameInfo: "Total intercambios: ", valueInfo: completedTrades || "0"},
+                {nameInfo: "Total compras: ", valueInfo: "0"},
+                {nameInfo: "Total Swappcoins: ", valueInfo: swappcoins || "0"}
+            );
+        }else if(rol === "collaborator"){
+            info.push(
+                {nameInfo: "Total productos: ", valueInfo: "0" || "0"},
+                {nameInfo: "Total ventas: ", valueInfo: "0"},
+            );
+        }else if(rol === "admin"){
+            info.push(
+                {nameInfo: "Total usuarios: ", valueInfo: "0" || "0"},
+                {nameInfo: "Total productos: ", valueInfo: "0"},
+                {nameInfo: "Total intercambios: ", valueInfo: "0" || "0"}
+            );
+        }
+
+        setInfoUser(info);
 
         // Calculamos el progreso basado en las tareas completadas
         let tasksCompleted = 0;
