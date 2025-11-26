@@ -28,7 +28,7 @@ const MainHeader = () => {
     const {username, logout, profileImageUser, rol, swappcoins, id, updateSwappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
     const [openCart, setOpenCart] = useState(false); //Estado para abrir/cerrar el carrito
-    const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : rol === "collaborator" ? "Productos en ofertas" : "Panel"); //Estado que almacena el botón seleccionado.
+    const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : rol === "collaborator" ? "Productos" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
 
     const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los Swappcoins.

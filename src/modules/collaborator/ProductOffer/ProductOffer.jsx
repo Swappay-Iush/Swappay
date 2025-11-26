@@ -13,6 +13,7 @@ import InfoPopup from "../../../components/InfoPopup/InfoPopup";
 import { useUserStore } from "../../../App/stores/Store";
 
 import PublicationOffersDialog from "../../Offers/PublicationOffersDialog/PublicationOffersDialog";
+import ProductOfferDialog from "./ProductOfferDialog/ProductOfferDialog";
 
 const ProductOffer = () => {
 
@@ -23,6 +24,8 @@ const ProductOffer = () => {
     const [dataProduct, setDataProduct] = useState([]);
     const [deleteProduct, setDeleteProduct] = useState(0);
     const [searchInput, setSearchInput] = useState("");
+    const [openAddDialog, setOpenAddDialog] = useState(false);
+    const [editProductData, setEditProductData] = useState(null);
     const {id} = useUserStore();
 
     const iconView = () => <GrDocumentText/>;
@@ -61,6 +64,11 @@ const ProductOffer = () => {
         setVisProductOffer(true)
     }
 
+    const handleEditProduct = (product) => {
+        setEditProductData(product);
+        setOpenAddDialog(true);
+    };
+
     const handleClose = () => { //Cierra el Popup
         setVisProductOffer(false); // Cierra el popup
         setDataProduct(null); // Limpia el producto seleccionado
@@ -85,6 +93,7 @@ const ProductOffer = () => {
         }
     }
 
+
     return (
         <div className="container_admin_users">
             <h1 className="title_admin_users" style={{fontFamily:"Outfit"}}>Productos en oferta</h1>
@@ -102,7 +111,7 @@ const ProductOffer = () => {
                                 onChange={(e) => setSearchInput(e.target.value)}
                             />
                         </div>
-                        <button id="button-add-offers">Agregar oferta</button>
+                        <button id="button-add-offers" onClick={() => setOpenAddDialog(true)}>Agregar oferta</button>
                     </div>
                     <div className="container_scroll_table">
                         <TableInfo
@@ -125,7 +134,7 @@ const ProductOffer = () => {
                                     render: (row) => (
                                         <>
                                             <button className="icon-btn edit-btn" title="Visualizar" onClick={() => handleVisProducts(row)}>{iconView()}</button>
-                                            <button className="icon-btn edit-btn" title="Editar">{iconEdit()}</button>
+                                            <button className="icon-btn edit-btn" title="Editar" onClick={() => handleEditProduct(row)}>{iconEdit()}</button>
                                             <button className="icon-btn delete-btn" title="Eliminar" onClick={() => viewDeleteProduct(row.id)}>{iconDelete()}</button>
                                         </>
                                     )
@@ -155,6 +164,14 @@ const ProductOffer = () => {
             {visProductOffer && (
                 <PublicationOffersDialog userData={dataProduct} open={visProductOffer} handleClose={handleClose}/>
             )}
+
+            {/* Dialog para agregar/editar oferta */}
+            <ProductOfferDialog
+                open={openAddDialog}
+                onClose={() => { setOpenAddDialog(false); setEditProductData(null); }}
+                userId={id}
+                editData={editProductData}
+            />
 
             <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar={false} closeOnClick pauseOnHover draggable/>
         </div>
