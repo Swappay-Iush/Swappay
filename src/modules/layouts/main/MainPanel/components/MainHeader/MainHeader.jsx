@@ -71,12 +71,13 @@ const MainHeader = () => {
         { name: "Usuarios", ref: "/admin/usuarios" },
         { name: "Productos", ref: "/admin/productos" },
         { name: "Intercambios", ref: "/admin/intercambios" },
+        { name: "Ventas", ref: "/admin/purchase-history" }
+
         //{ name: "Intercambio y Ventas", ref: "/admin/intercambios_ventas" },
     ];
 
     const collaboratorSections = [
         { name: "Productos", ref: "/collaborator/products" },
-        { name: "Ventas", ref: "/collaborator/purchase-history" }
     ];
 
     const visibleSections = rol === "admin" ? adminSections : rol === "collaborator" ? collaboratorSections : userSections;
@@ -93,10 +94,10 @@ const MainHeader = () => {
             if(location.pathname === "/admin/usuarios") setButtonSelected("Usuarios");
             else if(location.pathname === "/admin/productos") setButtonSelected("Productos");
             else if(location.pathname === "/admin/intercambios") setButtonSelected("Intercambios");
+            else if(location.pathname === "/admin/purchase-history") setButtonSelected("Ventas");
             //else if(location.pathname === "/admin/intercambios_ventas") setButtonSelected("Intercambio y Ventas");
         }else if(rol === "collaborator"){
             if(location.pathname === "/collaborator/products") setButtonSelected("Productos");
-            else if(location.pathname === "/collaborator/purchase-history") setButtonSelected("Ventas");
         } else {
             // Rutas para usuario normal
             if(location.pathname === "/panel") setButtonSelected("Panel");

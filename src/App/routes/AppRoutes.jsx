@@ -58,7 +58,7 @@ const AppRoutes = () => {
             ))}
 
             {/* Rutas de Admin */}
-            {["/admin/usuarios", "/admin/productos", "/admin/intercambios", "/admin/intercambios_ventas"].map((path) => (
+            {["/admin/usuarios", "/admin/productos", "/admin/intercambios", "/admin/intercambios_ventas", "/admin/purchase-history"].map((path) => (
                 <Route
                     key={path}
                     path={path}
@@ -71,7 +71,7 @@ const AppRoutes = () => {
             ))}
 
             {/* Rutas de Colaborador */}
-            {["/collaborator/products", "/collaborator/purchase-history"].map((path) => (
+            {["/collaborator/products"].map((path) => (
                 <Route
                     key={path}
                     path={path}
