@@ -67,8 +67,8 @@
     const traeCartItems = cartItem || [];
 
     // Separar items por tipo y memorizar cálculos costosos
-    const purchaseItems = useMemo(() => traeCartItems.filter(item => item.itemType === 'offer'), [traeCartItems]);
-    const exchangeItems = useMemo(() => traeCartItems.filter(item => item.itemType === 'exchange'), [traeCartItems]);
+    const purchaseItems = useMemo(() => traeCartItems.filter(item => item.itemType === 'offer' && item.productOffer), [traeCartItems]);
+    const exchangeItems = useMemo(() => traeCartItems.filter(item => item.itemType === 'exchange' && item.product), [traeCartItems]);
 
     // Calcular totales dinámicamente
     const subtotalPrice = useMemo(() => purchaseItems.reduce((acc, item) => {
