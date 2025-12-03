@@ -15,19 +15,12 @@
   const API_URL = import.meta.env.VITE_API_URL_BACKEND;
 
   const CartModal = ({ open, onClose }) => {
-    React.useEffect(() => {
-      console.log('CartModal mount, open=', open);
-      return () => console.log('CartModal unmount');
-    }, []);
-
-    React.useEffect(() => {
-      console.log('CartModal open prop changed ->', open);
-    }, [open]);
 
     //Estados globales del carrito
     const cartItem = useCartShopping((state) => state.cartItem);
     const updateCartItems = useCartShopping((state) => state.updateCartItems);
     const processCartPayment = useCartShopping((state) => state.processCartPayment);
+    const clearCart = useCartShopping((state) => state.clearCart);
 
     if (!open) return null; 
 
@@ -40,10 +33,18 @@
     //Información del usuario para validar el pago
     const userSwapcoins = useUserStore((state) => state.swappcoins);
     const userId = useUserStore((state) => state.id);
+    const updateSwappcoins = useUserStore((state) => state.updateSwappcoins);
 
     const resolveImage = (img) => {
       if (!img) return null;
       return `${API_URL}${img}`;
+    };
+
+    const formatPrice = (price) => {
+      return new Intl.NumberFormat('es-CO', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(price);
     };
 
     const getOfferPrice = (offer) => {
@@ -72,17 +73,26 @@
 
     // Calcular totales dinámicamente
     const subtotalPrice = useMemo(() => purchaseItems.reduce((acc, item) => {
-      const offerPrice = getOfferPrice(item.productOffer);
+      const offer = item.productOffer;
+      const isOutOfStock = (offer?.amount || 0) === 0;
+      if (isOutOfStock) return acc; // Excluir productos agotados
+      const offerPrice = getOfferPrice(offer);
       return acc + (offerPrice * item.quantity);
     }, 0), [purchaseItems]);
 
     const subtotalSwapcoins = useMemo(() => purchaseItems.reduce((acc, item) => {
-      const offerSwapcoins = getOfferSwapcoins(item.productOffer);
+      const offer = item.productOffer;
+      const isOutOfStock = (offer?.amount || 0) === 0;
+      if (isOutOfStock) return acc; // Excluir productos agotados
+      const offerSwapcoins = getOfferSwapcoins(offer);
       return acc + (offerSwapcoins * item.quantity);
     }, 0), [purchaseItems]);
 
     const exchangeProcessingFees = useMemo(() => exchangeItems.reduce((acc, item) => {
-      const exchangeSwapcoins = getExchangeSwapcoins(item.product);
+      const product = item.product;
+      const isOutOfStock = (product?.amount || 0) === 0;
+      if (isOutOfStock) return acc; // Excluir productos agotados
+      const exchangeSwapcoins = getExchangeSwapcoins(product);
       return acc + (exchangeSwapcoins * item.quantity);
     }, 0), [exchangeItems]);
 
@@ -129,7 +139,7 @@
     };
 
     //Procesar el pago
-      const handleProceedPayment = async () => {
+    const handleProceedPayment = async () => {
       if (traeCartItems.length === 0) {
         toast.info('No tienes productos en el carrito.', { position: 'top-center' });
         return;
@@ -141,9 +151,20 @@
         return;
       }
 
-      const idsProducts = purchaseItems.map((item) => item.productOffer.id);
-      const idsProductsChange = exchangeItems.map((item) => item.product.id);
-      const totalProducts = purchaseItems.length + exchangeItems.length;
+      // Filtrar productos disponibles (no agotados) para el pago
+      const availablePurchaseItems = purchaseItems.filter(item => {
+        const offer = item.productOffer;
+        return (offer?.amount || 0) > 0;
+      });
+
+      const availableExchangeItems = exchangeItems.filter(item => {
+        const product = item.product;
+        return (product?.amount || 0) > 0;
+      });
+
+      const idsProducts = availablePurchaseItems.map((item) => item.productOffer.id);
+      const idsProductsChange = availableExchangeItems.map((item) => item.product.id);
+      const totalProducts = availablePurchaseItems.length + availableExchangeItems.length;
 
       const paymentData = {
         idsProducts,
@@ -160,10 +181,16 @@
       try {
         await processCartPayment(paymentData); //Store para procesar el pago en el backend
 
+        const deletePromises = traeCartItems.map((item) => api.delete(`/carrito/${item.id}`));
+        await Promise.all(deletePromises);
+
         // Simulación de proceso
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
+
         setPaymentStatus('success');
+        clearCart(); //Limpiar carrito solo si el pago fue exitoso
+        await updateSwappcoins(userId); //Actualizar swapcoins después del pago exitoso
       } catch (error) {
         console.error(error);
         setPaymentStatus('error');
@@ -216,25 +243,33 @@
                     const swapcoins = getOfferSwapcoins(offer);
                     const offerImage = resolveImage(offer?.img1);
                     const maxStock = offer?.stock || offer?.amount;
+                    const isOutOfStock = (offer?.amount || 0) === 0;
 
                     return (
                       <div key={item.id} className="cart_row">
                         <img className="cart_thumb" src={offerImage} alt={offer?.title || 'Producto'} />
                         <div className="cart_info">
                           <div className="cart_title">{offer?.title}</div>
-                          <div className="cart_meta">
-                            <span className="price">${dollars.toFixed(2)}</span>
-                            <span className="swap">/ {swapcoins} Swapcoins</span>
-                          </div>
-                          <div className="seller">Usuario: {offer?.user?.username}</div>
+                          {isOutOfStock ? (
+                            <div className="cart_meta" style={{ color: '#f76b6bff', fontWeight: '600' }}>
+                              Producto agotado
+                            </div>
+                          ) : (
+                            <div className="cart_meta">
+                              <span className="price">${formatPrice(dollars)}</span>
+                              <span className="swap">/ {swapcoins} Swapcoins</span>
+                            </div>
+                          )}
                         </div>
                         <div className="cart_controls">
                           <button className="icon_btn delete" aria-label="Remove" onClick={() => handleRemove(item.id)}><DeleteOutlineIcon /></button>
-                          <div className="cart_qty">
-                            <button className="icon_btn" aria-label="Decrease" onClick={() => handleDecrease(item.id)} disabled={item.quantity <= 1}><RemoveIcon /></button>
-                            <span className="qty">{item.quantity <= 0 ? 'no disponible' : item.quantity}</span>
-                            <button className="icon_btn" aria-label="Increase" onClick={() => handleIncrease(item.id)} disabled={item.quantity <= 0 || item.quantity >= maxStock}><AddIcon /></button>
-                          </div>
+                          {!isOutOfStock && (
+                            <div className="cart_qty">
+                              <button className="icon_btn" aria-label="Decrease" onClick={() => handleDecrease(item.id)} disabled={item.quantity <= 1}><RemoveIcon /></button>
+                              <span className="qty">{item.quantity}</span>
+                              <button className="icon_btn" aria-label="Increase" onClick={() => handleIncrease(item.id)} disabled={item.quantity >= maxStock}><AddIcon /></button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -255,22 +290,31 @@
                     const swapcoins = getExchangeSwapcoins(product);
                     const productImage = resolveImage(product?.image1);
                     const maxStock = product?.stock || product?.amount;
+                    const isOutOfStock = (product?.amount || 0) === 0;
 
                     return (
                       <div key={item.id} className="cart_row">
                         <img className="cart_thumb" src={productImage} alt={product?.title || 'Intercambio'} />
                         <div className="cart_info">
                           <div className="cart_title">{product?.title}</div>
-                          <div className="cart_meta small">Valor: {swapcoins} Swapcoins</div>
+                          {isOutOfStock ? (
+                            <div className="cart_meta small" style={{ color: '#f76b6bff', fontWeight: '600' }}>
+                              Producto agotado
+                            </div>
+                          ) : (
+                            <div className="cart_meta small">Valor: {swapcoins} Swapcoins</div>
+                          )}
                           <div className="seller">Usuario: {product?.user?.username}</div>
                         </div>
                         <div className="cart_controls">
                           <button className="icon_btn delete" aria-label="Remove" onClick={() => handleRemove(item.id)}><DeleteOutlineIcon /></button>
-                          <div className="cart_qty">
-                            <button className="icon_btn" aria-label="Decrease" onClick={() => handleDecrease(item.id)} disabled={item.quantity <= 1}><RemoveIcon /></button>
-                            <span className="qty">{item.quantity <= 0 ? 'no disponible' : item.quantity}</span>
-                            <button className="icon_btn" aria-label="Increase" onClick={() => handleIncrease(item.id)} disabled={item.quantity <= 0 || item.quantity >= maxStock}><AddIcon /></button>
-                          </div>
+                          {!isOutOfStock && (
+                            <div className="cart_qty">
+                              <button className="icon_btn" aria-label="Decrease" onClick={() => handleDecrease(item.id)} disabled={item.quantity <= 1}><RemoveIcon /></button>
+                              <span className="qty">{item.quantity}</span>
+                              <button className="icon_btn" aria-label="Increase" onClick={() => handleIncrease(item.id)} disabled={item.quantity >= maxStock}><AddIcon /></button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -283,7 +327,7 @@
             <div className="summary">
               <div className="summary_row">
                 <span>Subtotal</span>
-                <span>${subtotalPrice.toFixed(2)} / {subtotalSwapcoins} Swapcoins</span>
+                <span>${formatPrice(subtotalPrice)} / {subtotalSwapcoins} Swapcoins</span>
               </div>
               <div className="summary_row">
                 <span>Valor de Swappaycoins del intercambio</span>
@@ -291,7 +335,7 @@
               </div>
               <div className="summary_row total">
                 <span>Total General</span>
-                <span>${totalPrice.toFixed(2)} + {totalSwapcoins} Swapcoins</span>
+                <span>${formatPrice(totalPrice)} + {totalSwapcoins} Swapcoins</span>
               </div>
             </div>
             <div className="actions">

@@ -202,9 +202,7 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
             />
             <div className="info_user_exchange">
               <span className="exchange_userName">{user.username || "Usuario"}</span>
-              <span className="exchange_userLoc">
-                {user.city || "Ciudad"}, {user.country || "País"}
-              </span>
+              <span className="exchange_userLoc">{user.city || "Ciudad"}, {user.country || "País"}</span>
             </div>
           </div>
 
@@ -212,10 +210,13 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
             <div className="exchange_buttons_products">
 
               {dataUser.priceSwapcoins && (
-                <button className="button_pricex"
+                <button 
+                  className="button_pricex"
                   onClick={handleBuySwappcoins}
+                  disabled={dataUser.amount === 0}
+                  style={dataUser.amount === 0 ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                 >
-                  {shoppingCart()}Comprar por Swapcoins
+                  {shoppingCart()}{dataUser.amount === 0 ? 'Producto agotado' : 'Comprar por Swapcoins'}
                 </button>
               )}
 

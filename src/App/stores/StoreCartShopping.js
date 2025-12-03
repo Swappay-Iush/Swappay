@@ -11,14 +11,9 @@ const useCartShopping = create(
             //Función para obtener el carrito por el usuario
             fetchCartItems: async (idUser) => {
                 if (!idUser) return; 
+                const { data } = await api.get(`/carrito?idUser=${idUser}`);
 
-                const { data } = await api.get("/carrito", {
-                    params: { idUser },
-                });
-
-                set({
-                    cartItem: data.items || [], //Guarda lo que llega de la appi
-                });
+                set({cartItem: data.items || [],});
             },
 
             //Función para añadir producto al carrito
@@ -97,11 +92,13 @@ const useCartShopping = create(
             //Función para procesar el pago
             processCartPayment: async (paymentCart) => {
                 const { data } = await api.post("/products-purchased", paymentCart);
-
-                //Limpiar carrito después del pago
-                set({ cartItem: [] });
-
+                console.log(data);
                 return data;
+            },
+
+            //Función para limpiar el carrito después de un pago exitoso
+            clearCart: () => {
+                set({ cartItem: [] });
             },
         }),
         {

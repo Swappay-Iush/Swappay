@@ -158,13 +158,7 @@ const PublicationOffersDialog = ({ userData, open, handleClose }) => {
                             >
                                 {shoppingCart()}Añadir al carrito
                             </button>
-                            <button
-                                className={`button-buy-now ${buttonsDisabled ? "button-disabled" : ""
-                                    }`}
-                                disabled={buttonsDisabled}
-                            >
-                                Comprar ahora
-                            </button>
+                            {/*<button className={`button-buy-now ${buttonsDisabled ? "button-disabled" : ""}`} disabled={buttonsDisabled}>Comprar ahora</button> */}
                         </div>
                     )}
 

@@ -203,3 +203,9 @@
     overflow-x: auto;
   }
 }
+
+
+.info_user_exchange{
+  display: flex;
+  flex-direction: column;
+}

@@ -8,6 +8,10 @@ import iconEmpty from "../../../resources/images/productos.svg" //Importamos la 
 import { MenuItem, Select, FormControl, InputLabel } from '@mui/material'; //Importamos componentes de materialUI a utilizar.
 
 import api from "../../../service/axiosConfig"
+import useCartShopping from "../../../App/stores/StoreCartShopping";
+import { useUserStore } from "../../../App/stores/Store";
+import { toast } from "react-toastify";
+import { ToastContainer } from 'react-toastify';
 
 const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
@@ -18,6 +22,9 @@ const PublicationsOffers = ({textSearch}) => {
     const [open, setOpen] = useState(false); //Estado que maneja la visibilidad del diálogo.
     const [category, setCategory] = useState(""); //Estado que almacena la categoría seleccionada en el filtro.
     const [dataOffer, setDataOffer] = useState([]);
+    
+    const userId = useUserStore((state) => state.id);
+    const addCartItems = useCartShopping((state) => state.addCartItems);
 
     useEffect(() => { //Hook que contiene una función para comunicarnos con el backend y traer los productos con ofertas.
         const getData = async () => { 
@@ -66,6 +73,42 @@ const PublicationsOffers = ({textSearch}) => {
         return filterCategory && filterSearch; 
     });
 
+    //Función para añadir oferta al carrito
+    const handleRedeemNow = async (product) => {
+        if (!userId) return;
+
+        const idProductOffer = product.id;
+
+        if (!idProductOffer) return;
+
+        //Se lee el estado actual desde el store para verificar si ya esta agregado
+        const alreadyExists = useCartShopping
+            .getState()
+            .cartItem
+            .some(item =>
+                item.itemType === "offer" &&
+                item.idProductOffer === idProductOffer
+            );
+
+        if (alreadyExists) {
+            toast.info("Ya se encuentra en tu carrito.", { position: "top-center" });
+            return;
+        }
+
+        //Si no existe, se añade al carrito
+        try {
+            await addCartItems({
+                idUser: userId,
+                itemType: "offer",
+                idProductOffer,
+                quantity: 1,
+            });
+            toast.success("Producto añadido al carrito", { position: "top-center" });
+        } catch (error) {
+            toast.error("Error al añadir al carrito.", { position: "top-center" });
+        }
+    };
+
  
 
     return (
@@ -104,7 +147,10 @@ const PublicationsOffers = ({textSearch}) => {
                                 + {value.priceSwapcoins} SwapCoins
                             </span>
                             <a className="button_more_info"onClick={() => handleOpen(value)}>Ver más información</a>
-                            <button className="button_redeem">Canjear ahora</button>
+                            <button className="button_redeem" onClick={() => handleRedeemNow(value)} disabled={!value.availability || value.amount === 0} 
+                                style={!value.availability || value.amount === 0 ? { opacity: 0.5, cursor: 'not-allowed' } : {}}>
+                                {!value.availability || value.amount === 0 ? 'Agotado' : 'Canjear ahora'}
+                            </button>
                         </div>
                     ))}
                 </section>
@@ -113,6 +159,9 @@ const PublicationsOffers = ({textSearch}) => {
             {open && ( //Si el estado open es true, mostramos el diálogo con la información del producto seleccionado.
                 <PublicationOffersDialog userData={dataUser} open={open} handleClose={handleClose} /> //Pasamos las props necesarias al diálogo.
             )}
+            <div>
+                <ToastContainer position="bottom-right" autoClose={2000} hideProgressBar={false} closeOnClick pauseOnHover draggable />
+            </div>
         </div>
     )
 }

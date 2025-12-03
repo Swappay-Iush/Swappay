@@ -22,6 +22,10 @@ const PaymentCart = ({ open, status, onClose, onInvoice }) => {
     // No permitimos cerrar mientras está cargando
     if (!isLoading && onClose) {
       onClose();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
     }
   };
 
@@ -35,10 +39,10 @@ const PaymentCart = ({ open, status, onClose, onInvoice }) => {
         <div className="payment_content">
           {/* ESTADO: PROCESANDO */}
           {isLoading && (
-            <>
+            <div className='pago_en_proceso'>
               <BeatLoader color="#2c7be5" size={15} />
               <p className="payment_message">Procesando pago...</p>
-            </>
+            </div>
           )}
 
           {/* ESTADO: ÉXITO */}
@@ -51,7 +55,7 @@ const PaymentCart = ({ open, status, onClose, onInvoice }) => {
                 <button
                   className="btn light"
                   type="button"
-                  onClick={onClose}
+                  onClick={handleOverlayClick}
                 >
                   Salir
                 </button>
@@ -75,7 +79,7 @@ const PaymentCart = ({ open, status, onClose, onInvoice }) => {
                 <button
                   className="btn light"
                   type="button"
-                  onClick={onClose}
+                  onClick={onClose()}
                 >
                   Salir
                 </button>
