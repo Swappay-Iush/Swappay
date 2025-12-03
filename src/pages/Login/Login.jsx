@@ -62,6 +62,8 @@ const Login = () => {
             setTimeout(() => { //Damos una espera de 2 segundos para iniciar sesión.
                 {data.rol === "admin" || rol === "admin" ? (
                     navigate("/admin/usuarios")
+                ) : data.rol === "collaborator" || rol === "collaborator" ? (
+                    navigate("/collaborator/products")
                 ) : (
                     navigate("/panel")
                 )}
