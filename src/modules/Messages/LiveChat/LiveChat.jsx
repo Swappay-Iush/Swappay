@@ -1,5 +1,5 @@
 // Importamos hooks de React para efectos, estado y referencias
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 // Estilos específicos del componente de chat
 import "./LiveChat.css";
 // Cliente de Socket.IO para comunicación en tiempo real
@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import Avatar from '@mui/material/Avatar';
 // Store de sesión para obtener el id del usuario autenticado
 import { useUserStore } from "../../../App/stores/Store";
+import { useChatUser } from "../../../App/stores/StoreChat";
 
 const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
@@ -21,41 +22,192 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-const LiveChat = ({ infoUser }) => { 
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+const LiveChat = ({ infoUser, onChatDeleted }) => {
     // Estado controlado del input de mensaje
     const [message, setMessage] = useState("");
     // Estado con el historial y nuevos mensajes de la conversación
     const [messages, setMessages] = useState([]);
+    // Mensajes administrativos provenientes del panel (messagesInfo)
+    const [tradeMessages, setTradeMessages] = useState([]);
+    // Mensajes informativos visibles dentro del chat (solo el más reciente relevante)
+    const [systemMessages, setSystemMessages] = useState([]);
     // URL de la imagen del avatar (si no hay, se usan iniciales)
     const [avatarSrc, setAvatarSrc] = useState(null);
     // Estado del acuerdo de intercambio (trade agreement)
     const [tradeStatus, setTradeStatus] = useState(null);
     // Loading state para el botón de aceptar
     const [loadingTrade, setLoadingTrade] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
     // Referencia estable a la conexión de socket (se mantiene entre renders)
     const socketRef = useRef(null);
     // Referencia al último elemento de la lista para auto-scroll
     const messagesEndRef = useRef(null);
-    // Id del usuario autenticado desde el store
+    const fileInputRef = useRef(null);
+    const tradeStatusFetchLockRef = useRef(false);
+    const localDeleteRef = useRef(false);
+    const suppressedChatsRef = useRef(new Map());
+    const adminMessagesSuppressedRef = useRef(false);
     const { id: currentUserId } = useUserStore();
     // Estado para el menú de opciones (tres puntitos)
     const [menuAnchor, setMenuAnchor] = useState(null);
+    const deleteChatRoom = useChatUser((state) => state.deleteChatRoom);
+    const removeChatRoomLocal = useChatUser((state) => state.removeChatRoomLocal);
+
+    const relevantAdminMessages = useMemo(() => {
+        if (!Array.isArray(tradeMessages)) return [];
+
+        const roomId = Number(infoUser?.salaID);
+
+        return tradeMessages.filter((msg) => {
+            if (!msg || typeof msg.text !== "string") return false;
+
+            const normalized = msg.text.trim().toLowerCase();
+            if (!normalized) return false;
+            if (normalized.includes("reinicio de intercambio")) return false;
+
+            if (Object.prototype.hasOwnProperty.call(msg, "chatRoomId")) {
+                const messageRoomId = Number(msg.chatRoomId);
+                if (!Number.isNaN(messageRoomId) && !Number.isNaN(roomId) && messageRoomId !== roomId) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }, [tradeMessages, infoUser?.salaID]);
+
+    const mapMessageFromBackend = (rawMessage) => {
+        if (!rawMessage) return null;
+
+        const chatRoomId = rawMessage.chatRoomId ?? infoUser?.salaID ?? null;
+        const fallbackId = `${chatRoomId || 'chat'}-${rawMessage.createdAt || Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const messageId = rawMessage.id ?? rawMessage.messageId ?? fallbackId;
+        const type = rawMessage.type === 'image' ? 'image' : 'text';
+        const content = typeof rawMessage.content === "string" ? rawMessage.content : "";
+        const mediaUrl = typeof rawMessage.mediaUrl === "string" ? rawMessage.mediaUrl : "";
+        const mediaName = typeof rawMessage.mediaName === "string" ? rawMessage.mediaName : "";
+        const mediaSize = typeof rawMessage.mediaSize === "number" ? rawMessage.mediaSize : null;
+        const senderIdValue = rawMessage.senderId ?? rawMessage.userId ?? null;
+
+        return {
+            id: messageId,
+            chatRoomId,
+            type,
+            text: content,
+            mediaUrl,
+            mediaName,
+            mediaSize,
+            fromMe: Number(senderIdValue) === Number(infoUser?.userId),
+            senderId: senderIdValue,
+            createdAt: rawMessage.createdAt ? new Date(rawMessage.createdAt) : new Date(),
+        };
+    };
+
+    const appendMessage = (rawMessage) => {
+        const shaped = mapMessageFromBackend(rawMessage);
+        if (!shaped) return;
+
+        setMessages((prev) => {
+            if (shaped.id && prev.some((msg) => msg.id === shaped.id)) {
+                return prev;
+            }
+            return [...prev, shaped];
+        });
+    };
+
+    const applyTradeStatus = (status, { shouldUpdateMessages = true } = {}) => {
+        setTradeStatus(status);
+
+        if (!status || typeof status !== "object") return;
+
+        const chatIdNumber = Number(status.chatRoomId || infoUser?.salaID);
+
+        const releaseSuppression = Boolean(
+            (status.user1Accepted && status.user2Accepted) ||
+            status.tradeCompleted === 'en_proceso' ||
+            status.tradeCompleted === 'completado'
+        );
+
+        if (releaseSuppression) {
+            adminMessagesSuppressedRef.current = false;
+            if (!Number.isNaN(chatIdNumber)) {
+                suppressedChatsRef.current.delete(chatIdNumber);
+            }
+        } else {
+            adminMessagesSuppressedRef.current = true;
+            if (!Number.isNaN(chatIdNumber)) {
+                suppressedChatsRef.current.set(chatIdNumber, true);
+            }
+        }
+
+        if (!shouldUpdateMessages) return;
+
+        if (adminMessagesSuppressedRef.current && !releaseSuppression) {
+            setTradeMessages([]);
+            setSystemMessages([]);
+            return;
+        }
+
+        const hasMessagesInfo = Object.prototype.hasOwnProperty.call(status, "messagesInfo");
+        if (!hasMessagesInfo) return;
+
+        const infoArray = Array.isArray(status.messagesInfo)
+            ? status.messagesInfo
+            : (typeof status.messagesInfo === "string" && status.messagesInfo.trim() !== "")
+                ? [status.messagesInfo]
+                : [];
+        const chatId = status.chatRoomId || infoUser?.salaID;
+        const shaped = infoArray.map((msg, index) => ({
+            id: `${chatId || 'trade'}-status-${index}`,
+            text: typeof msg === "string" ? msg : String(msg ?? ""),
+            chatRoomId: chatId
+        }));
+        setTradeMessages(shaped);
+    };
 
     // Acción: iniciar un nuevo intercambio (resetea el acuerdo y actualiza messagesInfo)
     const handleNewExchange = async () => {
         if (!infoUser?.salaID) return;
+        if (!currentUserId) {
+            toast.error('No se pudo identificar al usuario. Intenta iniciar sesión nuevamente.');
+            setMenuAnchor(null);
+            return;
+        }
+
         setMenuAnchor(null);
         try {
-            // Resetear acuerdo en backend
             await api.post('/chat/trade/reset', { chatRoomId: infoUser.salaID });
-            // Añadir una entrada para que la última posición deje de ser 'Intercambio exitoso'
-            await api.post(`/chat/trade/messages/${infoUser.salaID}`, { messagesInfo: ['Reinicio de intercambio'] });
-            // Refrescar estado local
-            await fetchTradeStatus();
-            toast.success('Nuevo intercambio iniciado. El estado se ha reiniciado.');
+            await api.post(`/chat/trade/messages/${infoUser.salaID}`, {
+                messagesInfo: []
+            });
+            setTradeStatus(null);
+            setTradeMessages([]);
+            setSystemMessages([]);
+            adminMessagesSuppressedRef.current = true;
+            suppressedChatsRef.current.set(Number(infoUser.salaID), true);
+            if (socketRef.current) {
+                socketRef.current.emit('tradeReset', {
+                    chatRoomId: infoUser.salaID,
+                    triggeredBy: Number(currentUserId)
+                });
+            }
+            await fetchTradeStatus({ shouldUpdateMessages: false });
+            toast.success('Intercambio restablecido. Los usuarios pueden negociar nuevamente.');
         } catch (err) {
             console.error('Error al iniciar nuevo intercambio:', err);
             toast.error('No se pudo iniciar nuevo intercambio.');
+        }
+    };
+
+    const fetchTradeStatus = async ({ shouldUpdateMessages = true } = {}) => {
+        if (!infoUser?.salaID) return;
+
+        try {
+            const response = await api.get(`/chat/trade/status/${infoUser.salaID}`);
+            applyTradeStatus(response.data, { shouldUpdateMessages });
+        } catch (error) {
+            console.error("Error al cargar estado del intercambio:", error);
         }
     };
 
@@ -91,12 +243,9 @@ const LiveChat = ({ infoUser }) => {
         api.get(`/chat/messages/${infoUser.salaID}`)
             .then(res => {
                 // Adaptamos cada mensaje al formato de la UI
-                const formattedMessages = res.data.map(msg => ({
-                    text: msg.content, // Texto del mensaje
-                    fromMe: msg.senderId === infoUser.userId, // Bandera para estilos (mío/otro)
-                    senderId: msg.senderId, // Id del remitente
-                    createdAt: msg.createdAt // Marca de tiempo original
-                }));
+                const formattedMessages = Array.isArray(res.data)
+                    ? res.data.map((msg) => mapMessageFromBackend(msg)).filter(Boolean)
+                    : [];
                 // Guardamos el historial en estado local
                 setMessages(formattedMessages);
             })
@@ -109,14 +258,8 @@ const LiveChat = ({ infoUser }) => {
         // Handler: procesa mensajes entrantes por Socket.IO
         const handleNewMessage = (data) => {
             // Aseguramos que el mensaje corresponde a la sala visible
-            if (data.chatRoomId === infoUser.salaID) {
-                // Agregamos el nuevo mensaje al final del historial
-                setMessages(prev => [...prev, {
-                    text: data.content, // Texto enviado
-                    fromMe: data.senderId === infoUser.userId, // ¿Lo envié yo?
-                    senderId: data.senderId, // Id del remitente
-                    createdAt: new Date() // Marca de tiempo local
-                }]);
+            if (Number(data?.chatRoomId) === Number(infoUser.salaID)) {
+                appendMessage(data);
             }
         };
 
@@ -125,15 +268,57 @@ const LiveChat = ({ infoUser }) => {
 
         // Handler: procesa actualizaciones del estado de intercambio por Socket.IO
         const handleTradeUpdate = (data) => {
-            // Si viene especificado el chatRoomId y no corresponde, ignoramos
-            if (data?.chatRoomId && data.chatRoomId !== infoUser.salaID) return;
-            // Aceptamos dos formatos: data directa o anidada en tradeAgreement
+            if (data?.chatRoomId && Number(data.chatRoomId) !== Number(infoUser.salaID)) return;
             const status = data?.tradeAgreement || data;
-            if (status) setTradeStatus(status);
+            if (status) applyTradeStatus(status);
+        };
+
+        const handleTradeResetNotification = (data) => {
+            const chatRoomId = Number(data?.chatRoomId);
+            if (!chatRoomId || Number(infoUser.salaID) !== chatRoomId) return;
+
+            const initiatorId = Number(data?.triggeredBy);
+            const initiatedByMe = !Number.isNaN(initiatorId) && Number(currentUserId) === initiatorId;
+
+            adminMessagesSuppressedRef.current = true;
+            suppressedChatsRef.current.set(chatRoomId, true);
+            setTradeStatus(null);
+            setTradeMessages([]);
+            setSystemMessages([]);
+
+            if (!initiatedByMe) {
+                toast.info('El otro usuario restableció el chat.');
+            }
+
+            fetchTradeStatus({ shouldUpdateMessages: false });
+        };
+
+        const handleChatDeleted = (data) => {
+            const deletedId = Number(data?.chatRoomId);
+            if (!deletedId) return;
+
+            if (typeof removeChatRoomLocal === "function") {
+                removeChatRoomLocal(deletedId);
+            }
+
+            if (Number(infoUser.salaID) === deletedId) {
+                const initiatedByMe = localDeleteRef.current;
+                localDeleteRef.current = false;
+
+                if (!initiatedByMe) {
+                    toast.info('El chat ha sido eliminado.');
+                }
+
+                if (typeof onChatDeleted === "function") {
+                    onChatDeleted();
+                }
+            }
         };
 
         // Suscribimos el handler al evento de estado de intercambio
         socketRef.current.on("tradeStatusUpdated", handleTradeUpdate);
+        socketRef.current.on("tradeReset", handleTradeResetNotification);
+        socketRef.current.on("chatDeleted", handleChatDeleted);
 
         // Cleanup: remover listener al cambiar de chat
         return () => {
@@ -141,9 +326,11 @@ const LiveChat = ({ infoUser }) => {
                 // Eliminamos los listeners para evitar duplicados si cambia la sala
                 socketRef.current.off("newMessage", handleNewMessage);
                 socketRef.current.off("tradeStatusUpdated", handleTradeUpdate);
+                socketRef.current.off("tradeReset", handleTradeResetNotification);
+                socketRef.current.off("chatDeleted", handleChatDeleted);
             }
         };
-    }, [infoUser]);
+    }, [infoUser, removeChatRoomLocal, onChatDeleted, currentUserId]);
 
     // Auto-scroll al último mensaje
     useEffect(() => {
@@ -168,29 +355,47 @@ const LiveChat = ({ infoUser }) => {
         }
     }, [infoUser?.salaID]);
 
-    // Función para obtener el estado actual del intercambio
-    const fetchTradeStatus = async () => {
-        if (!infoUser?.salaID) return;
-        
-        try {
-            const response = await api.get(`/chat/trade/status/${infoUser.salaID}`);
-            setTradeStatus(response.data);
-        } catch (error) {
-            console.error("Error al cargar estado del intercambio:", error);
-        }
-    };
+    useEffect(() => {
+        setTradeMessages([]);
+        setSystemMessages([]);
+        setTradeStatus(null);
+        tradeStatusFetchLockRef.current = false;
+        localDeleteRef.current = false;
 
-    // Fallback: sondeo periódico mientras el intercambio esté pendiente
+        const chatId = Number(infoUser?.salaID);
+        if (!Number.isNaN(chatId) && suppressedChatsRef.current.has(chatId)) {
+            adminMessagesSuppressedRef.current = true;
+        } else {
+            adminMessagesSuppressedRef.current = false;
+        }
+    }, [infoUser?.salaID]);
+
+    // Fallback: sondeo periódico para captar cambios aunque no haya eventos
     useEffect(() => {
         if (!infoUser?.salaID) return;
-        if (tradeStatus?.tradeCompleted === 'en_proceso') return; // Dejar de sondear cuando se complete
 
         const intervalId = setInterval(() => {
             fetchTradeStatus();
         }, 5000); // cada 5s
 
         return () => clearInterval(intervalId);
-    }, [infoUser?.salaID, tradeStatus?.tradeCompleted]);
+    }, [infoUser?.salaID]);
+
+    useEffect(() => {
+        if (!infoUser?.salaID) return;
+        if (!tradeStatus) return;
+
+        const bothAccepted = Boolean(tradeStatus.user1Accepted && tradeStatus.user2Accepted);
+        const hasRelevantAdminMessage = relevantAdminMessages.length > 0;
+
+        if (!bothAccepted || hasRelevantAdminMessage) return;
+        if (tradeStatusFetchLockRef.current) return;
+
+        tradeStatusFetchLockRef.current = true;
+        fetchTradeStatus().finally(() => {
+            tradeStatusFetchLockRef.current = false;
+        });
+    }, [tradeStatus?.user1Accepted, tradeStatus?.user2Accepted, relevantAdminMessages.length, infoUser?.salaID]);
 
     // Utilidad: obtiene iniciales a partir del nombre (ej: "Sindy Ospina" -> "SO")
     const getInitials = (name) => { // Calcula iniciales para el avatar (1 o 2 letras)
@@ -201,7 +406,16 @@ const LiveChat = ({ infoUser }) => {
         return `${first}${second}`.toUpperCase(); // Retorna en mayúsculas (ej: "SO")
     };
 
+    const chatDisabled = Boolean(
+        tradeStatus && (
+            (tradeStatus.user1Accepted && tradeStatus.user2Accepted) ||
+            tradeStatus.tradeCompleted === 'en_proceso' ||
+            tradeStatus.tradeCompleted === 'completado'
+        )
+    );
+
     const handleSend = () => {
+        if (chatDisabled) return;
         // Validación: evitar envíos vacíos o sin socket
         if (message.trim() === "" || !socketRef.current) return;
 
@@ -216,6 +430,54 @@ const LiveChat = ({ infoUser }) => {
         setMessage(""); // Limpiamos el input
     };
 
+    const handleImageButtonClick = () => {
+        if (chatDisabled || uploadingImage) return;
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleImageSelected = async (event) => {
+        const file = event.target?.files?.[0];
+
+        if (!file || !infoUser?.salaID) {
+            if (event.target) {
+                event.target.value = "";
+            }
+            return;
+        }
+
+        setUploadingImage(true);
+
+        try {
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const response = await api.post(
+                `/chat/messages/${infoUser.salaID}/upload`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+
+            const savedMessage = response.data?.message || response.data;
+            appendMessage(savedMessage);
+            toast.success('Imagen enviada correctamente.');
+        } catch (error) {
+            console.error('Error al subir imagen:', error);
+            const apiMsg = error?.response?.data?.message || error?.response?.data?.error;
+            toast.error(apiMsg || 'No se pudo enviar la imagen.');
+        } finally {
+            setUploadingImage(false);
+            if (event.target) {
+                event.target.value = "";
+            }
+        }
+    };
+
     useEffect(() => {
         if(tradeStatus && tradeStatus.tradeCompleted === 'en_proceso'){
             const changeInfoExchange = async () => {
@@ -226,11 +488,72 @@ const LiveChat = ({ infoUser }) => {
                 } catch (error) {
                     console.log(error);
                 }
-            }
+            };
 
             changeInfoExchange();
         }
-    }, [tradeStatus])
+    }, [tradeStatus]);
+
+    useEffect(() => {
+        if (!infoUser?.salaID || !relevantAdminMessages.length) {
+            setSystemMessages([]);
+            return;
+        }
+
+        const latestMessage = relevantAdminMessages[relevantAdminMessages.length - 1];
+        const messageId = latestMessage?.id
+            ? latestMessage.id
+            : `${infoUser?.salaID || 'trade'}-status-${relevantAdminMessages.length - 1}`;
+
+        setSystemMessages([{
+            id: messageId,
+            text: typeof latestMessage?.text === "string" ? latestMessage.text : String(latestMessage?.text ?? "")
+        }]);
+    }, [relevantAdminMessages, infoUser?.salaID]);
+
+    const tradeSuccessVisible = Boolean(
+        (tradeStatus && tradeStatus.tradeCompleted === 'completado') ||
+        systemMessages.some((msg) => (
+            typeof msg.text === "string" && msg.text.toLowerCase().includes("intercambio exitoso")
+        ))
+    );
+
+    const handleDeleteChat = async () => {
+        if (!infoUser?.salaID) return;
+        if (typeof deleteChatRoom !== "function") {
+            toast.error('No se pudo eliminar el chat. Intenta nuevamente.');
+            setMenuAnchor(null);
+            return;
+        }
+
+        try {
+            const candidateIds = [currentUserId, infoUser?.userId]
+                .map((value) => Number(value))
+                .filter((value) => Number.isFinite(value) && value > 0);
+
+            const userIdForRequest = candidateIds.length > 0 ? candidateIds[0] : undefined;
+
+            const deleted = await deleteChatRoom(infoUser.salaID, userIdForRequest);
+
+            if (!deleted) {
+                toast.error('No se pudo eliminar el chat.');
+                return;
+            }
+
+            localDeleteRef.current = true;
+
+            if (typeof onChatDeleted === "function") {
+                onChatDeleted();
+            }
+
+            toast.success('Chat eliminado correctamente.');
+        } catch (error) {
+            const apiMsg = error?.response?.data?.message || error?.response?.data?.error;
+            toast.error(apiMsg || 'No se pudo eliminar el chat.');
+        } finally {
+            setMenuAnchor(null);
+        }
+    };
 
     // Handler para aceptar/rechazar el intercambio (toggle)
     const handleAcceptTrade = async () => {
@@ -250,7 +573,7 @@ const LiveChat = ({ infoUser }) => {
             });
             
             // Actualizar estado local con la respuesta
-            setTradeStatus(response.data);
+            applyTradeStatus(response.data);
             
             // Mostrar notificación según el resultado
             if (response.data.tradeCompleted === 'en_proceso') {
@@ -360,11 +683,8 @@ const LiveChat = ({ infoUser }) => {
                         open={Boolean(menuAnchor)}
                         onClose={() => setMenuAnchor(null)}
                     >
-                        {tradeStatus?.tradeCompleted === 'completado' ? (
-                            <MenuItem onClick={handleNewExchange}>Nuevo intercambio</MenuItem>
-                        ) : (
-                            <MenuItem onClick={() => { setMenuAnchor(null); }}>Opciones</MenuItem>
-                        )}
+                        <MenuItem onClick={handleDeleteChat}>Eliminar chat</MenuItem>
+                        <MenuItem onClick={() => setMenuAnchor(null)}>Cerrar</MenuItem>
                     </Menu>
                 </div>
             </header>
@@ -373,11 +693,50 @@ const LiveChat = ({ infoUser }) => {
             <section className="chat_messages_section">
                 <div className="chat_messages_list">
                     {/* Render de cada mensaje con estilo condicional (mío/otro) */}
-                    {messages.map((msg, idx) => (
-                        <div key={idx} className={`chat_message ${msg.fromMe ? "from_me" : "from_them"}`}>
+                    {messages.map((msg, idx) => {
+                        const key = msg.id || idx;
+                        const classNames = ["chat_message", msg.fromMe ? "from_me" : "from_them"];
+                        if (msg.type === 'image') {
+                            classNames.push('image_message');
+                        }
+
+                        return (
+                            <div key={key} className={classNames.join(' ')}>
+                                {msg.type === 'image' && msg.mediaUrl ? (
+                                    <a
+                                        href={msg.mediaUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <img
+                                            src={msg.mediaUrl}
+                                            alt={msg.mediaName || 'Imagen enviada'}
+                                            loading="lazy"
+                                        />
+                                    </a>
+                                ) : (
+                                    msg.text
+                                )}
+                                {msg.type === 'image' && msg.text && (
+                                    <p className="chat_image_caption">{msg.text}</p>
+                                )}
+                            </div>
+                        );
+                    })}
+                    {systemMessages.map((msg) => (
+                        <div key={msg.id} className="chat_message system_message">
                             {msg.text}
                         </div>
                     ))}
+                    {tradeSuccessVisible && (
+                        <button
+                            type="button"
+                            className="chat_reset_btn"
+                            onClick={handleNewExchange}
+                        >
+                            Restablecer chat
+                        </button>
+                    )}
                     {/* Ancla invisible para auto-scroll al final */}
                     <div ref={messagesEndRef} />
                 </div>
@@ -385,15 +744,32 @@ const LiveChat = ({ infoUser }) => {
 
             {/* Sección de entrada: caja de texto + botón enviar */}
             <section className="chat_input_section">
+                <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleImageSelected}
+                    style={{ display: "none" }}
+                />
+                <button
+                    type="button"
+                    className="chat_media_btn"
+                    onClick={handleImageButtonClick}
+                    disabled={chatDisabled || uploadingImage}
+                    title={uploadingImage ? "Subiendo imagen..." : "Enviar imagen"}
+                >
+                    {uploadingImage ? "..." : <ImageOutlinedIcon fontSize="small" />}
+                </button>
                 <input 
                     type="text" 
                     value={message} 
                     onChange={(e) => setMessage(e.target.value)} // Actualiza el estado del input
                     placeholder="Escribe tu mensaje..." 
                     className="chat_input" 
-                    onKeyDown={(e) => {if (e.key === "Enter") handleSend();}} // Enviar con Enter
+                    onKeyDown={(e) => {if (!chatDisabled && e.key === "Enter") handleSend();}} // Enviar con Enter
+                    disabled={chatDisabled}
                 />
-                <button className="chat_send_btn">
+                <button className="chat_send_btn" onClick={handleSend} disabled={chatDisabled}>
                     Enviar
                 </button>
             </section>
