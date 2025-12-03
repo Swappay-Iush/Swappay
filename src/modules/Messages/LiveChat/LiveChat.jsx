@@ -22,8 +22,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
-const LiveChat = ({ infoUser, onChatDeleted }) => {
+import CameraAltRoundedIcon from "@mui/icons-material/CameraAltRounded";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => {
     // Estado controlado del input de mensaje
     const [message, setMessage] = useState("");
     // Estado con el historial y nuevos mensajes de la conversación
@@ -88,7 +89,41 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
         const mediaUrl = typeof rawMessage.mediaUrl === "string" ? rawMessage.mediaUrl : "";
         const mediaName = typeof rawMessage.mediaName === "string" ? rawMessage.mediaName : "";
         const mediaSize = typeof rawMessage.mediaSize === "number" ? rawMessage.mediaSize : null;
-        const senderIdValue = rawMessage.senderId ?? rawMessage.userId ?? null;
+        const normalizeId = (value) => {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : null;
+        };
+
+        const currentId = normalizeId(currentUserId);
+        const otherId = normalizeId(infoUser?.userId);
+
+        const senderCandidates = [
+            rawMessage.senderId,
+            rawMessage.sender?.id,
+            rawMessage.sender?.userId,
+            rawMessage.createdBy
+        ].map((value) => normalizeId(value));
+
+        let resolvedSenderId = senderCandidates.find((value) => value !== null) ?? null;
+        const recipientId = normalizeId(rawMessage.userId);
+
+        let fromMeFinal;
+
+        if (typeof rawMessage.fromMe === "boolean") {
+            fromMeFinal = rawMessage.fromMe;
+        } else if (resolvedSenderId !== null && currentId !== null && resolvedSenderId === currentId) {
+            fromMeFinal = true;
+        } else if (resolvedSenderId !== null && otherId !== null && resolvedSenderId === otherId) {
+            fromMeFinal = false;
+        } else if (recipientId !== null && currentId !== null) {
+            fromMeFinal = recipientId === currentId;
+        } else {
+            fromMeFinal = false;
+        }
+
+        if (resolvedSenderId === null) {
+            resolvedSenderId = fromMeFinal ? currentId : otherId;
+        }
 
         return {
             id: messageId,
@@ -98,8 +133,8 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
             mediaUrl,
             mediaName,
             mediaSize,
-            fromMe: Number(senderIdValue) === Number(infoUser?.userId),
-            senderId: senderIdValue,
+            fromMe: fromMeFinal,
+            senderId: resolvedSenderId,
             createdAt: rawMessage.createdAt ? new Date(rawMessage.createdAt) : new Date(),
         };
     };
@@ -108,12 +143,34 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
         const shaped = mapMessageFromBackend(rawMessage);
         if (!shaped) return;
 
+        const shapedWithTimestamp = shaped?.createdAt instanceof Date
+            ? shaped
+            : {
+                ...shaped,
+                createdAt: shaped?.createdAt ? new Date(shaped.createdAt) : new Date()
+            };
+
         setMessages((prev) => {
-            if (shaped.id && prev.some((msg) => msg.id === shaped.id)) {
+            const next = [...prev];
+
+            if (shapedWithTimestamp.type === 'image' && shapedWithTimestamp.mediaUrl) {
+                const existingIndex = next.findIndex((msg) => (
+                    msg.type === 'image' && msg.mediaUrl === shapedWithTimestamp.mediaUrl
+                ));
+
+                if (existingIndex !== -1) {
+                    next[existingIndex] = { ...next[existingIndex], ...shapedWithTimestamp };
+                    return next;
+                }
+            }
+
+            if (shapedWithTimestamp.id && prev.some((msg) => msg.id === shapedWithTimestamp.id)) {
                 return prev;
             }
-            return [...prev, shaped];
+            next.push(shapedWithTimestamp);
+            return next;
         });
+
     };
 
     const applyTradeStatus = (status, { shouldUpdateMessages = true } = {}) => {
@@ -233,8 +290,8 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
 
     // Cargar historial y configurar listeners cuando cambie el usuario
     useEffect(() => {
-        // Si no hay sala seleccionada o el socket no está listo, no hacemos nada
-        if (!infoUser?.salaID || !socketRef.current) return;
+        // Si no hay sala seleccionada, el socket no está listo o aún no conocemos el usuario actual, no hacemos nada
+        if (!infoUser?.salaID || !socketRef.current || !currentUserId) return;
 
         // Unirse a la sala de Socket.IO para recibir eventos en tiempo real de esa conversación
         socketRef.current.emit("joinRoom", { chatRoomId: infoUser.salaID });
@@ -415,14 +472,14 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
     );
 
     const handleSend = () => {
-        if (chatDisabled) return;
+        if (chatDisabled || !currentUserId) return;
         // Validación: evitar envíos vacíos o sin socket
         if (message.trim() === "" || !socketRef.current) return;
 
         // Cuerpo del mensaje que espera el backend/Socket.IO
         const payload = {
             chatRoomId: infoUser.salaID, // Sala a la que pertenece el mensaje
-            senderId: infoUser.userId, // Remitente (yo)
+            senderId: currentUserId, // Mi ID como remitente
             content: message.trim() // Contenido del mensaje sin espacios extremos
         };
 
@@ -464,7 +521,15 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
             );
 
             const savedMessage = response.data?.message || response.data;
-            appendMessage(savedMessage);
+            const normalizedMessage = {
+                ...savedMessage,
+                senderId: Number(infoUser?.userId),
+                userId: Number(currentUserId),
+                fromMe: true,
+                createdAt: new Date()
+            };
+
+            appendMessage(normalizedMessage);
             toast.success('Imagen enviada correctamente.');
         } catch (error) {
             console.error('Error al subir imagen:', error);
@@ -602,78 +667,115 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
         }
     };
 
+    const showBackNavigation = Boolean(showBackButton && typeof onBackToList === "function");
+    const handleBackNavigation = () => {
+        if (typeof onBackToList === "function") {
+            onBackToList();
+        }
+    };
+
+    const renderTradeAction = () => {
+        const user1Id = tradeStatus?.user1Id;
+        const iAccepted = tradeStatus
+            ? Boolean(Number(user1Id) === Number(currentUserId) ? tradeStatus.user1Accepted : tradeStatus?.user2Accepted)
+            : false;
+        const otherAccepted = tradeStatus
+            ? Boolean(Number(user1Id) === Number(currentUserId) ? tradeStatus?.user2Accepted : tradeStatus?.user1Accepted)
+            : false;
+        const bothAccepted = Boolean(tradeStatus && tradeStatus.user1Accepted && tradeStatus.user2Accepted);
+
+        if (tradeStatus && tradeStatus.tradeCompleted === 'completado') {
+            return (
+                <button className="trade_btn trade_btn--success" disabled>
+                    ✓ Intercambio completado
+                </button>
+            );
+        }
+
+        if (bothAccepted || (tradeStatus && tradeStatus.tradeCompleted === 'en_proceso')) {
+            return (
+                <button className="trade_btn trade_btn--success" disabled>
+                    ✓ Intercambio en proceso
+                </button>
+            );
+        }
+
+        if (iAccepted && !otherAccepted) {
+            return (
+                <button className="trade_btn trade_btn--success" disabled>
+                    ✓ Intercambio en proceso
+                </button>
+            );
+        }
+
+        return (
+            <>
+                <button
+                    onClick={handleAcceptTrade}
+                    disabled={loadingTrade}
+                    className={`trade_btn ${iAccepted ? 'trade_btn--success' : 'trade_btn--primary'}`}
+                >
+                    {loadingTrade ? '⏳ Procesando...' : (iAccepted ? '✓ Has Aceptado' : 'Aceptar intercambio')}
+                </button>
+
+                {otherAccepted && !iAccepted && (
+                    <span className="trade_status_text">
+                        Intercambio aceptado por el otro, esperando tu confirmación
+                    </span>
+                )}
+            </>
+        );
+    };
+
+    const formatMessageTime = (value) => {
+        if (!value) {
+            return "";
+        }
+
+        try {
+            const dateValue = value instanceof Date ? value : new Date(value);
+            if (Number.isNaN(dateValue.getTime())) {
+                return "";
+            }
+
+            return dateValue.toLocaleTimeString("es-ES", {
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        } catch (error) {
+            return "";
+        }
+    };
+
     return (
         <div className="container_chat_private">
             {/* Header: muestra avatar y nombre del otro usuario */}
             <header className="header_chat_private">
                 <div className="header_profile_user">
+                    {showBackNavigation && (
+                        <button
+                            type="button"
+                            className="chat_back_btn"
+                            onClick={handleBackNavigation}
+                        >
+                            <ArrowBackIosNewIcon fontSize="small" />
+                            <span>Chats</span>
+                        </button>
+                    )}
                     {/* Avatar con imagen si existe, o iniciales como fallback */}
                     <Avatar src={avatarSrc} alt={infoUser?.username}> {/* Si no carga la imagen, MUI muestra children */}
                         {getInitials(infoUser?.username)} {/* Iniciales como fallback visual */}
                     </Avatar>
-                    {/* Nombre visible del otro usuario */}
-                    <h1>{infoUser?.username || "Usuario"}</h1>
+                    <div className="header_user_info">
+                        {/* Nombre visible del otro usuario */}
+                        <h1>{infoUser?.username || "Usuario"}</h1>
+                    </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    {/* Sección de estado del intercambio */}
-                        {
-                            (() => {
-                                // Determinar roles y estados locales
-                                const user1Id = tradeStatus?.user1Id;
-                                const user2Id = tradeStatus?.user2Id;
-                                const iAccepted = tradeStatus ? (Number(user1Id) === Number(currentUserId) ? tradeStatus.user1Accepted : tradeStatus.user2Accepted) : false;
-                                const otherAccepted = tradeStatus ? (Number(user1Id) === Number(currentUserId) ? tradeStatus.user2Accepted : tradeStatus.user1Accepted) : false;
-                                const bothAccepted = tradeStatus && (tradeStatus.user1Accepted && tradeStatus.user2Accepted);
-
-                                // Caso: intercambio completado (final)
-                                if (tradeStatus && tradeStatus.tradeCompleted === 'completado') {
-                                    return (
-                                        <button className="trade_btn trade_btn--success" disabled>
-                                            ✓ Intercambio completado
-                                        </button>
-                                    );
-                                }
-
-                                // Caso: ambos aceptaron → mostrar estado en proceso
-                                if (bothAccepted || (tradeStatus && tradeStatus.tradeCompleted === 'en_proceso')) {
-                                    return (
-                                        <button className="trade_btn trade_btn--success" disabled>
-                                            ✓ Intercambio en proceso
-                                        </button>
-                                    );
-                                }
-
-                                // Caso: yo acepté y el otro no → mostrar para mi 'Intercambio en proceso'
-                                if (iAccepted && !otherAccepted) {
-                                    return (
-                                        <button className="trade_btn trade_btn--success" disabled>
-                                            ✓ Intercambio en proceso
-                                        </button>
-                                    );
-                                }
-
-                                // Caso: el otro aceptó y yo no → mostrar botón activo para aceptar y texto explicativo
-                                return (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <button 
-                                            onClick={handleAcceptTrade}
-                                            disabled={loadingTrade}
-                                            className={`trade_btn ${iAccepted ? 'trade_btn--success' : 'trade_btn--primary'}`}
-                                        >
-                                            {loadingTrade ? '⏳ Procesando...' : (iAccepted ? '✓ Has Aceptado' : 'Aceptar intercambio')}
-                                        </button>
-
-                                        {otherAccepted && !iAccepted && (
-                                            <span className="trade_status_text">
-                                                Intercambio aceptado por el otro, esperando tu confirmación
-                                            </span>
-                                        )}
-                                    </div>
-                                );
-                            })()
-                        }
-                    
+                <div className="header_actions">
+                    <div className="trade_status_group">
+                        {renderTradeAction()}
+                    </div>
                     {/* Icono de opciones del chat */}
                     <IconButton onClick={(e) => setMenuAnchor(e.currentTarget)} size="small">
                         <MoreVertIcon className="chat_options_icon" />
@@ -695,30 +797,41 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
                     {/* Render de cada mensaje con estilo condicional (mío/otro) */}
                     {messages.map((msg, idx) => {
                         const key = msg.id || idx;
-                        const classNames = ["chat_message", msg.fromMe ? "from_me" : "from_them"];
+                        const isMine = Boolean(msg?.fromMe);
+                        const classNames = ["chat_message", isMine ? "from_me" : "from_them"];
                         if (msg.type === 'image') {
                             classNames.push('image_message');
                         }
+                        const messageTime = formatMessageTime(msg?.createdAt);
 
                         return (
                             <div key={key} className={classNames.join(' ')}>
-                                {msg.type === 'image' && msg.mediaUrl ? (
-                                    <a
-                                        href={msg.mediaUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <img
-                                            src={msg.mediaUrl}
-                                            alt={msg.mediaName || 'Imagen enviada'}
-                                            loading="lazy"
-                                        />
-                                    </a>
-                                ) : (
-                                    msg.text
-                                )}
-                                {msg.type === 'image' && msg.text && (
-                                    <p className="chat_image_caption">{msg.text}</p>
+                                <div className="chat_message_content">
+                                    {msg.type === 'image' && msg.mediaUrl ? (
+                                        <a
+                                            href={msg.mediaUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="chat_message_media"
+                                        >
+                                            <img
+                                                src={msg.mediaUrl}
+                                                alt={msg.mediaName || 'Imagen enviada'}
+                                                loading="lazy"
+                                            />
+                                        </a>
+                                    ) : null}
+
+                                    {msg.type !== 'image' && typeof msg.text === "string" && (
+                                        <span className="chat_message_text">{msg.text}</span>
+                                    )}
+
+                                    {msg.type === 'image' && msg.text && (
+                                        <p className="chat_image_caption">{msg.text}</p>
+                                    )}
+                                </div>
+                                {messageTime && (
+                                    <span className="chat_message_meta">{messageTime}</span>
                                 )}
                             </div>
                         );
@@ -758,7 +871,7 @@ const LiveChat = ({ infoUser, onChatDeleted }) => {
                     disabled={chatDisabled || uploadingImage}
                     title={uploadingImage ? "Subiendo imagen..." : "Enviar imagen"}
                 >
-                    {uploadingImage ? "..." : <ImageOutlinedIcon fontSize="small" />}
+                    {uploadingImage ? "..." : <CameraAltRoundedIcon fontSize="small" color="primary" />}
                 </button>
                 <input 
                     type="text" 
