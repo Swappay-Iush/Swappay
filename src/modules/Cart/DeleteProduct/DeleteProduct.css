@@ -1,0 +1,51 @@
+.confirm_overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.45);
+  z-index: 60;
+}
+
+.confirm_dialog {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  width: 320px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.confirm_title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.confirm_message {
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.confirm_buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.btn.light {
+  background: #f3f3f3;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #2c7be5;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}

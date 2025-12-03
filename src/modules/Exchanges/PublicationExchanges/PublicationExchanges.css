@@ -1,23 +1,27 @@
 .container_general_publications_exchanges {
   width: 100%;
-  padding: 40px 20px;
+  padding: 40px 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   gap: 20px;
 }
 
+/* Título + filtro alineados con las cards */
 .title_filter_info_offers {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1100px;
+  margin: 0 auto 20px auto;
+  padding: 0 32px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+
   font-family: "Outfit";
 }
 
+/* Mensaje vacío */
 .info_empty_products {
   display: flex;
   flex-direction: column;
@@ -34,134 +38,142 @@
   color: #1f2937;
 }
 
+/* GRID de cards */
 .section_grid_exchanges {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+
+  padding: 0 32px;              /* espacio lateral */
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
+  gap: 20px;                    /* espacio entre cards */
+  justify-content: flex-start;  /* de izquierda a derecha */
 }
 
+/* CARD */
 .container_product_exchange {
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.12);
-  flex: 1 1 300px;
-  max-width: 340px;
-  min-height: 410px;
+  border-radius: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: 330px;
+  min-width: 260px;
+
+  min-height: 380px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column;       /* columna para poder alinear avatar/botón */
   position: relative;
-  transition: 0.2s ease-in-out;
-  gap: 10px;
-  padding-bottom:18px;
-  z-index: 0;
-}
-.container_product_exchange {
-  transition: transform .2s ease, box-shadow .2s ease;
+  padding-bottom: 16px;
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 0;                   /* por debajo de overlays/carrito */
 }
 
 .container_product_exchange:hover {
   transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.16);
 }
 
+/* CATEGORÍA superpuesta sobre la imagen, sin bloquear clics */
 .tag_exchange {
   position: absolute;
   top: 12px;
   right: 12px;
+
   background: #244a88;
   color: #fff;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 16px;
   font-size: 12px;
   font-weight: 600;
-  z-index: 2;
+  font-family: "Outfit";
+
+  z-index: 1;              /* sobre la imagen, pero debajo de modales */
+  pointer-events: none;    /* no bloquea clics/hover */
 }
 
+/* Imagen del producto */
 .img_product_exchange {
   width: 100%;
-  height: 240px;
-  object-fit:contain;
-  border-radius: 14px 14px 0 0;
+  height: 200px;
+  border-radius: 20px 20px 0 0;
+  object-fit: contain;
   display: block;
-  margin: 0;
 }
 
+/* Título */
 .product_name {
   font-family: "Outfit";
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: #244a88;
   text-align: center;
+  margin-top: 10px;
+  padding: 0 14px;
 }
 
+/* Descripción */
 .product_description {
   font-family: "Manrope";
-  text-align: center;
-  font-size: 14px;
-  color: #555;
-  padding: 0 10px;
-  max-width: 100%;
-  word-wrap: break-word;       
-  overflow-wrap: break-word;   
-  white-space: normal;        
-}
-
-.product_exchanges_interest {
   font-size: 13px;
-  color: #333;
+  color: #555;
   text-align: center;
-  padding: 0 10px;
+
+  margin-top: 4px;
+  padding: 0 14px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
-.price_swapcoins {
-  display: block;
-  color: #ff7b00;
-  font-weight: 700;
-  font-size: 14px;
-  text-align: center;
-}
-
+/* ⭐ AVATAR SIEMPRE A LA MISMA ALTURA
+   margin-top: auto empuja avatar + botón hacia abajo de forma uniforme */
 .users_exchanges {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 10px 0 0 10px;
+  margin: 0 0 0 14px;
+  margin-top: auto;            /* 🔥 clave: esto alinea avatares entre cards */
 }
 
 .avatar_exchange {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   object-fit: cover;
 }
 
 .user_name_exchange {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #244a88;
 }
 
+/* ⭐ BOTÓN SIEMPRE A LA MISMA ALTURA (debajo del avatar) */
 .button_more_info_exchange {
   background: #244a88;
   color: #fff;
   border: none;
-  padding: 13px;
-  border-radius: 10px;
-  font-size: 15px;
+  padding: 11px;
+  border-radius: 999px;
+  font-size: 14px;
   font-weight: 600;
+
+  width: 80%;
+  margin: 10px auto 0 auto;   /* siempre debajo del avatar, mismo espacio */
   cursor: pointer;
-  width: 90%;
-  margin: auto auto 0 auto;
-  display: block;
-  transition: 0.2s;
+
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center;
 }
 
 .button_more_info_exchange:hover {
   background: #163568;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
 }
+
 
 @media (max-width: 768px) {
   .title_filter_info_offers {

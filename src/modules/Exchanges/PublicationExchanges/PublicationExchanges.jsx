@@ -150,14 +150,6 @@ const PublicationExchanges = ({ textSearch }) => {
               <h5 className="product_name">{item.title}</h5>
               <p className="product_description">{item.description}</p>
 
-              <p className="product_exchanges_interest">
-                <strong>Intercambio por:</strong> {item.interests}
-              </p>
-
-              {item.priceSwapcoins && (
-                <span className="price_swapcoins">+ {item.priceSwapcoins} SwapCoins</span>
-              )}
-
               <div className="users_exchanges">
 
               <Avatar

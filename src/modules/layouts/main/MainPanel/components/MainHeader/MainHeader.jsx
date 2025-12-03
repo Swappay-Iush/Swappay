@@ -15,6 +15,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate, useLocation } from "react-router-dom"; //Usamos router-dom para validación y manejo de rutas.
 import { useUserStore } from "../../../../../../App/stores/Store"; //Importamos el store.
 import CartModal from "../Cart/CartModal";
+import useCartShopping from "../../../../../../App/stores/StoreCartShopping"; //Importamos el store del carrito.
 
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
@@ -30,13 +31,16 @@ const MainHeader = () => {
     const [openCart, setOpenCart] = useState(false); //Estado para abrir/cerrar el carrito
     const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : rol === "collaborator" ? "Productos" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
+    const cartItems = useCartShopping((state) => state.cartItem); //Obtener items del carrito desde el store.
+    const fetchCartItems = useCartShopping((state) => state.fetchCartItems); //Función para cargar el carrito
 
     const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los Swappcoins.
     
-    // Actualizar swappcoins al cargar el componente
+    // Actualizar swappcoins y cargar el carrito de compras al cargar el componente
     useEffect(() => {
         if (id && rol === "user") {
             updateSwappcoins(id).catch(err => console.error("Error al cargar swappcoins:", err));
+            fetchCartItems(id).catch(err => console.error("Error al cargar carrito:", err));
         }
     }, [id, rol]);
 
@@ -144,7 +148,7 @@ const MainHeader = () => {
                         </div>
                         <IconButton onClick={() => setOpenCart(true)}>
                             <ShoppingCartIcon fontSize="medium" style={{color:"#c4c4c4ff"}}/>
-                            <CartBadge badgeContent={3} color="primary" overlap="circular" />
+                            <CartBadge badgeContent={cartItems && cartItems.length > 0 ? cartItems.length : 0} color="primary" overlap="circular" hidden={!cartItems || cartItems.length === 0} />
                         </IconButton>
                     </>
                 )}
