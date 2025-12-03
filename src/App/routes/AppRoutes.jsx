@@ -11,6 +11,7 @@ import Profile from "../../pages/Profile/Profile.jsx";
 import MainHeader from "../../modules/layouts/main/MainPanel/components/MainHeader/MainHeader.jsx";
 import Messages from "../../pages/Messages/Messages.jsx";
 import MainAdmin from "../../modules/admin/MainAdmin.jsx";
+import MainCollaborator from "../../modules/collaborator/mainCollaborator.jsx";
 
 import NoPage from "../../components/NoPage/NoPage.jsx";
 
@@ -57,7 +58,7 @@ const AppRoutes = () => {
             ))}
 
             {/* Rutas de Admin */}
-            {["/admin/usuarios", "/admin/productos", "/admin/intercambios", "/admin/intercambios_ventas"].map((path) => (
+            {["/admin/usuarios", "/admin/productos", "/admin/intercambios", "/admin/intercambios_ventas", "/admin/purchase-history"].map((path) => (
                 <Route
                     key={path}
                     path={path}
@@ -69,11 +70,24 @@ const AppRoutes = () => {
                 />
             ))}
 
+            {/* Rutas de Colaborador */}
+            {["/collaborator/products"].map((path) => (
+                <Route
+                    key={path}
+                    path={path}
+                    element={
+                        <ProtectedRouters>
+                            {rol === "collaborator" ? <MainCollaborator /> : <NoPage />}
+                        </ProtectedRouters>
+                    }
+                />
+            ))}
+
             <Route
                 path="/perfil"
                 element={
                     <ProtectedRouters>
-                        {rol === "admin" ? <MainAdmin /> : rol === "user" ? <MainPanel /> : <NoPage />}
+                        {rol === "admin" ? <MainAdmin /> : rol === "collaborator" ? <MainCollaborator /> : rol === "user" ? <MainPanel /> : <NoPage />}
                     </ProtectedRouters>
                 }
             />

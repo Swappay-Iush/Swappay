@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import "./AboutMe.css"
 
 import { useUserStore } from "../../../App/stores/Store";
+import { useInfo } from "../../../App/stores/StoreInfo";
 
 const AboutMe = () => {
     
     const {email, userInfo, rol, swappcoins, completedTrades, profileCompletedReward, id, updateSwappcoins} = useUserStore();
+    const {lengthUsers,lengthProducts, lengthExchange, lengthPurchase, lengthProductsCol, infoUsers, infoProducts, infoExchange, infoPurchase } = useInfo();
     const [infoUser, setInfoUser] = useState([]); //Se crea el estado que contiene todos los valores que luego llegaran del servicio para mostrar más información del usuario.
     
     const [progress, setProgress] = useState(0); // Valor de la barra de progreso.
@@ -18,18 +20,39 @@ const AboutMe = () => {
     }, [id, rol]);
 
     useEffect(() => {
-        // Actualizamos la información del usuario cuando cambian los datos del store
-        setInfoUser([
+        infoUsers();
+        infoProducts();
+        infoExchange();
+        infoPurchase();
+    }, []);
+
+    useEffect(() => {
+        const info = [
             {nameInfo: "Fecha de nacimiento: ", valueInfo: userInfo.dateBirth || "Sin información"},
             {nameInfo: "Correo: ", valueInfo: email || "Sin información"},
             {nameInfo: "Genero: ", valueInfo: userInfo.gender || "Sin información"},
             {nameInfo: "Dirección: ", valueInfo: userInfo.address || "Sin información"},
             {nameInfo: "Ciudad: ", valueInfo: userInfo.city || "Sin información"},
             {nameInfo: "Teléfono: ", valueInfo: userInfo.phone || "Sin información"},
-            {nameInfo: "Total intercambios: ", valueInfo: completedTrades || "0"},
-            {nameInfo: "Total compras: ", valueInfo: "0"},
-            {nameInfo: "Total Swappcoins: ", valueInfo: swappcoins || "0"}
-        ]);
+        ];
+
+        if (rol === "user") {
+            info.push(
+                {nameInfo: "Total intercambios: ", valueInfo: completedTrades || "0"},
+                {nameInfo: "Total compras: ", valueInfo: "0"},
+                {nameInfo: "Total Swappcoins: ", valueInfo: swappcoins || "0"}
+            );
+        }else if(rol === "admin"){
+            info.push(
+                {nameInfo: "Total usuarios: ", valueInfo: lengthUsers || "0"},
+                {nameInfo: "Total ofertas: ", valueInfo: lengthProducts || "0"},
+                {nameInfo: "Total intercambios: ", valueInfo: lengthExchange || "0"},
+                {nameInfo: "Total ventas: ", valueInfo: lengthPurchase || "0"},
+
+            );
+        }
+
+        setInfoUser(info);
 
         // Calculamos el progreso basado en las tareas completadas
         let tasksCompleted = 0;
@@ -41,7 +64,7 @@ const AboutMe = () => {
         if (completedTrades >= 3) tasksCompleted++; // 3 intercambios
 
         setProgress(Math.round((tasksCompleted / totalTasks) * 100));
-    }, [email, userInfo, swappcoins, completedTrades, profileCompletedReward]);
+    }, [email, userInfo, swappcoins, completedTrades, profileCompletedReward, lengthUsers, lengthProducts, lengthExchange, lengthPurchase, lengthProductsCol, rol]);
 
     return (
         <div className="container_aboutme">

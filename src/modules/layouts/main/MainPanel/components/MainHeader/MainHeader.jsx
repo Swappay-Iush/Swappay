@@ -29,7 +29,7 @@ const MainHeader = () => {
     const {username, logout, profileImageUser, rol, swappcoins, id, updateSwappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
     const [openCart, setOpenCart] = useState(false); //Estado para abrir/cerrar el carrito
-    const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : "Panel"); //Estado que almacena el botón seleccionado.
+    const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : rol === "collaborator" ? "Productos" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
     const cartItems = useCartShopping((state) => state.cartItem); //Obtener items del carrito desde el store.
     const fetchCartItems = useCartShopping((state) => state.fetchCartItems); //Función para cargar el carrito
@@ -75,11 +75,17 @@ const MainHeader = () => {
         { name: "Usuarios", ref: "/admin/usuarios" },
         { name: "Productos", ref: "/admin/productos" },
         { name: "Intercambios", ref: "/admin/intercambios" },
+        { name: "Ventas", ref: "/admin/purchase-history" }
+
         //{ name: "Intercambio y Ventas", ref: "/admin/intercambios_ventas" },
     ];
 
-    const visibleSections = rol === "admin" ? adminSections : userSections;
-    const actionRol = rol === "admin";
+    const collaboratorSections = [
+        { name: "Productos", ref: "/collaborator/products" },
+    ];
+
+    const visibleSections = rol === "admin" ? adminSections : rol === "collaborator" ? collaboratorSections : userSections;
+    const actionRol = rol === "admin" || rol === "collaborator";
 
     const sectionSelected = (nameSection, refNavigate) => { //Función que permite actualizar el botón seleccionado y navegar hacia una ruta correspondiente. 
         setButtonSelected(nameSection);
@@ -92,7 +98,10 @@ const MainHeader = () => {
             if(location.pathname === "/admin/usuarios") setButtonSelected("Usuarios");
             else if(location.pathname === "/admin/productos") setButtonSelected("Productos");
             else if(location.pathname === "/admin/intercambios") setButtonSelected("Intercambios");
+            else if(location.pathname === "/admin/purchase-history") setButtonSelected("Ventas");
             //else if(location.pathname === "/admin/intercambios_ventas") setButtonSelected("Intercambio y Ventas");
+        }else if(rol === "collaborator"){
+            if(location.pathname === "/collaborator/products") setButtonSelected("Productos");
         } else {
             // Rutas para usuario normal
             if(location.pathname === "/panel") setButtonSelected("Panel");
@@ -120,7 +129,7 @@ const MainHeader = () => {
     return (
         <div className="container_Header_panel">
             <section className="sections_header">
-                <h1 className="title_header">{rol === "admin" ? "Swappay admin" : "Swappay"}</h1>
+                <h1 className="title_header">{rol === "admin" ? "Swappay admin" : rol === "collaborator" ? "Swappay colaborador" : "Swappay"}</h1>
                 {visibleSections.map((value, index) => ( //Mapeamos el arreglo para mostrar las opciones.
                     <a key={index} onClick={() => sectionSelected(value.name, value.ref)} id={buttonSelected === value.name && visibleSections.some(section => section.ref === location.pathname) ? "buttonSelected_header" : ""}>
                         {value.name}
@@ -155,10 +164,12 @@ const MainHeader = () => {
                         <ListItemIcon><PersonIcon/></ListItemIcon>
                         Mi perfil
                     </MenuItem>
-                    <MenuItem onClick={() => userAction('/mensajes')} style={{fontFamily:"Outfit"}} >
-                        <ListItemIcon><ChatBubbleOutlineIcon/></ListItemIcon>
-                        Mensajes
-                    </MenuItem>
+                    {!actionRol && (
+                        <MenuItem onClick={() => userAction('/mensajes')} style={{fontFamily:"Outfit"}} >
+                            <ListItemIcon><ChatBubbleOutlineIcon/></ListItemIcon>
+                            Mensajes
+                        </MenuItem>
+                    )}
                     <MenuItem onClick={() => setAnchorEl(null)} style={{fontFamily:"Outfit"}} >
                         <ListItemIcon><HelpOutlineIcon/></ListItemIcon>
                         Ayuda

@@ -92,9 +92,12 @@ background-color: #f4f4f4;    border-radius: 10px;
     color: #0056D2;
 }
 
-.info_products_description{
+.info_products_description {
     font-family: "Manrope";
     max-width: 93%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
 }
 
 .info_products_category_offers{

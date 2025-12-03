@@ -16,7 +16,9 @@ const NoPage = () => {
       navigate("/panel");
     } else if (isVerified && rol === "admin") {
       navigate("/admin/usuarios");
-    } else {
+    } else if(isVerified && rol === "collaborator"){
+      navigate("/collaborator/products")  
+    }else{
       navigate("/");
     }
   };

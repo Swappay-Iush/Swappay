@@ -6,6 +6,7 @@ import Users from "./Users/Users";
 import Products from "./Products/Products";
 import Profile from "../../pages/Profile/Profile";
 import ProductExchange from "./Exchanges/Exchanges";
+import PurchaseHistory from "./PurchaseHistory/PurchaseHistory";
 
 import { useUserStore } from "../../App/stores/Store";
 
@@ -20,6 +21,7 @@ const MainAdmin = () =>{
     else if (location.pathname === '/admin/productos') contentSection = <Products/>;
     else if (location.pathname === '/perfil') contentSection = <Profile/>;
     else if (location.pathname === '/admin/intercambios') contentSection = <ProductExchange/>;
+    else if (location.pathname === '/admin/purchase-history') contentSection = <PurchaseHistory/>;
     //else if (location.pathname === '/admin/intercambios_ventas') contentSection = <Exchanges/>;
     else contentSection = <Users/>;
 

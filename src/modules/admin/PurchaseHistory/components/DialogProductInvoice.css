@@ -1,0 +1,305 @@
+#tablePurchase {
+    overflow-x: auto;
+    width: 100%;
+}
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.dialog-invoice-container {
+    background: white;
+    border-radius: 12px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.dialog-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #666;
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.dialog-close-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.invoice-content {
+    padding: 40px;
+}
+
+/* Header */
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+}
+
+.invoice-logo .invoice-company-name {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin: 0;
+    font-family: 'Outfit';
+}
+
+.invoice-logo .invoice-tagline {
+    font-size: 14px;
+    color: #7f8c8d;
+    margin: 5px 0 0 0;
+}
+
+.invoice-details {
+    text-align: right;
+}
+
+.invoice-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3498db;
+    margin: 0 0 10px 0;
+}
+
+.invoice-details p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Divider */
+.invoice-divider {
+    height: 2px;
+    background: #4d79b8;
+    margin: 25px 0;
+}
+
+/* Sections */
+.invoice-section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-family: "Outfit";
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.client-info {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+}
+
+.client-info p {
+    margin: 8px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+/* Table */
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.invoice-table thead {
+    background-color: #3c6fb6;
+    color: white;
+}
+
+.invoice-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 500;
+    font-family: "Outfit";
+    font-size: 14px;
+}
+
+.invoice-table tbody tr {
+    border-bottom: 1px solid #ecf0f1;
+    transition: background-color 0.2s ease;
+}
+
+
+.invoice-table td {
+    padding: 12px;
+    color: #555;
+    font-family: "Manrope";
+    font-size: 14px;
+}
+
+.product-description {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* Summary */
+.invoice-summary {
+    max-width: 400px;
+    margin-left: auto;
+    margin-top: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    font-size: 15px;
+    color: #555;
+    font-family: "Outfit";
+    font-weight: 600;
+}
+
+.summary-row.total-row {
+    background-color: #3c6fb6;
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.summary-value {
+    font-weight: 500;
+    font-family: "Manrope";
+}
+
+/* Footer */
+.invoice-footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #ecf0f1;
+}
+
+.footer-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.footer-note {
+    font-size: 12px;
+    color: #95a5a6;
+    margin-top: 5px;
+}
+
+/* Actions */
+.invoice-actions {
+    padding: 20px 40px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.btn-print {
+    padding: 12px 30px;
+    background-color: #3c6fb6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Outfit', sans-serif;
+}
+
+.btn-print:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Print styles */
+@media print {
+    .dialog-overlay {
+        background: white;
+    }
+    
+    .dialog-close-btn,
+    .invoice-actions {
+        display: none;
+    }
+    
+    .dialog-invoice-container {
+        box-shadow: none;
+        max-height: none;
+    }
+    
+    .invoice-content {
+        padding: 20px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .invoice-content {
+        padding: 25px;
+    }
+    
+    .invoice-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .invoice-details {
+        text-align: left;
+    }
+    
+    .invoice-table {
+        font-size: 12px;
+    }
+    
+    .invoice-table th,
+    .invoice-table td {
+        padding: 8px;
+    }
+    
+    .product-description {
+        max-width: 150px;
+    }
+}
