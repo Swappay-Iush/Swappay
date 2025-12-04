@@ -28,26 +28,64 @@ const Exchanges = () => {
     const iconMessage = () => <BiMessageAdd/>
 
     useEffect(() => {
-        const getProductsExchange = async () => {
+        let isMounted = true;
+
+        const getProductsExchange = async (showLoader = false) => {
+            if (showLoader) {
+                setLoading(true);
+            }
+
             try {
-                setLoading(true)
                 const { data } = await api.get(`/chat/trade/all`);
-                setDataExchange(data);
+                if (!isMounted) return;
+
+                const normalized = (Array.isArray(data) ? data : []).map((item) => {
+                    const chatRoomRaw = item.chatRoom || {};
+                    const user1 = chatRoomRaw.user1 || chatRoomRaw.User1 || {};
+                    const user2 = chatRoomRaw.user2 || chatRoomRaw.User2 || {};
+
+                    return {
+                        ...item,
+                        messagesInfo: Array.isArray(item.messagesInfo) ? item.messagesInfo : [],
+                        chatRoom: {
+                            ...chatRoomRaw,
+                            user1,
+                            user2,
+                        },
+                    };
+                });
+
+                setDataExchange(normalized);
             } catch (error) {
-                console.log(error);
-            }finally{
-                setLoading(false);
+                if (isMounted) {
+                    console.log(error);
+                }
+            } finally {
+                if (showLoader && isMounted) {
+                    setLoading(false);
+                }
             }
         };
-        getProductsExchange();
+
+        getProductsExchange(true);
+        const intervalId = setInterval(() => getProductsExchange(false), 5000);
+
+        return () => {
+            isMounted = false;
+            clearInterval(intervalId);
+        };
     }, []);
 
     const filteredExchange = dataExchange.filter((product) => {
-        const search = searchInput.toLowerCase();
-        return (
-            product.chatRoom?.user1?.username.toLowerCase().includes(search) ||
-            product.chatRoom?.user2?.username.toLowerCase().includes(search)
-        );
+        const search = searchInput.trim().toLowerCase();
+        if (!search) {
+            return true;
+        }
+
+        const user1Name = product.chatRoom?.user1?.username?.toLowerCase() || "";
+        const user2Name = product.chatRoom?.user2?.username?.toLowerCase() || "";
+
+        return user1Name.includes(search) || user2Name.includes(search);
     });
 
     const handleDeleteUser = (idRequest) => {
@@ -112,12 +150,47 @@ const Exchanges = () => {
                                         const messages = Array.isArray(row.messagesInfo) ? row.messagesInfo : [];
                                         const lastMessage = messages.length > 0 ? messages[messages.length - 1] : "";
                                         const isNegotiation = lastMessage === "En negociación";
+
+                                        const handleEditClick = () => handleChangeMessage(row.chatRoom.id);
+                                        const handleDeleteClick = () => handleDeleteUser(row.chatRoom.id);
+
+                                        if (isNegotiation) {
+                                            return (
+                                                <>
+                                                    <button
+                                                        className="icon-btn edit-btn"
+                                                        title="Actualizar información"
+                                                        onClick={handleEditClick}
+                                                    >
+                                                        {iconMessage()} 
+                                                    </button>
+                                                    <button
+                                                        className="icon-btn delete-btn"
+                                                        title="Eliminar"
+                                                        onClick={handleDeleteClick}
+                                                    >
+                                                        {iconDelete()}
+                                                    </button>
+                                                </>
+                                            );
+                                        }
+
                                         return (
                                             <>
-                                                {!isNegotiation && (
-                                                    <button className="icon-btn edit-btn" title="Actualizar información" onClick={() => handleChangeMessage(row.chatRoom.id)}>{iconMessage()} </button>
-                                                )}
-                                                <button className="icon-btn delete-btn" title="Eliminar" onClick={() => handleDeleteUser(row.chatRoom.id)}>{iconDelete()}</button>
+                                                <button
+                                                    className="icon-btn edit-btn"
+                                                    title="Actualizar información"
+                                                    onClick={handleEditClick}
+                                                >
+                                                    {iconMessage()} 
+                                                </button>
+                                                <button
+                                                    className="icon-btn delete-btn"
+                                                    title="Eliminar"
+                                                    onClick={handleDeleteClick}
+                                                >
+                                                    {iconDelete()}
+                                                </button>
                                             </>
                                         );
                                     }

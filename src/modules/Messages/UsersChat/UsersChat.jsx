@@ -11,7 +11,7 @@ import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuar
 const API_URL = import.meta.env.VITE_API_URL_BACKEND; //Variable de entorno para la URL del backend.
 
 // Listado de conversaciones: al hacer click, avisamos al padre qué chat abrir
-const UsersChat = ({setInfoUser}) => { //Recibimos por props la función para establecer la información del usuario seleccionado.
+const UsersChat = ({ setInfoUser, activeChatId }) => { //Recibimos por props la función para establecer la información del usuario seleccionado.
 
     const { conversations_users } = useChatUser(); //Obtenemos las conversaciones de los usuarios desde el store.
     const [chatsUsers, setChatsUsers] = useState(conversations_users || []); //Estado para almacenar los usuarios con los que se tiene conversación.
@@ -41,21 +41,40 @@ const UsersChat = ({setInfoUser}) => { //Recibimos por props la función para es
     
     return (
         <div className="usersChat-container"> {/* Contenedor del listado de conversaciones */}
-            {chatsUsers.map((value, index) => (
-                <div key={index} className="userChat-item" onClick={() => userSelected(value)}> {/* Item clickeable */}
-                <Avatar
-                    className="userChat-avatar"
-                    src={value?.userImage ? `${API_URL}/uploads/${value.userImage}` : undefined} // Usamos imagen si existe
-                    alt={value?.username || "Usuario"} // Texto alternativo para accesibilidad
-                    {...stringAvatar(value?.username)} // Fallback: iniciales cuando no hay imagen
-                    style={{ cursor: "pointer" }}
-                />
+            {chatsUsers.map((value, index) => {
+                const isActive = Number(activeChatId) === Number(value?.chat_id);
 
-                <div className="userChat-info"> {/* Nombre del otro usuario */}
-                    <h4>{value.username}</h4>
-                </div>
-                </div>
-            ))}
+                const handleKeyDown = (event) => {
+                    if (event.key === "Enter" || event.key === " " || event.key === "Space") {
+                        event.preventDefault();
+                        userSelected(value);
+                    }
+                };
+
+                return (
+                    <div
+                        key={index}
+                        className={`userChat-item${isActive ? " active" : ""}`}
+                        onClick={() => userSelected(value)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={handleKeyDown}
+                        aria-pressed={isActive}
+                    >
+                        <Avatar
+                            className="userChat-avatar"
+                            src={value?.userImage ? `${API_URL}/uploads/${value.userImage}` : undefined} // Usamos imagen si existe
+                            alt={value?.username || "Usuario"} // Texto alternativo para accesibilidad
+                            {...stringAvatar(value?.username)} // Fallback: iniciales cuando no hay imagen
+                            style={{ cursor: "pointer" }}
+                        />
+
+                        <div className="userChat-info"> {/* Nombre del otro usuario */}
+                            <h4>{value.username}</h4>
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
 };

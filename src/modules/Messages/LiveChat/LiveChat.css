@@ -1,142 +1,258 @@
-.container_chat_private {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    overflow: hidden;
+.container_chat_private{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+    width:100%;
+    background:#ffffff;
+    border-radius:12px;
+    border:1px solid #e0e4eb;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    overflow:hidden;
 }
 
-.header_chat_private {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    border-bottom: 1px solid #eee;
-    background: #f5f5f5;
+.header_chat_private{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+    padding:18px 26px;
+    background:#f8f9fb;
+    border-bottom:1px solid #e0e4eb;
+    flex-wrap:wrap;
 }
 
-.header_profile_user {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+.header_profile_user{display:flex;align-items:center;gap:16px;flex:1 1 260px;min-width:0;}
+.header_profile_user img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #e5e7eb;}
+.header_user_info{min-width:0;display:flex;flex-direction:column;gap:4px;}
+.header_user_info h1{margin:0;font-family:"Outfit";font-size:1.18rem;font-weight:600;color:#1f2937;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+.chat_back_btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 14px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    background:#ffffff;
+    color:#374151;
+    font-family:"Outfit";
+    font-weight:600;
+    cursor:pointer;
+    transition:background .2s ease,border-color .2s ease;
 }
 
-.header_profile_user img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: fil;
+.chat_back_btn:hover{background:#f3f4f6;border-color:#9ca3af;}
+.chat_back_btn svg{font-size:16px;}
+.chat_back_btn span{white-space:nowrap;}
+
+.header_actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;min-width:fit-content;}
+.trade_status_group{display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:8px;background:#f3f4f6;border:1px solid #e5e7eb;flex-wrap:wrap;}
+
+.chat_messages_section{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:24px 26px;
+    overflow-y:auto;
+    min-height:0;
+    background:#fafbfc;
 }
 
-.header_profile_user h1 {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin: 0;
-    font-family: "Outfit";
+.chat_messages_list{display:flex;flex-direction:column;gap:14px;padding-bottom:18px;width:100%;}
+
+.chat_message{
+    position:relative;
+    max-width:72%;
+    width:fit-content;
+    padding:14px 18px;
+    border-radius:12px;
+    font-family:"Manrope";
+    font-size:0.97rem;
+    line-height:1.5;
+    color:#1f2937;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    box-shadow:0 2px 4px rgba(0,0,0,0.06);
+    animation:messagePop .28s ease-out;
 }
 
-.chat_messages_section {
-    flex: 1;
-    padding: 24px;
-    overflow-y: auto;
-    background: #fafafa;
+.chat_message.from_me{margin-left:auto;color:#fff;background:#4f8cff;border:1px solid #3b82f6;box-shadow:0 2px 4px rgba(79,140,255,0.2);}
+.chat_message.from_them{margin-right:auto;text-align:left;}
+
+.chat_message.system_message{
+    margin:6px auto;
+    max-width:80%;
+    background:#f0fdf4;
+    color:#166534;
+    border:1px solid #bbf7d0;
+    font-weight:600;
+    text-align:center;
+    box-shadow:none;
 }
 
-.chat_messages_list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+.chat_message.image_message{padding:12px;}
+.chat_message_content{display:flex;flex-direction:column;gap:8px;}
+.chat_message_text{word-break:break-word;}
+.chat_message_meta{margin-top:6px;align-self:flex-end;font-size:0.74rem;font-weight:500;color:rgba(28,42,79,0.55);}
+.chat_message.from_me .chat_message_meta{color:rgba(255,255,255,0.78);}
+.chat_message.from_them .chat_message_meta{color:rgba(28,42,79,0.45);}
+
+.chat_message_media{display:inline-flex;justify-content:flex-start;max-width:100%;border-radius:12px;overflow:hidden;box-shadow:0 18px 30px rgba(24,44,102,0.26);}
+.chat_message_media img{display:block;max-width:min(320px,100%);height:auto;object-fit:contain;}
+.chat_image_caption{margin:4px 0 0;font-size:0.9rem;line-height:1.4;color:rgba(28,42,79,0.75);}
+.chat_message.image_message.from_me .chat_image_caption{color:rgba(255,255,255,0.82);}
+
+.chat_input_section{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:14px;
+    padding:18px 22px;
+    background:#ffffff;
+    border-top:1px solid #e0e4eb;
+    box-shadow:0 -2px 8px rgba(0,0,0,0.04);
 }
 
-.chat_message {
-    max-width: 60%;
-    padding: 10px 16px;
-    border-radius: 16px;
-    font-size: 1rem;
-    font-family: "Manrope";
-    background: #e0e0e0;
-    align-self: flex-start;
+.chat_media_btn,
+.chat_send_btn{
+    border:none;
+    cursor:pointer;
+    transition:transform .2s ease,box-shadow .2s ease,background .2s ease;
 }
 
-.chat_message.from_me {
-    background: #4f8cff;
-    color: #fff;
-    align-self: flex-end;
+.chat_media_btn{
+    width:44px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    background:#4f8cff;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
 
-.chat_input_section {
-    display: flex;
-    gap: 12px;
-    padding: 16px 24px;
-    border-top: 1px solid #eee;
-    background: #f7f7f7;
+.chat_media_btn:hover{background:#3b82f6;}
+.chat_media_btn svg{color:#fff;}
+
+.chat_input{
+    flex:1;
+    min-width:0;
+    padding:12px 16px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    background:#ffffff;
+    font-family:"Manrope";
+    font-size:1rem;
+    transition:border .2s ease,box-shadow .2s ease;
 }
 
-.chat_input {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-    outline: none;
-    font-family: "Manrope";
+.chat_input:focus{
+    outline:none;
+    border-color:#4f8cff;
+    box-shadow:0 0 0 3px rgba(79,140,255,0.1);
 }
 
-.chat_send_btn {
-    padding: 10px 20px;
-    border-radius: 8px;
-    border: none;
-    background: #4f8cff;
-    color: #fff;
-    font-weight: 500;
-    font-family: "Outfit";
-    cursor: pointer;
-    transition: background 0.2s;
+.chat_input:disabled{background:#f3f4f6;cursor:not-allowed;box-shadow:none;}
+
+.chat_send_btn{
+    padding:12px 22px;
+    border-radius:8px;
+    background:#4f8cff;
+    font-family:"Outfit";
+    font-weight:600;
+    color:#fff;
+    box-shadow:0 2px 4px rgba(0,0,0,0.1);
 }
 
-.chat_send_btn:hover {
-    background: #3466c2;
+.chat_send_btn:hover{background:#3b82f6;}
+.chat_send_btn:disabled{background:#9ca3af;box-shadow:none;cursor:not-allowed;}
+
+.chat_reset_container{display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px;}
+.chat_reset_btn{padding:9px 24px;border-radius:8px;background:#4f8cff;color:#fff;font-family:"Outfit";font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:background .2s ease; border: none;}
+.chat_reset_btn:hover{background:#3b82f6;}
+
+.trade_btn{padding:8px 16px;border-radius:8px;font-family:"Outfit";font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,0.08); border: none;}
+.trade_btn--primary{background:#4f8cff;color:#fff;}
+.trade_btn--success{background:#10b981;color:#fff;}
+.trade_btn:disabled{opacity:.6;cursor:not-allowed;box-shadow:none;}
+.trade_status_text{font-size:0.78rem;color:#4b5563;font-weight:500; font-family: "Outfit";}
+
+.chat_messages_section::-webkit-scrollbar{width:8px;}
+.chat_messages_section::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px;}
+.chat_messages_section::-webkit-scrollbar-thumb:hover{background:#9ca3af;}
+
+.chat_typing_indicator{display:flex;align-items:center;gap:6px;font-size:0.85rem;color:#6b7280;}
+.chat_typing_indicator span{width:6px;height:6px;border-radius:50%;background:#9ca3af;animation:typingBlink 1s infinite ease-in-out;}
+.chat_typing_indicator span:nth-child(2){animation-delay:.15s;}
+.chat_typing_indicator span:nth-child(3){animation-delay:.3s;}
+@keyframes typingBlink{0%,80%,100%{opacity:.3;}40%{opacity:1;}}
+
+@keyframes messagePop{0%{opacity:0;transform:translateY(18px) scale(.96);}100%{opacity:1;transform:translateY(0) scale(1);}}
+
+@media (max-width:1080px){
+    .container_chat_private{border-radius:16px;}
+    .header_chat_private{padding:18px 20px;}
+    .chat_messages_section{padding:20px;}
+    .chat_message{max-width:72%;}
 }
 
-/* Botón de acciones del intercambio (aceptar / en proceso) */
-.trade_btn {
-    padding: 6px 12px; /* más pequeño */
-    border-radius: 6px;
-    border: none;
-    font-size: 14px;
-    font-weight: 500;
-    font-family: "Outfit";
-    cursor: pointer;
-    transition: background 0.2s, opacity 0.2s;
+@media (max-width:768px){
+    .container_chat_private{border-radius:12px;min-height:100%;height:auto;box-shadow:0 16px 32px rgba(37,58,145,0.14);}
+    .header_chat_private{flex-direction:row;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;text-align:left;}
+    .header_profile_user{flex:1;gap:12px;align-items:center;}
+    .chat_back_btn{padding:6px 12px;border-radius:999px;min-width:0;background:rgba(79,140,255,0.12);}
+    .chat_back_btn span{display:inline;}
+    .header_actions{display:flex;width:auto;align-items:center;gap:10px;flex-wrap:wrap;}
+    .trade_status_group{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(79,140,255,0.1);}
+    .trade_btn{padding:6px 14px;font-size:0.84rem;border-radius:12px;min-width:fit-content;}
+    .header_actions .MuiIconButton-root{padding:6px;}
+    .trade_status_text{font-size:0.74rem;line-height:1.2;text-align:left;}
+    .chat_messages_section{padding:16px 14px;}
+    .chat_messages_list{gap:10px;}
+    .chat_message{max-width:88%;font-size:0.95rem;}
+    .chat_input_section{padding:14px 14px;gap:12px;}
+    .chat_media_btn{width:36px;height:36px;}
 }
 
-.trade_btn--primary {
-    background: #2196F3; /* azul */
-    color: #fff;
+@media (max-width:520px){
+    .header_chat_private{flex-direction:column;align-items:stretch;gap:6px;padding:8px 12px 10px;text-align:left;}
+    .header_profile_user{flex:1;gap:8px;justify-content:flex-start;align-items:center;}
+    .header_profile_user img{width:34px;height:34px;}
+    .chat_back_btn{padding:6px;border-radius:10px;min-width:32px;justify-content:center;background:rgba(79,140,255,0.12);}
+    .chat_back_btn span{display:none;}
+    .header_user_info h1{font-size:0.96rem;text-align:left;}
+    .header_actions{width:100%;display:grid;grid-template-columns:1fr auto;align-items:center;gap:6px;margin-top:2px;}
+    .trade_status_group{display:flex;align-items:center;justify-content:flex-start;gap:6px;padding:0;background:transparent;flex-wrap:wrap;}
+    .trade_btn{flex:0 0 auto;padding:6px 12px;font-size:0.8rem;border-radius:12px;box-shadow:0 10px 18px rgba(79,140,255,0.22);}
+    .chat_send_btn{width:100%;}
+    .header_actions .MuiIconButton-root{justify-self:end;padding:6px;}
+    .trade_status_text{text-align:left;font-size:0.7rem;line-height:1.2;}
+    .chat_messages_section{padding:10px 8px;}
+    .chat_messages_list{gap:8px;}
+    .chat_message{max-width:94%;padding:12px 16px;}
+    .chat_message_media img{max-width:min(220px,100%);}
+    .chat_input_section{padding:10px 9px;gap:9px;}
+    .chat_media_btn{width:32px;height:32px;}
 }
 
-.trade_btn--primary:hover {
-    background: #1976D2; /* azul más oscuro */
+@media (max-width:360px){
+    .header_profile_user{gap:6px;}
+    .header_user_info h1{font-size:0.9rem;}
+    .chat_messages_section{padding:8px 6px;}
+    .chat_message{max-width:96%;font-size:0.9rem;}
+    .chat_input_section{padding:9px 6px;gap:7px;}
+    .chat_media_btn{width:28px;height:28px;}
+    .chat_send_btn{padding:10px 16px;}
 }
 
-.trade_btn--success {
-    background: #4CAF50; /* verde */
-    color: #fff;
+
+@media (prefers-reduced-motion:reduce){
+    .chat_message{animation:none;}
+    .chat_back_btn,
+    .chat_media_btn,
+    .chat_send_btn,
+    .chat_reset_btn,
+    .trade_btn{transition:none;}
 }
 
-.trade_btn--success:hover {
-    background: #3d8b41;
-}
 
-.trade_btn:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.trade_status_text {
-    font-size: 12px;
-    color: #4CAF50;
-    font-weight: 500;
-}
