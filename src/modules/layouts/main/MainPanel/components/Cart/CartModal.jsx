@@ -29,10 +29,13 @@
     const [toRemoveItem, setToRemoveItem] = useState(null);
     const [paymentOpen, setPaymentOpen] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState(null); // 'loading' | 'success' | 'error'
+    const [invoiceData, setInvoiceData] = useState(null); // Datos de la factura
 
     //Información del usuario para validar el pago
     const userSwapcoins = useUserStore((state) => state.swappcoins);
     const userId = useUserStore((state) => state.id);
+    const username = useUserStore((state) => state.username);
+    const email = useUserStore((state) => state.email);
     const updateSwappcoins = useUserStore((state) => state.updateSwappcoins);
 
     const resolveImage = (img) => {
@@ -162,9 +165,18 @@
         return (product?.amount || 0) > 0;
       });
 
-      const idsProducts = availablePurchaseItems.map((item) => item.productOffer.id);
-      const idsProductsChange = availableExchangeItems.map((item) => item.product.id);
-      const totalProducts = availablePurchaseItems.length + availableExchangeItems.length;
+      const idsProducts = availablePurchaseItems.map((item) => ({
+        id: item.productOffer.id,
+        quantity: item.quantity
+      }));
+      
+      const idsProductsChange = availableExchangeItems.map((item) => ({
+        id: item.product.id,
+        quantity: item.quantity
+      }));
+      
+      const totalProducts = availablePurchaseItems.reduce((sum, item) => sum + item.quantity, 0) + 
+                            availableExchangeItems.reduce((sum, item) => sum + item.quantity, 0);
 
       const paymentData = {
         idsProducts,
@@ -179,7 +191,7 @@
       setPaymentStatus('loading');
 
       try {
-        await processCartPayment(paymentData); //Store para procesar el pago en el backend
+        const response = await processCartPayment(paymentData); //Store para procesar el pago en el backend
 
         const deletePromises = traeCartItems.map((item) => api.delete(`/carrito/${item.id}`));
         await Promise.all(deletePromises);
@@ -187,6 +199,35 @@
         // Simulación de proceso
         await new Promise((resolve) => setTimeout(resolve, 3000));
 
+        // Construir los datos completos de la factura con la información del frontend
+        const invoiceDataComplete = {
+          idBuys: response.purchase?.idBuys || response.idBuys || response.id || Date.now(), // ID de la compra desde el backend
+          client: {
+            username: username,
+            email: email
+          },
+          products: availablePurchaseItems.map(item => ({
+            title: item.productOffer.title,
+            category: item.productOffer.category,
+            purchasedQuantity: item.quantity,
+            priceOriginal: item.productOffer.priceOriginal,
+            discount: item.productOffer.discount || 0,
+            priceDiscount: getOfferPrice(item.productOffer),
+            priceSwapcoins: getOfferSwapcoins(item.productOffer)
+          })),
+          productsChange: availableExchangeItems.map(item => ({
+            title: item.product.title,
+            category: item.product.category,
+            purchasedQuantity: item.quantity,
+            priceSwapcoins: getExchangeSwapcoins(item.product)
+          })),
+          totalProducts: totalProducts,
+          FullPayment: totalPrice,
+          FullSwapcoins: totalSwapcoins
+        };
+
+        // Guardar los datos de la factura
+        setInvoiceData(invoiceDataComplete);
 
         setPaymentStatus('success');
         clearCart(); //Limpiar carrito solo si el pago fue exitoso
@@ -202,6 +243,7 @@
       if (paymentStatus !== 'loading') {
         setPaymentOpen(false);
         setPaymentStatus(null);
+        setInvoiceData(null); // Limpiar datos de factura al cerrar
         onClose();
       }
     };
@@ -226,6 +268,7 @@
             open={paymentOpen}
             status={paymentStatus}
             onClose={handlePaymentClose}
+            invoiceData={invoiceData}
           />
 
           <div className="cart_body">

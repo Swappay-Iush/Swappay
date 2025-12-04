@@ -80,15 +80,19 @@ const PurchaseHistory = () => {
 
     const filteredPurchases = purchases.filter((purchase) => {
         const search = searchInput.toLowerCase();
-        // Filtra por nombre del producto o nombre del cliente.
-        const clientUsername = purchase.idClient && purchase.idClient.username ? purchase.idClient.username.toLowerCase() : "";
-        // Si tienes productos y quieres buscar por título de alguno:
-        let productTitle = "";
-        if (purchase.idsProducts && Array.isArray(purchase.idsProducts)) {
-            productTitle = purchase.idsProducts.map(p => p.title?.toLowerCase() || "").join(" ");
-        }
+        
+        // Filtrar por ID de compra
+        const purchaseId = purchase.idBuys ? purchase.idBuys.toString().toLowerCase() : "";
+        
+        // Filtrar por nombre del cliente
+        const clientUsername = purchase.idClient && purchase.idClient.username 
+            ? purchase.idClient.username.toLowerCase() 
+            : purchase.client && purchase.client.username 
+                ? purchase.client.username.toLowerCase() 
+                : "";
+        
         return (
-            productTitle.includes(search) ||
+            purchaseId.includes(search) ||
             clientUsername.includes(search)
         );
     });
@@ -106,7 +110,7 @@ const PurchaseHistory = () => {
                             <input
                                 type="text"
                                 className="search_input_products"
-                                placeholder="Buscar por nombre del producto o nombre del cliente..."
+                                placeholder="Buscar por id de la compra o nombre del cliente..."
                                 onChange={(e) => setSearchInput(e.target.value)}
                             />
                         </div>

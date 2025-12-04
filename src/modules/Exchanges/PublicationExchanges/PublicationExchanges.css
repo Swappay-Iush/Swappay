@@ -112,6 +112,28 @@
   text-align: center;
   margin-top: 10px;
   padding: 0 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.product_name::-webkit-scrollbar {
+  height: 4px;
+}
+
+.product_name::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.product_name::-webkit-scrollbar-thumb {
+  background: #244a88;
+  border-radius: 10px;
+}
+
+.product_name::-webkit-scrollbar-thumb:hover {
+  background: #163568;
 }
 
 /* Descripción */

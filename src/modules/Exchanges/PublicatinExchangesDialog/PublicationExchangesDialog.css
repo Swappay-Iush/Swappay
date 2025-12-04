@@ -111,6 +111,28 @@
   font-size: 22px;
   font-weight: 700;
   color: #0b3c88;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.info_exchanges_title::-webkit-scrollbar {
+  height: 5px;
+}
+
+.info_exchanges_title::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.info_exchanges_title::-webkit-scrollbar-thumb {
+  background: #0b3c88;
+  border-radius: 10px;
+}
+
+.info_exchanges_title::-webkit-scrollbar-thumb:hover {
+  background: #072c67;
 }
 
 .info_exchanges_description,
@@ -187,6 +209,27 @@
 .button_exchange:hover {
   background-color: #e86736;
   transform: translateY(-1px);
+}
+
+.own_product_message {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #e9f3fd;
+  border-radius: 10px;
+  border-left: 3px solid #0056d2;
+  font-family: "Manrope";
+  font-size: 14px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+.own_product_message p {
+  margin: 0;
+}
+
+.own_product_message strong {
+  color: #0b3c88;
+  font-weight: 600;
 }
 
 
