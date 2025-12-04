@@ -91,13 +91,11 @@ const ProductForm = ({ open = false, onClose, editProductData }) => {
                 toast.success("Publicación creada exitosamente.", {position: "top-center"}); //Mensaje informativo.
                 setButtonDisabled(true);
                 setTimeout(() => {
-                    if (onClose) onClose();
-                    if(location.pathname == "/perfil/publicaciones"){
-                        setTimeout(() => {
-                            window.location.reload();
-                        },); 
+                    if(location.pathname === "/perfil/publicaciones" || location.pathname === "/intercambios"){
+                        window.location.reload();
+                    } else {
+                        if (onClose) onClose();
                     }
-
                 }, 2000);
             } catch (error) {
                 toast.error(error.response.data.error, {position: "top-center"}); //Mensaje informativo.
@@ -113,11 +111,10 @@ const ProductForm = ({ open = false, onClose, editProductData }) => {
                 toast.success("Producto actualizado exitosamente.", {position: "top-center"});
                 setButtonDisabled(true);
                 setTimeout(() => {
-                    if (onClose) onClose();
-                    if(location.pathname === "/perfil/publicaciones"){
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 500); 
+                    if(location.pathname === "/perfil/publicaciones" || location.pathname === "/intercambios"){
+                        window.location.reload();
+                    } else {
+                        if (onClose) onClose();
                     }
                 }, 2000);
             } catch (error) {
