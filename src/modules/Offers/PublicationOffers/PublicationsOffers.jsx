@@ -30,7 +30,6 @@ const PublicationsOffers = ({textSearch}) => {
         const getData = async () => { 
             try {
                 const {data} = await api.get("/product-offer")  //Llamamos el endpoint para traer las ofertas
-                console.log(data);
 
                 setDataOffer(data); //Actualizamos el estado con el objeto que trae el backend.
 
