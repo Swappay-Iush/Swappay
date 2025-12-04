@@ -39,7 +39,6 @@ const AboutMe = () => {
         if (rol === "user") {
             info.push(
                 {nameInfo: "Total intercambios: ", valueInfo: completedTrades || "0"},
-                {nameInfo: "Total compras: ", valueInfo: "0"},
                 {nameInfo: "Total Swappcoins: ", valueInfo: swappcoins || "0"}
             );
         }else if(rol === "admin"){
