@@ -584,37 +584,23 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
     );
 
     const handleDeleteChat = async () => {
-        if (!infoUser?.salaID) return;
-        if (typeof deleteChatRoom !== "function") {
-            toast.error('No se pudo eliminar el chat. Intenta nuevamente.');
-            setMenuAnchor(null);
-            return;
-        }
-
+        if (!infoUser?.salaID || !currentUserId) return;
         try {
-            const candidateIds = [currentUserId, infoUser?.userId]
-                .map((value) => Number(value))
-                .filter((value) => Number.isFinite(value) && value > 0);
-
-            const userIdForRequest = candidateIds.length > 0 ? candidateIds[0] : undefined;
-
-            const deleted = await deleteChatRoom(infoUser.salaID, userIdForRequest);
-
-            if (!deleted) {
-                toast.error('No se pudo eliminar el chat.');
-                return;
+            await api.patch(`/chat/rooms/${infoUser.salaID}/visibility`, {
+                hidden: true,
+                userId: currentUserId
+            });
+            // Eliminar el chat localmente para el usuario actual
+            if (typeof removeChatRoomLocal === "function") {
+                removeChatRoomLocal(infoUser.salaID);
             }
-
-            localDeleteRef.current = true;
-
+            // Notificar al padre si corresponde
             if (typeof onChatDeleted === "function") {
                 onChatDeleted();
             }
-
-            toast.success('Chat eliminado correctamente.');
+            // El backend eliminará la sala y mensajes si ambos la ocultan
         } catch (error) {
-            const apiMsg = error?.response?.data?.message || error?.response?.data?.error;
-            toast.error(apiMsg || 'No se pudo eliminar el chat.');
+            toast.error('No se pudo ocultar el chat.');
         } finally {
             setMenuAnchor(null);
         }
