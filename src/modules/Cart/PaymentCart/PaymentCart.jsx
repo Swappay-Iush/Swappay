@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './PaymentCart.css';
 import { BeatLoader } from 'react-spinners';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
+import DialogProductInvoice from '../../admin/PurchaseHistory/components/DialogProductInvoice';
 
 /*
   Props:
@@ -10,8 +11,10 @@ import CancelIcon from '@mui/icons-material/Cancel';
   - status: 'loading' | 'success' | 'error' | null
   - onClose: función para cerrar (para botón Salir y cerrar overlay)
   - onInvoice: función opcional para manejar la acción "Factura"
+  - invoiceData: objeto con los datos de la compra para la factura
 */
-const PaymentCart = ({ open, status, onClose, onInvoice }) => {
+const PaymentCart = ({ open, status, onClose, onInvoice, invoiceData }) => {
+  const [showInvoice, setShowInvoice] = useState(false);
   if (!open) return null;
 
   const isLoading = status === 'loading';
@@ -62,6 +65,7 @@ const PaymentCart = ({ open, status, onClose, onInvoice }) => {
                 <button
                   className="btn primary"
                   type="button"
+                  onClick={() => setShowInvoice(true)}
                 >
                   Factura
                 </button>
@@ -88,6 +92,14 @@ const PaymentCart = ({ open, status, onClose, onInvoice }) => {
           )}
         </div>
       </div>
+
+      {/* Dialog de Factura */}
+      {showInvoice && invoiceData && (
+        <DialogProductInvoice
+          data={invoiceData}
+          onClose={() => setShowInvoice(false)}
+        />
+      )}
     </div>
   );
 };

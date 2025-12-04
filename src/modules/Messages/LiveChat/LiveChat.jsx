@@ -250,7 +250,6 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
                 });
             }
             await fetchTradeStatus({ shouldUpdateMessages: false });
-            toast.success('Intercambio restablecido. Los usuarios pueden negociar nuevamente.');
         } catch (err) {
             console.error('Error al iniciar nuevo intercambio:', err);
             toast.error('No se pudo iniciar nuevo intercambio.');
@@ -343,10 +342,6 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
             setTradeMessages([]);
             setSystemMessages([]);
 
-            if (!initiatedByMe) {
-                toast.info('El otro usuario restableció el chat.');
-            }
-
             fetchTradeStatus({ shouldUpdateMessages: false });
         };
 
@@ -361,10 +356,6 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
             if (Number(infoUser.salaID) === deletedId) {
                 const initiatedByMe = localDeleteRef.current;
                 localDeleteRef.current = false;
-
-                if (!initiatedByMe) {
-                    toast.info('El chat ha sido eliminado.');
-                }
 
                 if (typeof onChatDeleted === "function") {
                     onChatDeleted();
@@ -530,7 +521,6 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
             };
 
             appendMessage(normalizedMessage);
-            toast.success('Imagen enviada correctamente.');
         } catch (error) {
             console.error('Error al subir imagen:', error);
             const apiMsg = error?.response?.data?.message || error?.response?.data?.error;
@@ -625,19 +615,6 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
             
             // Actualizar estado local con la respuesta
             applyTradeStatus(response.data);
-            
-            // Mostrar notificación según el resultado
-            if (response.data.tradeCompleted === 'en_proceso') {
-                toast.success('¡Intercambio en proceso! Ambos usuarios han aceptado.', {
-                    position: "top-center",
-                    autoClose: 4000
-                });
-            } else {
-                toast.info(response.data.message, {
-                    position: "top-center",
-                    autoClose: 3000
-                });
-            }
             
         } catch (error) {
             console.error(" Error al procesar aceptación:", error);
@@ -771,7 +748,12 @@ const LiveChat = ({ infoUser, onChatDeleted, onBackToList, showBackButton }) => 
                         open={Boolean(menuAnchor)}
                         onClose={() => setMenuAnchor(null)}
                     >
-                        <MenuItem onClick={handleDeleteChat}>Eliminar chat</MenuItem>
+                        <MenuItem 
+                            onClick={handleDeleteChat}
+                            disabled={systemMessages.length > 0}
+                        >
+                            Eliminar chat
+                        </MenuItem>
                         <MenuItem onClick={() => setMenuAnchor(null)}>Cerrar</MenuItem>
                     </Menu>
                 </div>

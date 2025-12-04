@@ -73,7 +73,6 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
       });
 
       const { chatRoomId } = response.data; // Id de la sala creada por el backend
-      console.log(" Sala de chat creada con ID:", chatRoomId);
 
       // Agregar al store local para que aparezca inmediatamente en la lista
       setChat({
@@ -81,12 +80,6 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
         userImage: product.user.profileImage, // Avatar del otro usuario
         username: product.user.username, // Nombre del otro usuario
         chat_id: chatRoomId // Id de la sala para abrir el chat luego
-      });
-
-      // Notificación de éxito al usuario
-      toast.success(`Chat creado con ${product.user.username}. Ve a Mensajes para chatear.`, {
-        position: "top-center",
-        autoClose: 3000
       });
 
       setTimeout(() => {
@@ -206,7 +199,11 @@ const PublicationExchangesDialog = ({ dataUser, open, handleClose }) => {
             </div>
           </div>
 
-          {rol !== "admin" && (
+          {id === user.id ? (
+            <div className="own_product_message">
+              <p>Este es tu producto. Para editar o eliminar tus publicaciones, ve al perfil y luego a <strong>Mis Publicaciones</strong>.</p>
+            </div>
+          ) : rol !== "admin" && (
             <div className="exchange_buttons_products">
 
               {dataUser.priceSwapcoins && (

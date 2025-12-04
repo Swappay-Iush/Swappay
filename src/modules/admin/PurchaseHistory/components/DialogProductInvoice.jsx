@@ -31,7 +31,7 @@ const DialogProductInvoice = ({ data, onClose }) => {
 
                     {/* Información del cliente */}
                     <div className="invoice-section">
-                        <h3 className="section-title">Información del Cliente</h3>
+                        <h3 className="section-title" style={{color:"#2c3e50"}}>Información del Cliente</h3>
                         <div className="client-info">
                             <p style={{fontFamily:"Manrope", fontWeight:"500"}}><strong style={{fontFamily:"Outfit"}}>Nombre:</strong> {data.client?.username || "-"}</p>
                             <p style={{fontFamily:"Manrope", fontWeight:"500"}}><strong style={{fontFamily:"Outfit"}}>Email:</strong> {data.client?.email || "-"}</p>
@@ -42,11 +42,12 @@ const DialogProductInvoice = ({ data, onClose }) => {
 
                     {/* Detalle de productos */}
                     <div className="invoice-section" id="tablePurchase">
-                        <h3 className="section-title">Detalle de Productos</h3>
+                        <h3 className="section-title" style={{color:"#2c3e50"}}>Detalle de Productos</h3>
                         <table className="invoice-table">
                             <thead>
                                 <tr>
                                     <th>Producto</th>
+                                    <th>Tipo</th>
                                     <th>Categoría</th>
                                     <th>Cantidad</th>
                                     <th className="text-right">Precio Unitario</th>
@@ -56,21 +57,43 @@ const DialogProductInvoice = ({ data, onClose }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.products && data.products.length > 0 ? (
+                                {/* Productos de oferta */}
+                                {data.products && data.products.length > 0 && (
                                     data.products.map((product, index) => (
-                                        <tr key={index}>
-                                            <td>{product.title || "-"}</td>
+                                        <tr key={`product-${index}`}>
+                                            <td><div className="product-title">{product.title || "-"}</div></td>
+                                            <td><span className="badge-offer">Oferta</span></td>
                                             <td>{product.category || "-"}</td>
-                                            <td>{product.amount}</td>
-                                            <td>{formatCurrency(product.priceOriginal)}</td>
-                                            <td>{product.discount || 0} %</td>
-                                            <td>{formatCurrency(product.priceDiscount)}</td>
-                                            <td>{product.priceSwapcoins || 0}</td>
+                                            <td>{product.purchasedQuantity}</td>
+                                            <td className="text-right">{formatCurrency(product.priceOriginal)}</td>
+                                            <td className="text-right">{product.discount || 0} %</td>
+                                            <td className="text-right">{formatCurrency(product.priceDiscount)}</td>
+                                            <td className="text-right">{product.priceSwapcoins || 0}</td>
                                         </tr>
                                     ))
-                                ) : (
+                                )}
+                                
+                                {/* Productos de intercambio */}
+                                {data.productsChange && data.productsChange.length > 0 && (
+                                    data.productsChange.map((product, index) => (
+                                        <tr key={`exchange-${index}`}>
+                                            <td><div className="product-title">{product.title || "-"}</div></td>
+                                            <td><span className="badge-exchange">Intercambio</span></td>
+                                            <td>{product.category || "-"}</td>
+                                            <td>{product.purchasedQuantity}</td>
+                                            <td className="text-right">-</td>
+                                            <td className="text-right">-</td>
+                                            <td className="text-right">-</td>
+                                            <td className="text-right">{product.priceSwapcoins || 0}</td>
+                                        </tr>
+                                    ))
+                                )}
+
+                                {/* Mensaje cuando no hay productos */}
+                                {(!data.products || data.products.length === 0) && 
+                                 (!data.productsChange || data.productsChange.length === 0) && (
                                     <tr>
-                                        <td colSpan="4" className="text-center">No hay productos en esta compra</td>
+                                        <td colSpan="8" className="text-center">No hay productos en esta compra</td>
                                     </tr>
                                 )}
                             </tbody>
