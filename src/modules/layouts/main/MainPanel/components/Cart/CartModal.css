@@ -123,6 +123,7 @@
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
+    word-break: break-word;
 }
 
 .cart_title::-webkit-scrollbar {
@@ -302,6 +303,7 @@
         column-gap: 10px;
         row-gap: 8px;
         align-items: start;
+        overflow: hidden;
     }
 
     .cart_thumb{
@@ -313,6 +315,19 @@
     .cart_info{
         grid-column: 2;
         grid-row: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .cart_title{
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-width: 100%;
     }
 
     .cart_meta{

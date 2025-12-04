@@ -124,7 +124,7 @@ const PublicationOffersDialog = ({ userData, open, handleClose }) => {
 
                     <div className="info_product_offers">
                         <h6 className="product_offers_discount">
-                            ${userData.priceDiscount} + {userData.priceSwapcoins} Swapcoins
+                            ${userData.priceDiscount.toLocaleString('es-ES')} + {userData.priceSwapcoins.toLocaleString('es-ES')} Swapcoins
                         </h6>
                         <div
                             style={{ display: "flex", gap: "20px" }}
@@ -136,7 +136,7 @@ const PublicationOffersDialog = ({ userData, open, handleClose }) => {
                                     color: "grey"
                                 }}
                             >
-                                ${userData.priceOriginal}
+                                ${userData.priceOriginal.toLocaleString('es-ES')}
                             </h6>
                             <h6
                                 style={{

@@ -287,7 +287,7 @@
                     const offerImage = resolveImage(offer?.img1);
                     const maxStock = offer?.stock || offer?.amount;
                     const isOutOfStock = (offer?.amount || 0) === 0;
-
+                    
                     return (
                       <div key={item.id} className="cart_row">
                         <img className="cart_thumb" src={offerImage} alt={offer?.title || 'Producto'} />
@@ -347,7 +347,7 @@
                           ) : (
                             <div className="cart_meta small">Valor: {swapcoins} Swapcoins</div>
                           )}
-                          <div className="seller">Usuario: {product?.user?.username}</div>
+                          <div className="seller">Usuari@: {product?.user?.username}</div>
                         </div>
                         <div className="cart_controls">
                           <button className="icon_btn delete" aria-label="Remove" onClick={() => handleRemove(item.id)}><DeleteOutlineIcon /></button>

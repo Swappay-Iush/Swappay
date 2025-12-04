@@ -94,12 +94,12 @@ const AboutMe = () => {
                             <div className="swapcoins_task">
                                 <input type="checkbox" checked={true} readOnly />
                                 <span>Registrarse</span>
-                                <span className="task_reward">+100 Swappcoins</span>
+                                <span className="task_reward">+200 Swappcoins</span>
                             </div>
                             <div className="swapcoins_task">
                                 <input type="checkbox" checked={profileCompletedReward} readOnly />
                                 <span>Completar perfil</span>
-                                <span className="task_reward">+200 Swappcoins</span>
+                                <span className="task_reward">+300 Swappcoins</span>
                             </div>
                             <div className="swapcoins_task">
                                 <input type="checkbox" checked={completedTrades >= 1} readOnly />

@@ -140,11 +140,11 @@ const PublicationsOffers = ({textSearch}) => {
                             <img src={`${API_URL}${value.img1}`} alt="imagenProducto" />
                             <h5 className="product_name">{value.title}</h5>
                             <div className="container_price_offers">
-                                <span className="price_offers">${value.priceDiscount}</span>
-                                <span className="price_original">${value.priceOriginal}</span>
+                                <span className="price_offers">${value.priceDiscount.toLocaleString('es-ES')}</span>
+                                <span className="price_original">${value.priceOriginal.toLocaleString('es-ES')}</span>
                             </div>
                             <span className="price_swapcoins">
-                                + {value.priceSwapcoins} SwapCoins
+                                + {value.priceSwapcoins.toLocaleString('es-ES')} SwapCoins
                             </span>
                             <a className="button_more_info"onClick={() => handleOpen(value)}>Ver más información</a>
                             <button className="button_redeem" onClick={() => handleRedeemNow(value)} disabled={!value.availability || value.amount === 0} 
