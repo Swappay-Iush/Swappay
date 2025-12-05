@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import "./MainHeader.css"
 
-import { BsCoin } from "react-icons/bs"; //Importamos el icono usado para los swapcoins
+import { BsCoin } from "react-icons/bs"; //Importamos el icono usado para los swappcoins
 
 //Importamos componentes a utilizar desde materialUI
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
@@ -14,19 +14,36 @@ import PersonIcon from '@mui/icons-material/Person';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import { useNavigate, useLocation } from "react-router-dom"; //Usamos router-dom para validación y manejo de rutas.
 import { useUserStore } from "../../../../../../App/stores/Store"; //Importamos el store.
+import CartModal from "../Cart/CartModal";
+import useCartShopping from "../../../../../../App/stores/StoreCartShopping"; //Importamos el store del carrito.
+
+import { styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
+import Badge, { badgeClasses } from '@mui/material/Badge';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 
 const MainHeader = () => {
 
     const navigate = useNavigate(); //Utilizamos esto para navegar entre rutas.
     const location = useLocation(); //Usamos esto para verificar la ruta actual según la URL.
-    const {username, logout, profileImageUser } = useUserStore(); //Se obtiene el username, cierre de sesión e imagen del usuario.
-
+    const {username, logout, profileImageUser, rol, swappcoins, id, updateSwappcoins } = useUserStore(); //Se obtiene el username, cierre de sesión, imagen del usuario y swappcoins.
     const [anchorEl, setAnchorEl] = useState(null); //Estado que permite cerrar el menu.
-    const [buttonSelected, setButtonSelected] = useState("Panel"); //Estado que almacena el botón seleccionado.
+    const [openCart, setOpenCart] = useState(false); //Estado para abrir/cerrar el carrito
+    const [buttonSelected, setButtonSelected] = useState(rol === "admin" ? "Usuarios" : rol === "collaborator" ? "Productos" : "Panel"); //Estado que almacena el botón seleccionado.
     const [loading, setLoading] = useState(true); //Estado para mostrar una carga mientras los datos se traen del back.
+    const cartItems = useCartShopping((state) => state.cartItem); //Obtener items del carrito desde el store.
+    const fetchCartItems = useCartShopping((state) => state.fetchCartItems); //Función para cargar el carrito
 
-    const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los swapCoins.
+    const bsCoin = () => <BsCoin color="#000" fontSize={"20px"}/> //Icono de los Swappcoins.
     
+    // Actualizar swappcoins y cargar el carrito de compras al cargar el componente
+    useEffect(() => {
+        if (id && rol === "user") {
+            updateSwappcoins(id).catch(err => console.error("Error al cargar swappcoins:", err));
+            fetchCartItems(id).catch(err => console.error("Error al cargar carrito:", err));
+        }
+    }, [id, rol]);
+
     useEffect (() => { //Actualiza loading si el username está disponible en el store.
         if(username === null){
             setLoading(true);
@@ -48,11 +65,27 @@ const MainHeader = () => {
         navigate(sectionRef)
     }
 
-    const allSections = [ //Arreglo de objetos para mapearlos y mostrar las secciones disponibles.
+    const userSections = [ //Arreglo de objetos para mapearlos y mostrar las secciones disponibles.
         {name: "Panel", ref: "/panel"}, 
         {name: "Ofertas", ref: "/ofertas"},
         {name: "Intercambios", ref: "/intercambios"}
     ]
+
+    const adminSections = [
+        { name: "Usuarios", ref: "/admin/usuarios" },
+        { name: "Productos", ref: "/admin/productos" },
+        { name: "Intercambios", ref: "/admin/intercambios" },
+        { name: "Ventas", ref: "/admin/purchase-history" }
+
+        //{ name: "Intercambio y Ventas", ref: "/admin/intercambios_ventas" },
+    ];
+
+    const collaboratorSections = [
+        { name: "Productos", ref: "/collaborator/products" },
+    ];
+
+    const visibleSections = rol === "admin" ? adminSections : rol === "collaborator" ? collaboratorSections : userSections;
+    const actionRol = rol === "admin" || rol === "collaborator";
 
     const sectionSelected = (nameSection, refNavigate) => { //Función que permite actualizar el botón seleccionado y navegar hacia una ruta correspondiente. 
         setButtonSelected(nameSection);
@@ -60,10 +93,22 @@ const MainHeader = () => {
     }
 
     useEffect(() => { //Hook que controla el enfoque de las secciones según la ruta correspondiente.
-        if(location.pathname === "/panel") setButtonSelected("Panel");
-        else if(location.pathname === "/ofertas") setButtonSelected("Ofertas");
-        else if(location.pathname === "/intercambios") setButtonSelected("Intercambios");
-    }, [location.pathname])
+        if (rol === "admin") {
+            // Rutas para administrador
+            if(location.pathname === "/admin/usuarios") setButtonSelected("Usuarios");
+            else if(location.pathname === "/admin/productos") setButtonSelected("Productos");
+            else if(location.pathname === "/admin/intercambios") setButtonSelected("Intercambios");
+            else if(location.pathname === "/admin/purchase-history") setButtonSelected("Ventas");
+            //else if(location.pathname === "/admin/intercambios_ventas") setButtonSelected("Intercambio y Ventas");
+        }else if(rol === "collaborator"){
+            if(location.pathname === "/collaborator/products") setButtonSelected("Productos");
+        } else {
+            // Rutas para usuario normal
+            if(location.pathname === "/panel") setButtonSelected("Panel");
+            else if(location.pathname === "/ofertas") setButtonSelected("Ofertas");
+            else if(location.pathname === "/intercambios") setButtonSelected("Intercambios");
+        }
+    }, [location.pathname, rol])
 
     const userLogout = async () => { //Función que permite cerrar la sesión del usuario.
         try {
@@ -74,24 +119,40 @@ const MainHeader = () => {
         }
     }
 
+    const CartBadge = styled(Badge)`
+        & .${badgeClasses.badge} {
+            top: -12px;
+            right: -6px;
+        }
+    `;
+
     return (
         <div className="container_Header_panel">
             <section className="sections_header">
-                <h1 className="title_header">Swappay</h1>
-                {allSections.map((value, index) => ( //Mapeamos el arreglo para mostrar las opciones.
-                    <a key={index} onClick={() => sectionSelected(value.name, value.ref)} id={buttonSelected === value.name && allSections.some(section => section.ref === location.pathname) ? "buttonSelected_header" : ""}>
+                <h1 className="title_header">{rol === "admin" ? "Swappay admin" : rol === "collaborator" ? "Swappay colaborador" : "Swappay"}</h1>
+                {visibleSections.map((value, index) => ( //Mapeamos el arreglo para mostrar las opciones.
+                    <a key={index} onClick={() => sectionSelected(value.name, value.ref)} id={buttonSelected === value.name && visibleSections.some(section => section.ref === location.pathname) ? "buttonSelected_header" : ""}>
                         {value.name}
                     </a>
                 ))}
             </section>
             <section className="sections_header">
-                <div className="swapCoin_header">
-                    {bsCoin()} {/*Icono de los swapcoins */}
-                    <div className="info_swapcoin">
-                        <div className="text_swapcoins">Mis Swapcoins:</div>
-                        <div className="value_swapcoins">{50}</div>
-                    </div>
-                </div>
+                {!actionRol && (
+                    <>
+                        <div className="swapCoin_header">
+                            {bsCoin()} {/*Icono de los swappcoins */}
+                            <div className="info_swapcoin">
+                                <div className="text_swapcoins">Mis Swappcoins:</div>
+                                <div className="value_swapcoins">{swappcoins || 0}</div>
+                            </div>
+                        </div>
+                        <IconButton onClick={() => setOpenCart(true)}>
+                            <ShoppingCartIcon fontSize="medium" style={{color:"#c4c4c4ff"}}/>
+                            <CartBadge badgeContent={cartItems && cartItems.length > 0 ? cartItems.length : 0} color="primary" overlap="circular" hidden={!cartItems || cartItems.length === 0} />
+                        </IconButton>
+                    </>
+                )}
+                
                 <Avatar
                     className="profile_user_header"
                     src={loading ? "Cargando imagen" : profileImageUser}
@@ -103,10 +164,12 @@ const MainHeader = () => {
                         <ListItemIcon><PersonIcon/></ListItemIcon>
                         Mi perfil
                     </MenuItem>
-                    <MenuItem onClick={() => userAction('/mensajes')} style={{fontFamily:"Outfit"}} >
-                        <ListItemIcon><ChatBubbleOutlineIcon/></ListItemIcon>
-                        Mensajes
-                    </MenuItem>
+                    {!actionRol && (
+                        <MenuItem onClick={() => userAction('/mensajes')} style={{fontFamily:"Outfit"}} >
+                            <ListItemIcon><ChatBubbleOutlineIcon/></ListItemIcon>
+                            Mensajes
+                        </MenuItem>
+                    )}
                     <MenuItem onClick={() => setAnchorEl(null)} style={{fontFamily:"Outfit"}} >
                         <ListItemIcon><HelpOutlineIcon/></ListItemIcon>
                         Ayuda
@@ -117,6 +180,10 @@ const MainHeader = () => {
                     </MenuItem>
                 </Menu>
             </section>
+            {/* Modal del carrito */}
+            {openCart && (
+                <CartModal open={openCart} onClose={() => setOpenCart(false)} />
+            )}
         </div>
     );
 }

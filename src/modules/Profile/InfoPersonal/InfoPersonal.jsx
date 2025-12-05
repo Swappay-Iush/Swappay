@@ -23,7 +23,7 @@ const InfoPersonal = () => {
     const[visButtonConfig, setVisButtonConfig] = useState(true);
     const[avatarSrc, setAvatarSrc] = useState(null); // Estado para la imagen del avatar
     const[loading, setLoading] = useState(true);
-    const {username, country, isVerified, id, profileImageUser, setUser} = useUserStore();
+    const {username, country, isVerified, id, profileImageUser, setUser, rol, swappcoins} = useUserStore();
 
     useEffect(() => { //UseEffect que permite cargar todos los datos que vienen del back, para poderlos mostrar.
         if(!isVerified) setLoading(true)  //Si el usuario no esta verificado, muestra el componente de carga, si no, lo oculta
@@ -36,10 +36,19 @@ const InfoPersonal = () => {
         return {children: initials,};
     };
 
-    const valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
-        {name: "Sobre mi", href: "/perfil"},
-        {name: "Mis publicaciones", href: "/perfil/publicaciones"}
-    ]
+
+    let valueSections = []
+
+    if(rol === "admin" || rol === "collaborator"){
+        valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
+            {name: "Sobre mi", href: "/perfil"},
+        ]
+    }else{
+        valueSections = [ //Arreglo de objetos que almacena la información de las 'páginas' correspondientes.
+            {name: "Sobre mi", href: "/perfil"},
+            {name: "Mis publicaciones", href: "/perfil/publicaciones"}
+        ]
+    }
 
     const changeSection = (name, href) => { //Función que permite el cambio de las rutas.
         setSectionSelected(name)
@@ -128,7 +137,7 @@ const InfoPersonal = () => {
                 <h5>{loading ? "Pais" : country}</h5>
                 <h5>
                     <Stack spacing={1} className="rating_users">
-                        <Rating name="half-rating" defaultValue={2.5} precision={0.5} readOnly /> {/*Estrellas de calificación en solo lectura.*/}
+                        <Rating name="half-rating" defaultValue={5} precision={0.5} readOnly /> {/*Estrellas de calificación en solo lectura.*/}
                     </Stack>
                 </h5>
             </section>

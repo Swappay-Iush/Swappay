@@ -4,8 +4,8 @@ import { MenuItem, Select, FormControl, InputLabel } from "@mui/material"; //MUI
 import PublicationExchangesDialog from "../PublicatinExchangesDialog/PublicationExchangesDialog.jsx";
 import api from "../../../service/axiosConfig"; //Llamamos el back
 import iconEmpty from "../../../resources/images/productos.svg";
-import InfoPopup from "../../../components/InfoPopup/InfoPopup";
 import { useNavigate } from "react-router-dom";
+import InfoPopup from "../../../components/InfoPopup/InfoPopup.jsx";
 
 import Avatar from '@mui/material/Avatar'; //Componente para el perfil del usuario
 import { useUserStore } from "../../../App/stores/Store";
@@ -113,7 +113,7 @@ const PublicationExchanges = ({ textSearch }) => {
       <div className="title_filter_info_offers">
         <h1 className="title_section_exchange">{dataFilter.length} Intercambios disponibles</h1>
 
-        <FormControl fullWidth variant="outlined" sx={{ width: "200px" }}>
+        <FormControl fullWidth variant="outlined" sx={{ width: "200px", zIndex: "0" }}>
           <InputLabel id="category-label">Categoría</InputLabel>
           <Select
             labelId="category-label"
@@ -149,14 +149,6 @@ const PublicationExchanges = ({ textSearch }) => {
 
               <h5 className="product_name">{item.title}</h5>
               <p className="product_description">{item.description}</p>
-
-              <p className="product_exchanges_interest">
-                <strong>Intercambio por:</strong> {item.interests}
-              </p>
-
-              {item.priceSwapcoins && (
-                <span className="price_swapcoins">+ {item.priceSwapcoins} SwapCoins</span>
-              )}
 
               <div className="users_exchanges">
 

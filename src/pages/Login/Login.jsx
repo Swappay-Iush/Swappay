@@ -18,7 +18,7 @@ const Login = () => {
     const navigate= useNavigate();
     const [email, setEmail] = useState(""); //Variable que almacena el email digitado en el imput
     const [password, setPassword] = useState("");//Variable que almacena la contraseña digitada en el imput
-    const {setUser} = useUserStore(); //Función del store para actualizar el usuario.
+    const {setUser, rol} = useUserStore(); //Función del store para actualizar el usuario.
     const [visPassword, setVisPassowrd] = useState(false); //Estado que permite al visualización de la contraseña
     const [changeLogin, setChangeLogin] = useState(false) //Estado que deshabilita el botón de ingresar, luego de enviar una solicitud.
     const iconClose = () => <IoClose className="iconClose" onClick={() => navigate("/")}/> //Icono para cerrar la ventana
@@ -44,14 +44,29 @@ const Login = () => {
 
             const data = response.data;
 
-            setUser(data)
+            setUser({
+                id: data.id,
+                username: data.username,
+                rol: data.rol,
+                country: data.country,
+                email: data.email,
+                swappcoins: data.swappcoins || 0,
+                completedTrades: data.completedTrades || 0,
+                profileCompletedReward: data.profileCompletedReward || false
+            })
             setChangeLogin(true);
-
+            
             toast.success(`¡Bienvenid@! ${data.username}`, { position: "top-center",autoClose: 1500,hideProgressBar: false,closeOnClick: true,
             pauseOnHover: true,draggable: true,progress: undefined,});
 
             setTimeout(() => { //Damos una espera de 2 segundos para iniciar sesión.
-                navigate("/panel")
+                {data.rol === "admin" || rol === "admin" ? (
+                    navigate("/admin/usuarios")
+                ) : data.rol === "collaborator" || rol === "collaborator" ? (
+                    navigate("/collaborator/products")
+                ) : (
+                    navigate("/panel")
+                )}
             }, 2000);
             
         } catch (error) {

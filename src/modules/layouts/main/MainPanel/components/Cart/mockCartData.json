@@ -1,0 +1,85 @@
+{
+  "cartItems": [
+    {
+      "id": 1,
+      "idUser": 1,
+      "itemType": "offer",
+      "idProductOffer": 101,
+      "idProduct": null,
+      "quantity": 1,
+      "productOffer": {
+        "id": 101,
+        "title": "Computador HP Pavilion",
+        "description": "Laptop en excelente estado",
+        "category": "Tecnología",
+        "priceOriginal": 50.0,
+        "priceDiscount": 0,
+        "discount": 0,
+        "priceSwapcoins": 500,
+        "availability": true,
+        "img1": "computer",
+        "user": {
+          "id": 5,
+          "username": "Usuario1",
+          "profileImage": null
+        }
+      }
+    },
+    {
+      "id": 2,
+      "idUser": 1,
+      "itemType": "offer",
+      "idProductOffer": 102,
+      "idProduct": null,
+      "quantity": 2,
+      "productOffer": {
+        "id": 102,
+        "title": "Curso de Diseño Swappay",
+        "description": "Curso completo de diseño gráfico",
+        "category": "Educación",
+        "priceOriginal": 20.0,
+        "priceDiscount": 15.0,
+        "discount": 25,
+        "priceSwapcoins": 150,
+        "availability": true,
+        "img1": "designer",
+        "user": {
+          "id": 8,
+          "username": "Usuario2",
+          "profileImage": null
+        }
+      }
+    },
+    {
+      "id": 3,
+      "idUser": 1,
+      "itemType": "exchange",
+      "idProductOffer": null,
+      "idProduct": 201,
+      "quantity": 1,
+      "product": {
+        "id": 201,
+        "title": "Cámara Canon EOS",
+        "description": "Cámara profesional en buen estado",
+        "category": "Tecnología",
+        "condition": "Usado",
+        "interests": "Trueque",
+        "priceSwapcoins": 50,
+        "image1": "discount",
+        "ubication": "Bogotá",
+        "deliveryMethod": "Envio",
+        "user": {
+          "id": 12,
+          "username": "Usuario3",
+          "profileImage": null
+        }
+      },
+      "offeredProduct": {
+        "title": "Mi Laptop Lenovo",
+        "description": "Laptop que ofrezco en intercambio",
+        "category": "Tecnología",
+        "condition": "Usado"
+      }
+    }
+  ]
+}

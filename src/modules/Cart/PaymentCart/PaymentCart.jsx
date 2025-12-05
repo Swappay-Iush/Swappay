@@ -1,0 +1,107 @@
+import React, { useState } from 'react';
+import './PaymentCart.css';
+import { BeatLoader } from 'react-spinners';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import DialogProductInvoice from '../../admin/PurchaseHistory/components/DialogProductInvoice';
+
+/*
+  Props:
+  - open: boolean → controla si se muestra el modal
+  - status: 'loading' | 'success' | 'error' | null
+  - onClose: función para cerrar (para botón Salir y cerrar overlay)
+  - onInvoice: función opcional para manejar la acción "Factura"
+  - invoiceData: objeto con los datos de la compra para la factura
+*/
+const PaymentCart = ({ open, status, onClose, onInvoice, invoiceData }) => {
+  const [showInvoice, setShowInvoice] = useState(false);
+  if (!open) return null;
+
+  const isLoading = status === 'loading';
+  const isSuccess = status === 'success';
+  const isError = status === 'error';
+
+  const handleOverlayClick = () => {
+    // No permitimos cerrar mientras está cargando
+    if (!isLoading && onClose) {
+      onClose();
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 300);
+    }
+  };
+
+  const handleDialogClick = (e) => {
+    e.stopPropagation();
+  };
+
+  return (
+    <div className="payment_overlay" onClick={handleOverlayClick}>
+      <div className="payment_dialog" onClick={handleDialogClick}>
+        <div className="payment_content">
+          {/* ESTADO: PROCESANDO */}
+          {isLoading && (
+            <div className='pago_en_proceso'>
+              <BeatLoader color="#2c7be5" size={15} />
+              <p className="payment_message">Procesando pago...</p>
+            </div>
+          )}
+
+          {/* ESTADO: ÉXITO */}
+          {isSuccess && (
+            <>
+              <CheckCircleIcon sx={{ fontSize: 60, color: '#10b981' }} />
+              <p className="payment_message success">Pago exitoso</p>
+
+              <div className="payment_actions">
+                <button
+                  className="btn light"
+                  type="button"
+                  onClick={handleOverlayClick}
+                >
+                  Salir
+                </button>
+                <button
+                  className="btn primary"
+                  type="button"
+                  onClick={() => setShowInvoice(true)}
+                >
+                  Factura
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ESTADO: ERROR */}
+          {isError && (
+            <>
+              <CancelIcon sx={{ fontSize: 60, color: '#b91c1c' }} />
+              <p className="payment_message error">Pago rechazado</p>
+
+              <div className="payment_actions">
+                <button
+                  className="btn light"
+                  type="button"
+                  onClick={onClose()}
+                >
+                  Salir
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Dialog de Factura */}
+      {showInvoice && invoiceData && (
+        <DialogProductInvoice
+          data={invoiceData}
+          onClose={() => setShowInvoice(false)}
+        />
+      )}
+    </div>
+  );
+};
+
+export default PaymentCart;
